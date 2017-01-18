@@ -14,12 +14,15 @@ class Chips
      *
      * @param int $chips
      */
-    public function __construct(int $chips)
+    private function __construct(int $chips)
     {
         $this->chips = $chips;
     }
 
-    public static function zero()
+    /**
+     * @return Chips
+     */
+    public static function zero(): self
     {
         return new self(0);
     }
@@ -37,7 +40,7 @@ class Chips
     /**
      * @return int
      */
-    public function amount(): int
+    public function amount()
     {
         return $this->chips;
     }
@@ -59,10 +62,10 @@ class Chips
     }
 
     /**
-     *
+     * @return string
      */
     public function __toString()
     {
-        return $this->amount();
+        return (string) $this->amount();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace xLink\Poker\Cards;
 
-use xLink\Poker\Cards\Providers\StandardProvider;
+use xLink\Poker\Cards\Providers\StandardDeck;
 use xLink\Poker\Cards\Contracts\CardProvider;
 
 class Deck
@@ -14,7 +14,7 @@ class Deck
     public function __construct(CardProvider $provider = null)
     {
         if (is_null($provider)) {
-            $provider = new StandardProvider();
+            $provider = new StandardDeck();
         }
 
         $this->cards = $provider->getCards();
@@ -58,11 +58,6 @@ class Deck
         }
 
         return $hand;
-    }
-
-    public function humanize(array $hand)
-    {
-        var_dump($hand);
     }
 
     /**

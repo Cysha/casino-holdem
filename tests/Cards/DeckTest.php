@@ -2,7 +2,7 @@
 
 namespace xLink\Tests\Cards;
 
-use xLink\Poker\Cards\Providers\EmptyProvider;
+use xLink\Poker\Cards\Providers\EmptyDeck;
 use xLink\Poker\Cards\Card;
 use xLink\Poker\Cards\Deck;
 
@@ -37,7 +37,7 @@ class DeckTest extends \PHPUnit_Framework_TestCase
      */
     public function cant_draw_a_card_from_empty_deck()
     {
-        $deck = new Deck(new EmptyProvider());
+        $deck = new Deck(new EmptyDeck());
         $deck->draw();
     }
 

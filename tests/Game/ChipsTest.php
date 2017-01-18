@@ -19,7 +19,7 @@ class ChipsTest extends \PHPUnit_Framework_TestCase
         $chips = Chips::zero();
         $chips->add(Chips::fromAmount(100));
 
-        $this->assertEquals($chips->amount(), 100);
+        $this->assertEquals(100, $chips->amount());
     }
 
     /** @test */
@@ -28,6 +28,14 @@ class ChipsTest extends \PHPUnit_Framework_TestCase
         $chips = Chips::fromAmount(100);
         $chips->subtract(Chips::fromAmount(100));
 
-        $this->assertEquals($chips->amount(), 0);
+        $this->assertEquals(0, $chips->amount());
+    }
+
+    /** @test */
+    public function chip_count_is_returned_from_object()
+    {
+        $chips = Chips::fromAmount(100);
+
+        $this->assertEquals('100', $chips);
     }
 }

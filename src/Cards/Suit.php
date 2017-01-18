@@ -13,7 +13,10 @@ final class Suit
 
     private static $suits = [];
 
-    private function __construct($suit)
+    /**
+     * @param int $suit
+     */
+    private function __construct(int $suit)
     {
         $this->suit = $suit;
     }
@@ -25,7 +28,7 @@ final class Suit
      *
      * @return Suit
      */
-    public static function club($shareable = true)
+    public static function club($shareable = true): Suit
     {
         if (!$shareable) {
             return new self(static::CLUB);
@@ -41,7 +44,7 @@ final class Suit
      *
      * @return Suit
      */
-    public static function diamond($shareable = true)
+    public static function diamond($shareable = true): Suit
     {
         if (!$shareable) {
             return new self(static::DIAMOND);
@@ -57,7 +60,7 @@ final class Suit
      *
      * @return Suit
      */
-    public static function heart($shareable = true)
+    public static function heart($shareable = true): Suit
     {
         if (!$shareable) {
             return new self(static::HEART);
@@ -73,7 +76,7 @@ final class Suit
      *
      * @return Suit
      */
-    public static function spade($shareable = true)
+    public static function spade($shareable = true): Suit
     {
         if (!$shareable) {
             return new self(static::SPADE);
@@ -82,7 +85,12 @@ final class Suit
         return static::makeSuit(static::SPADE);
     }
 
-    private static function makeSuit($suit)
+    /**
+     * @param int
+     *
+     * @return Suit
+     */
+    private static function makeSuit(int $suit): Suit
     {
         if (!array_key_exists($suit, static::$suits)) {
             static::$suits[$suit] = new static($suit);

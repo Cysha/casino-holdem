@@ -6,10 +6,10 @@ use InvalidArgumentException;
 
 class Card
 {
-    const ACE = 100;
-    const JACK = 101;
-    const QUEEN = 102;
-    const KING = 103;
+    const ACE = 1;
+    const JACK = 11;
+    const QUEEN = 12;
+    const KING = 13;
 
     /**
      * The Suit of this card.
