@@ -7,7 +7,7 @@ PHP 7+ library to make poker related activities easy as code!
 Via Composer
 
 ``` bash
-$ composer require xLink/poker-library
+$ composer require xLink/lib-poker
 ```
 
 
