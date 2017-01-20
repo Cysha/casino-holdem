@@ -9,7 +9,7 @@ use xLink\Poker\Cards\Hand;
 
 class SevenCard implements CardEvaluator
 {
-    public static function evaluate(CardCollection $board, Hand $hand)
+    /*public static function evaluate(CardCollection $board, Hand $hand)
     {
         $cards = $board->merge($hand);
 
@@ -26,7 +26,7 @@ class SevenCard implements CardEvaluator
         }
 
         return false;
-    }
+    }*/
 
     public static function royalFlush(CardCollection $cards)
     {
@@ -46,28 +46,33 @@ class SevenCard implements CardEvaluator
             return false;
         }
 
-        return $royalFlushHand;
+        return $royalFlushHand->sortByValue();
     }
 
     public static function straightFlush(CardCollection $cards)
     {
         // check for flush
-        if (!static::flush($cards)) {
+        if (static::flush($cards) === false) {
             return false;
         }
 
         // check for straight
-        if (!static::straight($cards)) {
+        if (($straight = static::straight($cards)) === false) {
             return false;
         }
 
-        return true;
+        return $straight;
     }
 
     // public static function fourOfAKind(CardCollection $cards) {}
 
     // public static function fullHouse(CardCollection $cards) {}
 
+    /**
+     * @param CardCollection $cards
+     *
+     * @return CardCollection|bool
+     */
     public static function flush(CardCollection $cards)
     {
         $groupedBySuit = $cards
@@ -81,17 +86,74 @@ class SevenCard implements CardEvaluator
             return false;
         }
 
-        return CardCollection::make($groupedBySuit->first());
+        return $groupedBySuit->first()->sortByValue();
     }
 
-    public static function straight(CardCollection $cards)
+    /**
+     * @param CardCollection $cardCollection
+     *
+     * @return bool|static
+     */
+    public static function straight(CardCollection $cardCollection)
     {
-        $cards = $cards
-            ->sortBy(function (Card $card) {
+        $check = static::checkForHighLowStraight($cardCollection->sortByValue()->unique());
+        if ($check !== false) {
+            return $check;
+        }
+
+        // check for straight with the current card list
+        $check = static::checkForStraight($cardCollection->sortByValue()->unique());
+        if ($check !== false) {
+            return $check;
+        }
+
+        return false;
+    }
+
+    // public static function threeOfAKind(CardCollection $cards) {}
+
+    // public static function twoPair(CardCollection $cards) {}
+
+    // public static function pair(CardCollection $cards) {}
+
+    // public static function highCard(CardCollection $cards) {}
+
+    private static function checkForHighLowStraight(CardCollection $cards)
+    {
+        // check for aces before we write off the straight possibility
+        if (($aceCount = $cards->whereValue(Card::ACE)->count()) === 0) {
+            return false;
+        }
+
+        // check for A2345 via card values
+        $lowAStraight = $cards->only(range(0, 4));
+        $lowSum = $lowAStraight
+            ->sum(function (Card $card) {
                 return $card->value();
-            }, SORT_NUMERIC)
+            });
+        if ($lowSum === 15) {
+            return $lowAStraight;
+        }
+
+        // check for TJQKA via card values
+        $highAStraight = $cards
+            ->switchAceValue()
+            ->sortByValue()
+            ->only(range(6, 2))
             ->values();
 
+        $highSum = $highAStraight->sum(function (Card $card) {
+            return $card->value();
+        });
+        if ($highSum === 60) {
+            return $highAStraight;
+        }
+
+        return false;
+    }
+
+    private static function checkForStraight(CardCollection $cards)
+    {
         $runningLength = 0;
         $highestSequentialPosition = 0;
 
@@ -112,17 +174,11 @@ class SevenCard implements CardEvaluator
         }
 
         if ($runningLength === 4) {
-            return $cards->splice($highestSequentialPosition - 4, 5);
+            return $cards
+                ->only(range($highestSequentialPosition - 4, $highestSequentialPosition))
+                ->values();
         }
 
         return false;
     }
-
-    // public static function threeOfAKind(CardCollection $cards) {}
-
-    // public static function twoPair(CardCollection $cards) {}
-
-    // public static function pair(CardCollection $cards) {}
-
-    // public static function highCard(CardCollection $cards) {}
 }

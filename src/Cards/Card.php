@@ -3,13 +3,15 @@
 namespace xLink\Poker\Cards;
 
 use InvalidArgumentException;
+use xLink\Poker\Exceptions\CardException;
 
 class Card
 {
-    const ACE = 1;
-    const JACK = 11;
-    const QUEEN = 12;
-    const KING = 13;
+    const ACE      = 1;
+    const JACK     = 11;
+    const QUEEN    = 12;
+    const KING     = 13;
+    const ACE_HIGH = 14;
 
     /**
      * The Suit of this card.
@@ -59,26 +61,6 @@ class Card
     }
 
     /**
-     * Get the suit name for the card.
-     *
-     * @return string
-     */
-    public function suitName()
-    {
-        return $this->suit->name();
-    }
-
-    /**
-     * Get the suit symbol for the card.
-     *
-     * @return string
-     */
-    public function suitSymbol()
-    {
-        return $this->suit->symbol();
-    }
-
-    /**
      * @return bool
      */
     protected function isValidCardValue()
@@ -110,10 +92,13 @@ class Card
     public function isFaceCard()
     {
         $values = [
-            static::JACK, static::QUEEN, static::KING, static::ACE,
+            $this->isJack(),
+            $this->isQueen(),
+            $this->isKing(),
+            $this->isAce(),
         ];
 
-        return in_array($this->value(), $values, true);
+        return in_array(true, $values, true);
     }
 
     /*
@@ -123,7 +108,7 @@ class Card
      */
     public function isAce()
     {
-        return $this->value === static::ACE;
+        return $this->value === static::ACE || $this->value === self::ACE_HIGH;
     }
 
     /**
@@ -163,24 +148,23 @@ class Card
      */
     public function name()
     {
-        if ($this->value() <= 9) {
-            return (string) $this->value();
-        }
-        if ($this->value() === 10) {
-            return 'T';
-        }
-        if ($this->isJack()) {
-            return 'J';
-        }
-        if ($this->isQueen()) {
-            return 'Q';
+        if ($this->isAce()) {
+            return 'A';
         }
         if ($this->isKing()) {
             return 'K';
         }
-        if ($this->isAce()) {
-            return 'A';
+        if ($this->isQueen()) {
+            return 'Q';
         }
+        if ($this->isJack()) {
+            return 'J';
+        }
+        if ($this->value() === 10) {
+            return 'T';
+        }
+
+        return (string)$this->value();
     }
 
     /**
@@ -201,6 +185,6 @@ class Card
      */
     public function __toString()
     {
-        return sprintf('%s%s', $this->name(), $this->suitSymbol());
+        return sprintf('%s%s', $this->name(), $this->suit()->symbol());
     }
 }

@@ -2,8 +2,10 @@
 
 namespace xLink\Tests\Exceptions;
 
+use BadMethodCallException;
 use PHPUnit_Framework_TestCase;
 use TypeError;
+use xLink\Poker\Exceptions\GameException;
 use xLink\Poker\Game\CashGame;
 use Ramsey\Uuid\Uuid;
 use xLink\Poker\Game\Chips;
@@ -149,5 +151,18 @@ class CashGameTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Player::class, $player);
         $this->assertEquals(500, $player->wallet()->amount());
         $this->assertEquals(500, $player->chipStack()->amount());
+    }
+
+    /**
+     * @expectedException \xLink\Poker\Exceptions\GameException
+     */
+    public function test_an_exception_is_thrown_if_a_player_has_insufficient_funds_to_buy_in()
+    {
+        $uuid = Uuid::uuid4();
+        $gameName = 'game name';
+        $game = CashGame::setUp($uuid, $gameName, Chips::fromAmount(100));
+        $player = Client::register('xLink', Chips::fromAmount(0));
+
+        $game->registerPlayer($player);
     }
 }

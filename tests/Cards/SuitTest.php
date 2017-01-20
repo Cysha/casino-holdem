@@ -41,10 +41,6 @@ class SuitTest extends \PHPUnit_Framework_TestCase
         $suit2 = Suit::spade();
 
         $this->assertSame($suit1, $suit2);
-
-        $suit3 = Suit::spade(false);
-
-        $this->assertNotSame($suit1, $suit3);
     }
 
     /** @test **/

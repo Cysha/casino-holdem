@@ -14,7 +14,7 @@ class Player
      *
      * @param $name
      */
-    public function __construct($name)
+    private function __construct($name)
     {
         $this->name = $name;
     }

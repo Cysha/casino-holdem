@@ -5,3 +5,4 @@ gen
 vendor
 *.txt
 bin/
+coverage/

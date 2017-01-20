@@ -2,8 +2,6 @@
 
 namespace xLink\Poker\Cards;
 
-use xLink\Poker\Exceptions\CardException;
-
 final class Suit
 {
     const CLUB = 100;
@@ -24,64 +22,40 @@ final class Suit
     /**
      * Make a Club suit.
      *
-     * @param bool $shareable share an instance of the suit
-     *
      * @return Suit
      */
-    public static function club($shareable = true): Suit
+    public static function club(): Suit
     {
-        if (!$shareable) {
-            return new self(static::CLUB);
-        }
-
         return static::makeSuit(static::CLUB);
     }
 
     /**
      * Make a Diamnod suit.
      *
-     * @param bool $shareable share an instance of the suit
-     *
      * @return Suit
      */
-    public static function diamond($shareable = true): Suit
+    public static function diamond(): Suit
     {
-        if (!$shareable) {
-            return new self(static::DIAMOND);
-        }
-
         return static::makeSuit(static::DIAMOND);
     }
 
     /**
      * Make a Heart suit.
      *
-     * @param bool $shareable share an instance of the suit
-     *
      * @return Suit
      */
-    public static function heart($shareable = true): Suit
+    public static function heart(): Suit
     {
-        if (!$shareable) {
-            return new self(static::HEART);
-        }
-
         return static::makeSuit(static::HEART);
     }
 
     /**
      * Make a Spade suit.
      *
-     * @param bool $shareable share an instance of the suit
-     *
      * @return Suit
      */
-    public static function spade($shareable = true): Suit
+    public static function spade(): Suit
     {
-        if (!$shareable) {
-            return new self(static::SPADE);
-        }
-
         return static::makeSuit(static::SPADE);
     }
 
@@ -113,46 +87,50 @@ final class Suit
      * Get the suit name.
      *
      * @return string
-     *
-     * @throws CardException
      */
     public function name()
     {
         switch ($this->suit) {
             case static::CLUB:
-                return 'club';
+                $suit = 'club';
+            break;
             case static::DIAMOND:
-                return 'diamond';
+                $suit = 'diamond';
+            break;
             case static::HEART:
-                return 'heart';
+                $suit = 'heart';
+            break;
             case static::SPADE:
-                return 'spade';
+                $suit = 'spade';
+            break;
         }
 
-        throw CardException::unexpectedSuit();
+        return $suit;
     }
 
     /**
      * Get the suit symbol.
      *
      * @return string
-     *
-     * @throws CardException
      */
     public function symbol()
     {
         switch ($this->suit) {
             case static::CLUB:
-                return '♣';
+                $symbol = '♣';
+            break;
             case static::DIAMOND:
-                return '♦';
+                $symbol = '♦';
+            break;
             case static::HEART:
-                return '♥';
+                $symbol = '♥';
+            break;
             case static::SPADE:
-                return '♠';
+                $symbol = '♠';
+            break;
         }
 
-        throw CardException::unexpectedSuit();
+        return $symbol;
     }
 
     /**
@@ -160,14 +138,12 @@ final class Suit
      */
     public function __toString()
     {
-        try {
-            return $this->symbol();
-        } catch (CardException $e) {
-            return 'Unknown suit';
-        }
+        return $this->symbol();
     }
 
     /**
+     * @param Suit $suit
+     *
      * @return bool
      */
     public function equals($suit)

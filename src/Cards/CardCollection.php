@@ -2,6 +2,7 @@
 
 namespace xLink\Poker\Cards;
 
+use BadMethodCallException;
 use Illuminate\Support\Collection;
 
 class CardCollection extends Collection
@@ -33,15 +34,57 @@ class CardCollection extends Collection
     }
 
     /**
+     * @param $sort
+     *
+     * @return CardCollection
+     */
+    public function sortByValue($sort = SORT_NUMERIC)
+    {
+        return $this->sortBy(function (Card $card) {
+            return $card->value();
+        }, $sort)->values();
+    }
+
+    /**
+     * Replaces any Aces found in the collection with values of 14.
+     *
+     * @return CardCollection
+     */
+    public function switchAceValue()
+    {
+        return $this->map(function (Card $card) {
+            if ($card->isAce() === false) {
+                return $card;
+            }
+
+            return new Card(14, $card->suit());
+        });
+    }
+
+    /**
      * @param string $name
      * @param array  $arguments
      *
      * @return CardCollection
+     *
+     * @throws BadMethodCallException
      */
     public function __call($name, $arguments)
     {
-        if (in_array($name, ['hearts', 'diamonds', 'clubs', 'spades']) !== false) {
+        if (in_array($name, ['hearts', 'diamonds', 'clubs', 'spades'], true) !== false) {
             return $this->whereSuit($name);
         }
+
+        throw new BadMethodCallException();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->map(function (Card $card) {
+            return $card->__toString();
+        })->implode(' ');
     }
 }

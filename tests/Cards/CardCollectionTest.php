@@ -12,6 +12,17 @@ class CardCollectionTest extends \PHPUnit_Framework_TestCase
     {
     }
 
+    /**
+     * @expectedException \BadMethodCallException
+     * @test
+     */
+    public function call()
+    {
+        $cards = CardCollection::make();
+
+        $this->assertFalse($cards->potato());
+    }
+
     /** @test */
     public function can_get_suit_counts_from_cards_given()
     {
