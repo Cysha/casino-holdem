@@ -166,4 +166,13 @@ final class Suit
             return 'Unknown suit';
         }
     }
+
+    /**
+     * @return bool
+     */
+    public function equals($suit)
+    {
+        return get_class($suit) === static::class
+            && $suit->suit === $this->suit;
+    }
 }

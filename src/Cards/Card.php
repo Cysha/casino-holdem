@@ -184,6 +184,17 @@ class Card
     }
 
     /**
+     * @param mixed $card
+     *
+     * @return bool
+     */
+    public function equals($card)
+    {
+        return get_class($card) === static::class
+            && $card->value === $this->value;
+    }
+
+    /**
      * Returns a human readable string for outputting the card.
      *
      * @return string

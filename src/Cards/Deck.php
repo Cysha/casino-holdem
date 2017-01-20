@@ -113,11 +113,9 @@ class Deck
     /**
      * ReAdds cards from the drawn pile back to the main deck.
      */
-    protected function reset()
+    public function reset()
     {
-        while (count($this->cardsDrawn)) {
-            $card = array_pop($this->cardsDrawn);
-            array_push($this->cards, $card);
-        }
+        $this->cards = array_merge($this->cards, $this->cardsDrawn);
+        $this->cardsDrawn = [];
     }
 }

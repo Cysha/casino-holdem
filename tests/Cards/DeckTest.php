@@ -54,6 +54,14 @@ class DeckTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
+    public function can_shuffle_deck()
+    {
+        $deck = new Deck();
+
+        $this->assertEquals($deck->shuffle(), $deck->shuffle(), '', 0.0, 10, true);
+    }
+
+    /** @test **/
     public function can_reset_deck()
     {
         $deck = new Deck();
@@ -62,7 +70,7 @@ class DeckTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(50, $deck->getCards());
         $this->assertCount(2, $deck->getDrawnCards());
 
-        $deck->shuffle();
+        $deck->reset();
 
         $this->assertCount(52, $deck->getCards());
         $this->assertCount(0, $deck->getDrawnCards());

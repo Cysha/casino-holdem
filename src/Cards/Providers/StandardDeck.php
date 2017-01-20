@@ -7,7 +7,7 @@ use xLink\Poker\Cards\Card;
 use xLink\Poker\Cards\Suit;
 
 /**
- * The standards cards in a 52 card deck.
+ * The standard cards in a 52 card deck.
  */
 class StandardDeck implements CardProvider
 {
