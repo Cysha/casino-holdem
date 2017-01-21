@@ -61,4 +61,35 @@ class CardCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $cards->whereValue(Card::ACE));
         $this->assertCount(1, $cards->whereValue(Card::QUEEN));
     }
+
+    /** @test */
+    public function can_reconstiute_cards_from_string_with_ascii_suits()
+    {
+        $result = CardCollection::fromString('8♦ T♣ A♠ 8♥ Q♣');
+
+        $expected = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(10, Suit::club()),
+            new Card(Card::ACE, Suit::spade()),
+            new Card(8, Suit::heart()),
+            new Card(Card::QUEEN, Suit::club()),
+        ]);
+
+        $this->assertInstanceOf(CardCollection::class, $result);
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test */
+    public function can_reconstiute_cards_from_string_with_plaintext_suits()
+    {
+        $result = CardCollection::fromString('8d Qc');
+
+        $expected = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::club()),
+        ]);
+
+        $this->assertInstanceOf(CardCollection::class, $result);
+        $this->assertEquals($expected, $result);
+    }
 }

@@ -107,4 +107,42 @@ class CardTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($card->equals($otherCardValue));
     }
+
+    /** @test */
+    public function can_create_card_from_string()
+    {
+        $builtCard = Card::fromString('8♦');
+
+        $actualCard = new Card(8, Suit::diamond());
+
+        $this->assertEquals($builtCard, $actualCard);
+    }
+
+    /** @test */
+    public function can_create_card_from_lowercase_string()
+    {
+        $builtCard = Card::fromString('k♦');
+
+        $actualCard = new Card(Card::KING, Suit::diamond());
+
+        $this->assertEquals($builtCard, $actualCard);
+    }
+
+    /**
+     * @expectedException \xLink\Poker\Exceptions\CardException
+     * @test
+     */
+    public function cannot_create_card_from_invalid_suit_number()
+    {
+        Card::fromString('45');
+    }
+
+    /**
+     * @expectedException \xLink\Poker\Exceptions\CardException
+     * @test
+     */
+    public function cannot_create_card_from_invalid_card_number()
+    {
+        Card::fromString('Ld');
+    }
 }

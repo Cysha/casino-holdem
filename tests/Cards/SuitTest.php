@@ -35,15 +35,6 @@ class SuitTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
-    public function multiple_suit_calls_return_same_object()
-    {
-        $suit1 = Suit::spade();
-        $suit2 = Suit::spade();
-
-        $this->assertSame($suit1, $suit2);
-    }
-
-    /** @test **/
     public function can_get_suit_identifier()
     {
         $suit = Suit::spade();
@@ -51,5 +42,43 @@ class SuitTest extends \PHPUnit_Framework_TestCase
 
         $suit = Suit::diamond();
         $this->assertEquals('♦', $suit);
+    }
+
+    /** @test */
+    public function can_create_suit_from_string()
+    {
+        $builtSuit = Suit::fromString('♦');
+
+        $actualSuit = Suit::diamond();
+
+        $this->assertEquals($builtSuit, $actualSuit);
+    }
+
+    /** @test */
+    public function can_create_suit_from_uppercase_string()
+    {
+        $builtSuit = Suit::fromString('D');
+
+        $actualSuit = Suit::diamond();
+
+        $this->assertEquals($builtSuit, $actualSuit);
+    }
+
+    /**
+     * @expectedException \xLink\Poker\Exceptions\CardException
+     * @test
+     */
+    public function cannot_create_suit_from_invalid_string()
+    {
+        Suit::fromString('n');
+    }
+
+    /**
+     * @expectedException \xLink\Poker\Exceptions\CardException
+     * @test
+     */
+    public function cannot_create_suit_from_invalid_string_()
+    {
+        Suit::fromString('KK');
     }
 }

@@ -7,6 +7,15 @@ use Illuminate\Support\Collection;
 
 class CardCollection extends Collection
 {
+    public static function fromString($cards)
+    {
+        $cards = explode(' ', $cards);
+
+        return static::make($cards)->map(function ($card) {
+            return Card::fromString($card);
+        });
+    }
+
     /**
      * @param $name
      *
@@ -38,11 +47,32 @@ class CardCollection extends Collection
      *
      * @return CardCollection
      */
-    public function sortByValue($sort = SORT_NUMERIC)
+    public function sortBySuitValue()
     {
         return $this->sortBy(function (Card $card) {
-            return $card->value();
-        }, $sort)->values();
+            return $card->suit()->value();
+        });
+    }
+
+    /**
+     * @param int $sort
+     *
+     * @return CardCollection
+     */
+    public function sortByValue($sort = SORT_NUMERIC)
+    {
+        return $this
+            ->groupBy(function (Card $card) {
+                return $card->value();
+            })
+            ->map(function (CardCollection $valueGroup) {
+                return $valueGroup->sortBySuitValue();
+            })
+            ->flatten()
+            ->sortBy(function (Card $card) {
+                return $card->value();
+            }, $sort)
+            ->values();
     }
 
     /**

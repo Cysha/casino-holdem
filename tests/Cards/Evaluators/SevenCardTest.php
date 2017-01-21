@@ -15,6 +15,106 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
+    public function can_eval_hand_royal_flush()
+    {
+        $board = CardCollection::fromString('8d 10c Ac 8h Qc');
+        $hand = Hand::fromString('Jc Kc');
+
+        $result = SevenCard::evaluate($board, $hand);
+        $this->assertEquals('Royal Flush', $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_straight_flush()
+    {
+        $board = CardCollection::fromString('6d Tc 9c 6h Qc');
+        $hand = Hand::fromString('Jc Kc');
+
+        $result = SevenCard::evaluate($board, $hand);
+        $this->assertEquals('Straight Flush', $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_four_of_a_kind()
+    {
+        $board = CardCollection::fromString('8d Qc Tc 2h Qd');
+        $hand = Hand::fromString('Qs Qh');
+
+        $result = SevenCard::evaluate($board, $hand);
+        $this->assertEquals('Four of a Kind', $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_full_house()
+    {
+        $board = CardCollection::fromString('8d Qc Tc 8h Qd');
+        $hand = Hand::fromString('7s Qh');
+
+        $result = SevenCard::evaluate($board, $hand);
+        $this->assertEquals('Full House', $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_flush()
+    {
+        $board = CardCollection::fromString('8d Tc 7c 8h Qc');
+        $hand = Hand::fromString('Jc Kc');
+
+        $result = SevenCard::evaluate($board, $hand);
+        $this->assertEquals('Flush', $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_straight()
+    {
+        $board = CardCollection::fromString('9d Ac 2c 6h 8d');
+        $hand = Hand::fromString('5c 7d');
+
+        $result = SevenCard::evaluate($board, $hand);
+        $this->assertEquals('Straight', $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_three_of_a_kind()
+    {
+        $board = CardCollection::fromString('8d 3c 10c 2h Qd');
+        $hand = Hand::fromString('Qs Qh');
+
+        $result = SevenCard::evaluate($board, $hand);
+        $this->assertEquals('Three of a Kind', $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_two_pair()
+    {
+        $board = CardCollection::fromString('8d Qc 10c 8h Qd');
+        $hand = Hand::fromString('7s 6h');
+
+        $result = SevenCard::evaluate($board, $hand);
+        $this->assertEquals('Two Pair', $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_one_pair()
+    {
+        $board = CardCollection::fromString('8d Qc 10c 2h Qd');
+        $hand = Hand::fromString('7s 6h');
+
+        $result = SevenCard::evaluate($board, $hand);
+        $this->assertEquals('One Pair', $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_high_card()
+    {
+        $board = CardCollection::fromString('8d Jc 10c 2h Qd');
+        $hand = Hand::fromString('7s 6h');
+
+        $result = SevenCard::evaluate($board, $hand);
+        $this->assertEquals('High Card', $result);
+    }
+
+    /** @test **/
     public function hand_evals_to_royal_flush()
     {
         $board = new CardCollection([
@@ -45,7 +145,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
-    public function non_straight_flush_is_caught_in_royal_flush()
+    public function straight_flush_is_not_a_royal_flush()
     {
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
@@ -66,7 +166,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
-    public function straight_flush_is_not_a_royal_flush()
+    public function flush_is_not_a_royal_flush()
     {
         $board = new CardCollection([
             new Card(6, Suit::diamond()),
@@ -154,6 +254,110 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $result = SevenCard::straightflush($board->merge($hand));
+
+        $this->assertFalse($result);
+    }
+
+    /** @test **/
+    public function hand_evals_to_four_of_a_kind()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::club()),
+            new Card(10, Suit::club()),
+            new Card(2, Suit::heart()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(Card::QUEEN, Suit::spade()),
+            new Card(Card::QUEEN, Suit::heart()),
+        ]);
+
+        $result = SevenCard::fourOfAKind($board->merge($hand));
+
+        $expected = new CardCollection([
+            new Card(10, Suit::club()),
+            new Card(Card::QUEEN, Suit::club()),
+            new Card(Card::QUEEN, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::heart()),
+            new Card(Card::QUEEN, Suit::spade()),
+        ]);
+
+        $this->assertInstanceOf(CardCollection::class, $result);
+        $this->assertEquals($expected->__toString(), $result->__toString());
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test **/
+    public function three_of_a_kind_is_not_four_of_a_kind()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(Card::KING, Suit::club()),
+            new Card(10, Suit::club()),
+            new Card(2, Suit::heart()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(Card::QUEEN, Suit::spade()),
+            new Card(Card::QUEEN, Suit::heart()),
+        ]);
+
+        $result = SevenCard::fourOfAKind($board->merge($hand));
+
+        $this->assertFalse($result);
+    }
+
+    /** @test **/
+    public function hand_evals_to_full_house()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::club()),
+            new Card(10, Suit::club()),
+            new Card(8, Suit::heart()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(7, Suit::spade()),
+            new Card(Card::QUEEN, Suit::heart()),
+        ]);
+
+        $result = SevenCard::fullHouse($board->merge($hand));
+
+        $expected = new CardCollection([
+            new Card(Card::QUEEN, Suit::club()),
+            new Card(Card::QUEEN, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::heart()),
+            new Card(8, Suit::diamond()),
+            new Card(8, Suit::heart()),
+        ]);
+
+        $this->assertInstanceOf(CardCollection::class, $result);
+        $this->assertEquals($expected->__toString(), $result->__toString());
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test **/
+    public function flush_is_not_full_house()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(10, Suit::club()),
+            new Card(7, Suit::club()),
+            new Card(8, Suit::heart()),
+            new Card(Card::QUEEN, Suit::club()),
+        ]);
+
+        $hand = new Hand([
+            new Card(Card::JACK, Suit::club()),
+            new Card(Card::KING, Suit::club()),
+        ]);
+
+        $result = SevenCard::fullHouse($board->merge($hand));
 
         $this->assertFalse($result);
     }
@@ -277,5 +481,140 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(CardCollection::class, $result);
         $this->assertEquals($expected->__toString(), $result->__toString());
         $this->assertEquals($expected, $result);
+    }
+
+    /** @test **/
+    public function hand_evals_to_three_of_a_kind()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(3, Suit::club()),
+            new Card(10, Suit::club()),
+            new Card(2, Suit::heart()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(Card::QUEEN, Suit::spade()),
+            new Card(Card::QUEEN, Suit::heart()),
+        ]);
+
+        $result = SevenCard::threeOfAKind($board->merge($hand));
+
+        $expected = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(10, Suit::club()),
+            new Card(Card::QUEEN, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::heart()),
+            new Card(Card::QUEEN, Suit::spade()),
+        ]);
+
+        $this->assertInstanceOf(CardCollection::class, $result);
+        $this->assertEquals($expected->__toString(), $result->__toString());
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test **/
+    public function hand_evals_to_two_pair()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::club()),
+            new Card(10, Suit::club()),
+            new Card(8, Suit::heart()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(7, Suit::spade()),
+            new Card(6, Suit::heart()),
+        ]);
+
+        $result = SevenCard::twoPair($board->merge($hand));
+
+        $expected = new CardCollection([
+            new Card(Card::QUEEN, Suit::club()),
+            new Card(Card::QUEEN, Suit::diamond()),
+            new Card(8, Suit::diamond()),
+            new Card(8, Suit::heart()),
+            new Card(10, Suit::club()),
+        ]);
+
+        $this->assertInstanceOf(CardCollection::class, $result);
+        $this->assertEquals($expected->__toString(), $result->__toString());
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test **/
+    public function one_pair_is_not_two_pair()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::club()),
+            new Card(10, Suit::club()),
+            new Card(2, Suit::heart()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(7, Suit::spade()),
+            new Card(6, Suit::heart()),
+        ]);
+
+        $result = SevenCard::twoPair($board->merge($hand));
+
+        $this->assertFalse($result);
+    }
+
+    /** @test **/
+    public function hand_evals_to_one_pair()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::club()),
+            new Card(10, Suit::club()),
+            new Card(2, Suit::heart()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(7, Suit::spade()),
+            new Card(6, Suit::heart()),
+        ]);
+
+        $result = SevenCard::onePair($board->merge($hand));
+
+        $expected = new CardCollection([
+            new Card(Card::QUEEN, Suit::club()),
+            new Card(Card::QUEEN, Suit::diamond()),
+            new Card(10, Suit::club()),
+            new Card(8, Suit::diamond()),
+            new Card(7, Suit::spade()),
+        ]);
+
+        $this->assertInstanceOf(CardCollection::class, $result);
+        $this->assertEquals($expected->__toString(), $result->__toString());
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test **/
+    public function high_card_is_not_one_pair()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(Card::JACK, Suit::club()),
+            new Card(10, Suit::club()),
+            new Card(2, Suit::heart()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(7, Suit::spade()),
+            new Card(6, Suit::heart()),
+        ]);
+
+        $result = SevenCard::onePair($board->merge($hand));
+
+        $this->assertFalse($result);
     }
 }

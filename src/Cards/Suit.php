@@ -2,6 +2,8 @@
 
 namespace xLink\Poker\Cards;
 
+use xLink\Poker\Exceptions\CardException;
+
 final class Suit
 {
     const CLUB = 100;
@@ -9,7 +11,29 @@ final class Suit
     const HEART = 102;
     const SPADE = 103;
 
-    private static $suits = [];
+    const CLUB_SYMBOL = '♣';
+    const DIAMOND_SYMBOL = '♦';
+    const HEART_SYMBOL = '♥';
+    const SPADE_SYMBOL = '♠';
+
+    const CLUB_LETTER = 'c';
+    const DIAMOND_LETTER = 'd';
+    const HEART_LETTER = 'h';
+    const SPADE_LETTER = 's';
+
+    private static $symbols = [
+        self::CLUB => self::CLUB_SYMBOL,
+        self::DIAMOND => self::DIAMOND_SYMBOL,
+        self::HEART => self::HEART_SYMBOL,
+        self::SPADE => self::SPADE_SYMBOL,
+    ];
+
+    private static $letters = [
+        self::CLUB => self::CLUB_LETTER,
+        self::DIAMOND => self::DIAMOND_LETTER,
+        self::HEART => self::HEART_LETTER,
+        self::SPADE => self::SPADE_LETTER,
+    ];
 
     /**
      * @param int $suit
@@ -66,11 +90,33 @@ final class Suit
      */
     private static function makeSuit(int $suit): Suit
     {
-        if (!array_key_exists($suit, static::$suits)) {
-            static::$suits[$suit] = new static($suit);
-        }
+        return new static($suit);
+    }
 
-        return static::$suits[$suit];
+    /**
+     * @param $stringValue
+     *
+     * @return Suit
+     */
+    private static function getValueFromLetter($stringValue): Suit
+    {
+        $values = array_values(static::$letters);
+        $key = array_search($stringValue, $values, true);
+
+        return static::makeSuit($key + 100);
+    }
+
+    /**
+     * @param $stringValue
+     *
+     * @return Suit
+     */
+    private static function getValueFromSymbol($stringValue): Suit
+    {
+        $values = array_values(static::$symbols);
+        $key = array_search($stringValue, $values, true);
+
+        return static::makeSuit($key + 100);
     }
 
     /**
@@ -100,6 +146,7 @@ final class Suit
             case static::HEART:
                 $suit = 'heart';
             break;
+            default:
             case static::SPADE:
                 $suit = 'spade';
             break;
@@ -117,16 +164,17 @@ final class Suit
     {
         switch ($this->suit) {
             case static::CLUB:
-                $symbol = '♣';
+                $symbol = self::CLUB_SYMBOL;
             break;
             case static::DIAMOND:
-                $symbol = '♦';
+                $symbol = self::DIAMOND_SYMBOL;
             break;
             case static::HEART:
-                $symbol = '♥';
+                $symbol = self::HEART_SYMBOL;
             break;
+            default:
             case static::SPADE:
-                $symbol = '♠';
+                $symbol = self::SPADE_SYMBOL;
             break;
         }
 
@@ -150,5 +198,27 @@ final class Suit
     {
         return get_class($suit) === static::class
             && $suit->suit === $this->suit;
+    }
+
+    /**
+     * @param $stringValue
+     *
+     * @return Suit
+     *
+     * @throws CardException
+     */
+    public static function fromString($stringValue)
+    {
+        $stringValue = strtolower($stringValue);
+
+        if (in_array($stringValue, static::$letters, true)) {
+            return static::getValueFromLetter($stringValue);
+        }
+
+        if (in_array($stringValue, static::$symbols, true)) {
+            return static::getValueFromSymbol($stringValue);
+        }
+
+        throw CardException::unexpectedSuit($stringValue);
     }
 }

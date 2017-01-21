@@ -2,10 +2,8 @@
 
 namespace xLink\Tests\Exceptions;
 
-use BadMethodCallException;
 use PHPUnit_Framework_TestCase;
 use TypeError;
-use xLink\Poker\Exceptions\GameException;
 use xLink\Poker\Game\CashGame;
 use Ramsey\Uuid\Uuid;
 use xLink\Poker\Game\Chips;

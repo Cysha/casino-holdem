@@ -9,24 +9,48 @@ use xLink\Poker\Cards\Hand;
 
 class SevenCard implements CardEvaluator
 {
-    /*public static function evaluate(CardCollection $board, Hand $hand)
+    public static function evaluate(CardCollection $board, Hand $hand)
     {
         $cards = $board->merge($hand);
 
-        if (static::royalFlush($cards)) {
+        if (static::royalFlush($cards) !== false) {
             return 'Royal Flush';
         }
 
-        if (static::flush($cards)) {
+        if (static::straightFlush($cards) !== false) {
+            return 'Straight Flush';
+        }
+
+        if (static::fourOfAKind($cards) !== false) {
+            return 'Four of a Kind';
+        }
+
+        if (static::fullHouse($cards) !== false) {
+            return 'Full House';
+        }
+
+        if (static::flush($cards) !== false) {
             return 'Flush';
         }
 
-        if (static::straight($cards)) {
+        if (static::straight($cards) !== false) {
             return 'Straight';
         }
 
-        return false;
-    }*/
+        if (static::threeOfAKind($cards) !== false) {
+            return 'Three of a Kind';
+        }
+
+        if (static::twoPair($cards) !== false) {
+            return 'Two Pair';
+        }
+
+        if (static::onePair($cards) !== false) {
+            return 'One Pair';
+        }
+
+        return 'High Card';#static::highCard($cards);
+    }
 
     public static function royalFlush(CardCollection $cards)
     {
@@ -64,9 +88,40 @@ class SevenCard implements CardEvaluator
         return $straight;
     }
 
-    // public static function fourOfAKind(CardCollection $cards) {}
+    /**
+     * @param CardCollection $cards
+     *
+     * @return CardCollection|false
+     */
+    public static function fourOfAKind(CardCollection $cards)
+    {
+        $judgedHand = self::nNumberOfCardsInCards($cards, 4);
 
-    // public static function fullHouse(CardCollection $cards) {}
+        if ($judgedHand === null) {
+            return false;
+        }
+
+        $highCard = self::highCard($cards->diff($judgedHand));
+
+        return $judgedHand->push($highCard)->sortByValue();
+    }
+
+    /**
+     * @param CardCollection $cards
+     *
+     * @return bool|CardCollection
+     */
+    public static function fullHouse(CardCollection $cards)
+    {
+        $threeOfAKind = self::nNumberOfCardsInCards($cards, 3);
+        $twoOfAKind = self::nNumberOfCardsInCards($cards->diff($threeOfAKind), 2);
+
+        if ($threeOfAKind === null || $twoOfAKind === null) {
+            return false;
+        }
+
+        return $threeOfAKind->merge($twoOfAKind);
+    }
 
     /**
      * @param CardCollection $cards
@@ -78,7 +133,8 @@ class SevenCard implements CardEvaluator
         $groupedBySuit = $cards
             ->groupBy(function (Card $card) {
                 return $card->suit()->name();
-            })->sort(function ($group) {
+            })
+            ->sort(function ($group) {
                 return count($group);
             });
 
@@ -92,7 +148,7 @@ class SevenCard implements CardEvaluator
     /**
      * @param CardCollection $cardCollection
      *
-     * @return bool|static
+     * @return bool|CardCollection
      */
     public static function straight(CardCollection $cardCollection)
     {
@@ -110,14 +166,76 @@ class SevenCard implements CardEvaluator
         return false;
     }
 
-    // public static function threeOfAKind(CardCollection $cards) {}
+    /**
+     * @param CardCollection $cards
+     *
+     * @return CardCollection|bool
+     */
+    public static function threeOfAKind(CardCollection $cards)
+    {
+        $judgedHand = self::nNumberOfCardsInCards($cards, 3);
 
-    // public static function twoPair(CardCollection $cards) {}
+        if ($judgedHand === null) {
+            return false;
+        }
 
-    // public static function pair(CardCollection $cards) {}
+        $highCards = $cards->diff($judgedHand)->sortByValue()->reverse()->take(2);
 
-    // public static function highCard(CardCollection $cards) {}
+        return $judgedHand->merge($highCards)->sortByValue();
+    }
 
+    /**
+     * @param CardCollection $cards
+     *
+     * @return CardCollection|bool
+     */
+    public static function twoPair(CardCollection $cards)
+    {
+        $pairOne = self::nNumberOfCardsInCards($cards, 2);
+        $pairTwo = self::nNumberOfCardsInCards($cards->diff($pairOne), 2);
+
+        if ($pairTwo === null) {
+            return false;
+        }
+
+        $pairs = $pairOne->merge($pairTwo);
+
+        $highCard = self::highCard($cards->diff($pairs));
+
+        return $pairs->push($highCard);
+    }
+
+    /**
+     * @param CardCollection $cards
+     *
+     * @return CardCollection|false
+     */
+    public static function onePair(CardCollection $cards)
+    {
+        $pair = self::nNumberOfCardsInCards($cards, 2);
+
+        if ($pair === null) {
+            return false;
+        }
+
+        return $pair->merge($cards->diff($pair)->sortByValue()->reverse()->take(3));
+    }
+
+    /**
+     * @param CardCollection $cards
+     *
+     * @return CardCollection
+     */
+    public static function highCard(CardCollection $cards)
+    {
+        return $cards->sortByValue()->last();
+    }
+
+    /**
+     * @param CardCollection $cards
+     *
+     * @return bool|CardCollection
+     */
     private static function checkForHighLowStraight(CardCollection $cards)
     {
         // check for aces before we write off the straight possibility
@@ -152,6 +270,11 @@ class SevenCard implements CardEvaluator
         return false;
     }
 
+    /**
+     * @param CardCollection $cards
+     *
+     * @return bool|CardCollection
+     */
     private static function checkForStraight(CardCollection $cards)
     {
         $runningLength = 0;
@@ -180,5 +303,30 @@ class SevenCard implements CardEvaluator
         }
 
         return false;
+    }
+
+    /**
+     * @param CardCollection $cards
+     * @param int            $numberOfCardsOfType
+     *
+     * @return CardCollection
+     */
+    private static function nNumberOfCardsInCards(CardCollection $cards, int $numberOfCardsOfType)
+    {
+        $judgedHand = $cards
+            ->groupBy(function (Card $card) {
+                return $card->value();
+            })
+            ->filter(function (CardCollection $group) use ($numberOfCardsOfType) {
+                return $group->count() === $numberOfCardsOfType;
+            })
+            ->sortBy(function (CardCollection $group) {
+                return $group->count();
+            })
+            ->values()
+            ->last()
+        ;
+
+        return $judgedHand;
     }
 }
