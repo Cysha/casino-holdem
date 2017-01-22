@@ -527,6 +527,26 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /** @test */
+    public function hand_doesnt_eval_to_straight_without_10_or_5()
+    {
+        $board = new CardCollection([
+            new Card(6, Suit::diamond()),
+            new Card(9, Suit::club()),
+            new Card(Card::ACE, Suit::diamond()),
+            new Card(4, Suit::club()),
+            new Card(Card::QUEEN, Suit::club()),
+        ]);
+
+        $hand = new Hand([
+            new Card(2, Suit::club()),
+            new Card(3, Suit::club()),
+        ]);
+
+        $result = SevenCard::straight($board->merge($hand));
+        $this->assertFalse($result);
+    }
+
     /** @test **/
     public function hand_evals_to_three_of_a_kind()
     {

@@ -153,6 +153,11 @@ class SevenCard implements CardEvaluator
      */
     public static function straight(CardCollection $cardCollection)
     {
+        // a straight has to have a 5 or 10 in
+        if ($cardCollection->whereValue(5)->count() === 0 && $cardCollection->whereValue(10)->count() === 0) {
+            return false;
+        }
+
         $check = static::checkForHighLowStraight($cardCollection->sortByValue()->unique());
         if ($check !== false) {
             return $check;
