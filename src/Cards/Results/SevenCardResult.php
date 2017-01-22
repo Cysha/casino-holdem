@@ -7,16 +7,16 @@ use xLink\Poker\Cards\Contracts\CardResults;
 
 class SevenCardResult implements CardResults
 {
-    const ROYAL_FLUSH = 10;
-    const STRAIGHT_FLUSH = 9;
-    const FOUR_OF_A_KIND = 8;
-    const FULL_HOUSE = 7;
-    const FLUSH = 6;
-    const STRAIGHT = 5;
-    const THREE_OF_A_KIND = 4;
-    const TWO_PAIR = 3;
-    const ONE_PAIR = 2;
-    const HIGH_CARD = 1;
+    const ROYAL_FLUSH = 9;
+    const STRAIGHT_FLUSH = 8;
+    const FOUR_OF_A_KIND = 7;
+    const FULL_HOUSE = 6;
+    const FLUSH = 5;
+    const STRAIGHT = 4;
+    const THREE_OF_A_KIND = 3;
+    const TWO_PAIR = 2;
+    const ONE_PAIR = 1;
+    const HIGH_CARD = 0;
 
     private $handRank = 0;
     private $cards;
