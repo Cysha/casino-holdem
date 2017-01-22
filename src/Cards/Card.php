@@ -76,9 +76,7 @@ class Card
             $facecardLetter = ucfirst($cardValue);
 
             if (ctype_alpha($facecardLetter) === true) {
-                //                if (in_array($facecardLetter, self::$faceCardShortNames, true)) {
-                    $cardValue = static::getRawCardValueFromShortFaceName(ucfirst($facecardLetter));
-//                }
+                $cardValue = static::getRawCardValueFromShortFaceName(ucfirst($facecardLetter));
             }
 
             return new static((int) $cardValue, Suit::fromString($symbol));

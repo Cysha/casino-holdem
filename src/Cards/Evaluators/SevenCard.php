@@ -6,6 +6,7 @@ use xLink\Poker\Cards\Card;
 use xLink\Poker\Cards\Contracts\CardEvaluator;
 use xLink\Poker\Cards\CardCollection;
 use xLink\Poker\Cards\Hand;
+use xLink\Poker\Cards\Results\SevenCardResult;
 
 class SevenCard implements CardEvaluator
 {
@@ -13,43 +14,43 @@ class SevenCard implements CardEvaluator
     {
         $cards = $board->merge($hand);
 
-        if (static::royalFlush($cards) !== false) {
-            return 'Royal Flush';
+        if (($result = static::royalFlush($cards)) !== false) {
+            return SevenCardResult::createRoyalFlush($result);
         }
 
-        if (static::straightFlush($cards) !== false) {
-            return 'Straight Flush';
+        if (($result = static::StraightFlush($cards)) !== false) {
+            return SevenCardResult::createStraightFlush($result);
         }
 
-        if (static::fourOfAKind($cards) !== false) {
-            return 'Four of a Kind';
+        if (($result = static::fourOfAKind($cards)) !== false) {
+            return SevenCardResult::createFourOfAKind($result);
         }
 
-        if (static::fullHouse($cards) !== false) {
-            return 'Full House';
+        if (($result = static::fullHouse($cards)) !== false) {
+            return SevenCardResult::createFullHouse($result);
         }
 
-        if (static::flush($cards) !== false) {
-            return 'Flush';
+        if (($result = static::flush($cards)) !== false) {
+            return SevenCardResult::createFlush($result);
         }
 
-        if (static::straight($cards) !== false) {
-            return 'Straight';
+        if (($result = static::straight($cards)) !== false) {
+            return SevenCardResult::createStraight($result);
         }
 
-        if (static::threeOfAKind($cards) !== false) {
-            return 'Three of a Kind';
+        if (($result = static::threeOfAKind($cards)) !== false) {
+            return SevenCardResult::createThreeOfAKind($result);
         }
 
-        if (static::twoPair($cards) !== false) {
-            return 'Two Pair';
+        if (($result = static::twoPair($cards)) !== false) {
+            return SevenCardResult::createTwoPair($result);
         }
 
-        if (static::onePair($cards) !== false) {
-            return 'One Pair';
+        if (($result = static::onePair($cards)) !== false) {
+            return SevenCardResult::createOnePair($result);
         }
 
-        return 'High Card';#static::highCard($cards);
+        return SevenCardResult::createHighCard(static::highCard($cards));
     }
 
     public static function royalFlush(CardCollection $cards)
@@ -60,7 +61,7 @@ class SevenCard implements CardEvaluator
         }
 
         // make sure that TJQKA exist in hand
-        $royalFlushHand = $cards->filter(
+        $royalFlushHand = $cards->switchAceValue()->filter(
             function (Card $card) {
                 return $card->isFaceCard() || $card->value() === 10;
             }
@@ -101,7 +102,7 @@ class SevenCard implements CardEvaluator
             return false;
         }
 
-        $highCard = self::highCard($cards->diff($judgedHand));
+        $highCard = self::highCard($cards->diff($judgedHand))->last();
 
         return $judgedHand->push($highCard)->sortByValue();
     }
@@ -200,7 +201,7 @@ class SevenCard implements CardEvaluator
 
         $pairs = $pairOne->merge($pairTwo);
 
-        $highCard = self::highCard($cards->diff($pairs));
+        $highCard = self::highCard($cards->diff($pairs))->last();
 
         return $pairs->push($highCard);
     }
@@ -218,7 +219,11 @@ class SevenCard implements CardEvaluator
             return false;
         }
 
-        return $pair->merge($cards->diff($pair)->sortByValue()->reverse()->take(3));
+        return $pair
+            ->merge($cards->diff($pair)
+            ->sortByValue()
+            ->reverse()
+            ->take(3));
     }
 
     /**
@@ -226,9 +231,15 @@ class SevenCard implements CardEvaluator
      *
      * @return CardCollection
      */
-    public static function highCard(CardCollection $cards)
+    public static function highCard(CardCollection $cards): CardCollection
     {
-        return $cards->sortByValue()->last();
+        return $cards
+            ->switchAceValue()
+            ->sortByValue()
+            ->reverse()
+            ->take(5)
+            ->reverse()
+            ->values();
     }
 
     /**

@@ -6,6 +6,7 @@ use xLink\Poker\Cards\Evaluators\SevenCard;
 use xLink\Poker\Cards\CardCollection;
 use xLink\Poker\Cards\Card;
 use xLink\Poker\Cards\Hand;
+use xLink\Poker\Cards\Results\SevenCardResult;
 use xLink\Poker\Cards\Suit;
 
 class SevenCardTest extends \PHPUnit_Framework_TestCase
@@ -21,7 +22,10 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $hand = Hand::fromString('Jc Kc');
 
         $result = SevenCard::evaluate($board, $hand);
-        $this->assertEquals('Royal Flush', $result);
+
+        $expected = CardCollection::fromString('10c Jc Qc Kc 14c');
+        $expectedResult = SevenCardResult::createRoyalFlush($expected);
+        $this->assertEquals($expectedResult, $result);
     }
 
     /** @test **/
@@ -31,7 +35,10 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $hand = Hand::fromString('Jc Kc');
 
         $result = SevenCard::evaluate($board, $hand);
-        $this->assertEquals('Straight Flush', $result);
+
+        $expected = CardCollection::fromString('9c Tc Jc Qc Kc');
+        $expectedResult = SevenCardResult::createStraightFlush($expected);
+        $this->assertEquals($expectedResult, $result);
     }
 
     /** @test **/
@@ -41,7 +48,10 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $hand = Hand::fromString('Qs Qh');
 
         $result = SevenCard::evaluate($board, $hand);
-        $this->assertEquals('Four of a Kind', $result);
+
+        $expected = CardCollection::fromString('Tc Qc Qd Qh Qs');
+        $expectedResult = SevenCardResult::createFourOfAKind($expected);
+        $this->assertEquals($expectedResult, $result);
     }
 
     /** @test **/
@@ -51,7 +61,10 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $hand = Hand::fromString('7s Qh');
 
         $result = SevenCard::evaluate($board, $hand);
-        $this->assertEquals('Full House', $result);
+
+        $expected = CardCollection::fromString('Qc Qd Qh 8d 8h');
+        $expectedResult = SevenCardResult::createFullHouse($expected);
+        $this->assertEquals($expectedResult, $result);
     }
 
     /** @test **/
@@ -61,7 +74,10 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $hand = Hand::fromString('Jc Kc');
 
         $result = SevenCard::evaluate($board, $hand);
-        $this->assertEquals('Flush', $result);
+
+        $expected = CardCollection::fromString('7c Tc Jc Qc Kc');
+        $expectedResult = SevenCardResult::createFlush($expected);
+        $this->assertEquals($expectedResult, $result);
     }
 
     /** @test **/
@@ -71,7 +87,10 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $hand = Hand::fromString('5c 7d');
 
         $result = SevenCard::evaluate($board, $hand);
-        $this->assertEquals('Straight', $result);
+
+        $expected = CardCollection::fromString('5c 6h 7d 8d 9d');
+        $expectedResult = SevenCardResult::createStraight($expected);
+        $this->assertEquals($expectedResult, $result);
     }
 
     /** @test **/
@@ -81,7 +100,10 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $hand = Hand::fromString('Qs Qh');
 
         $result = SevenCard::evaluate($board, $hand);
-        $this->assertEquals('Three of a Kind', $result);
+
+        $expected = CardCollection::fromString('8d 10c Qd Qh Qs');
+        $expectedResult = SevenCardResult::createThreeOfAKind($expected);
+        $this->assertEquals($expectedResult, $result);
     }
 
     /** @test **/
@@ -91,7 +113,10 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $hand = Hand::fromString('7s 6h');
 
         $result = SevenCard::evaluate($board, $hand);
-        $this->assertEquals('Two Pair', $result);
+
+        $expected = CardCollection::fromString('Qc Qd 8d 8h 10c');
+        $expectedResult = SevenCardResult::createTwoPair($expected);
+        $this->assertEquals($expectedResult, $result);
     }
 
     /** @test **/
@@ -101,7 +126,10 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $hand = Hand::fromString('7s 6h');
 
         $result = SevenCard::evaluate($board, $hand);
-        $this->assertEquals('One Pair', $result);
+
+        $expected = CardCollection::fromString('Qc Qd 10c 8d 7s');
+        $expectedResult = SevenCardResult::createOnePair($expected);
+        $this->assertEquals($expectedResult, $result);
     }
 
     /** @test **/
@@ -111,7 +139,23 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $hand = Hand::fromString('7s 6h');
 
         $result = SevenCard::evaluate($board, $hand);
-        $this->assertEquals('High Card', $result);
+
+        $expected = CardCollection::fromString('7s 8d 10c Jc Qd');
+        $expectedResult = SevenCardResult::createHighCard($expected);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_ace_high_card()
+    {
+        $board = CardCollection::fromString('8d Jc 10c 2h Qd');
+        $hand = Hand::fromString('As 6h');
+
+        $result = SevenCard::evaluate($board, $hand);
+
+        $expected = CardCollection::fromString('8d 10c Jc Qd 14s');
+        $expectedResult = SevenCardResult::createHighCard($expected);
+        $this->assertEquals($expectedResult, $result);
     }
 
     /** @test **/
@@ -133,11 +177,11 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::royalFlush($board->merge($hand));
 
         $expected = new CardCollection([
-            new Card(Card::ACE, Suit::club()),
             new Card(10, Suit::club()),
             new Card(Card::JACK, Suit::club()),
             new Card(Card::QUEEN, Suit::club()),
             new Card(Card::KING, Suit::club()),
+            new Card(Card::ACE_HIGH, Suit::club()),
         ]);
         $this->assertInstanceOf(CardCollection::class, $result);
         $this->assertEquals($expected->__toString(), $result->__toString());
@@ -590,6 +634,68 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(10, Suit::club()),
             new Card(8, Suit::diamond()),
             new Card(7, Suit::spade()),
+        ]);
+
+        $this->assertInstanceOf(CardCollection::class, $result);
+        $this->assertEquals($expected->__toString(), $result->__toString());
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test **/
+    public function hand_evals_to_high_card()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(Card::JACK, Suit::club()),
+            new Card(10, Suit::club()),
+            new Card(2, Suit::heart()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(7, Suit::spade()),
+            new Card(6, Suit::heart()),
+        ]);
+
+        $result = SevenCard::highCard($board->merge($hand));
+
+        $expected = new CardCollection([
+            new Card(7, Suit::spade()),
+            new Card(8, Suit::diamond()),
+            new Card(10, Suit::club()),
+            new Card(Card::JACK, Suit::club()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $this->assertInstanceOf(CardCollection::class, $result);
+        $this->assertEquals($expected->__toString(), $result->__toString());
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test **/
+    public function hand_evals_to_ace_high_card()
+    {
+        $board = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(Card::JACK, Suit::club()),
+            new Card(10, Suit::club()),
+            new Card(2, Suit::heart()),
+            new Card(Card::QUEEN, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(Card::ACE, Suit::spade()),
+            new Card(6, Suit::heart()),
+        ]);
+
+        $result = SevenCard::highCard($board->merge($hand));
+
+        $expected = new CardCollection([
+            new Card(8, Suit::diamond()),
+            new Card(10, Suit::club()),
+            new Card(Card::JACK, Suit::club()),
+            new Card(Card::QUEEN, Suit::diamond()),
+            new Card(Card::ACE_HIGH, Suit::spade()),
         ]);
 
         $this->assertInstanceOf(CardCollection::class, $result);
