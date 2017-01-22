@@ -11,10 +11,10 @@ final class Suit
     const HEART = 102;
     const SPADE = 103;
 
-    const CLUB_SYMBOL = '♣';
-    const DIAMOND_SYMBOL = '♦';
-    const HEART_SYMBOL = '♥';
-    const SPADE_SYMBOL = '♠';
+    const CLUB_SYMBOL = "\u{2663}";
+    const DIAMOND_SYMBOL = "\u{2666}";
+    const HEART_SYMBOL = "\u{2665}";
+    const SPADE_SYMBOL = "\u{2660}";
 
     const CLUB_LETTER = 'c';
     const DIAMOND_LETTER = 'd';

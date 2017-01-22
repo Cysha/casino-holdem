@@ -2,11 +2,11 @@
 
 namespace xLink\Poker\Cards\Evaluators;
 
-use xLink\Poker\Cards\Card;
 use xLink\Poker\Cards\Contracts\CardEvaluator;
-use xLink\Poker\Cards\CardCollection;
-use xLink\Poker\Cards\Hand;
 use xLink\Poker\Cards\Results\SevenCardResult;
+use xLink\Poker\Cards\CardCollection;
+use xLink\Poker\Cards\Card;
+use xLink\Poker\Cards\Hand;
 
 class SevenCard implements CardEvaluator
 {
@@ -104,7 +104,10 @@ class SevenCard implements CardEvaluator
 
         $highCard = self::highCard($cards->diff($judgedHand))->last();
 
-        return $judgedHand->push($highCard)->sortByValue();
+        return $judgedHand
+            ->push($highCard)
+            ->switchAceValue()
+            ->sortByValue();
     }
 
     /**
@@ -187,7 +190,10 @@ class SevenCard implements CardEvaluator
 
         $highCards = $cards->diff($judgedHand)->sortByValue()->reverse()->take(2);
 
-        return $judgedHand->merge($highCards)->sortByValue();
+        return $judgedHand
+            ->merge($highCards)
+            ->switchAceValue()
+            ->sortByValue();
     }
 
     /**
@@ -208,7 +214,9 @@ class SevenCard implements CardEvaluator
 
         $highCard = self::highCard($cards->diff($pairs))->last();
 
-        return $pairs->push($highCard);
+        return $pairs
+            ->push($highCard)
+            ->switchAceValue();
     }
 
     /**

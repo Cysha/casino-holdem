@@ -21,7 +21,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::ROYAL_FLUSH, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('Royal Flush', $expectedResult->definition());
     }
 
     /** @test */
@@ -33,7 +33,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::STRAIGHT_FLUSH, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('Straight Flush to K', $expectedResult->definition());
     }
 
     /** @test */
@@ -45,7 +45,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::FOUR_OF_A_KIND, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('4 of a Kind - Qs', $expectedResult->definition());
     }
 
     /** @test */
@@ -57,7 +57,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::FULL_HOUSE, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('Full House - Qs over 8s', $expectedResult->definition());
     }
 
     /** @test */
@@ -69,7 +69,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::FLUSH, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('Flush to K', $expectedResult->definition());
     }
 
     /** @test */
@@ -81,7 +81,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::STRAIGHT, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('Straight to 9', $expectedResult->definition());
     }
 
     /** @test */
@@ -93,7 +93,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::STRAIGHT, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('Straight to A', $expectedResult->definition());
     }
 
     /** @test */
@@ -105,7 +105,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::STRAIGHT, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('Straight to 5', $expectedResult->definition());
     }
 
     /** @test */
@@ -117,7 +117,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::THREE_OF_A_KIND, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('3 of a Kind - Qs', $expectedResult->definition());
     }
 
     /** @test */
@@ -129,7 +129,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::TWO_PAIR, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('Two Pair - Qs and 8s', $expectedResult->definition());
     }
 
     /** @test */
@@ -141,7 +141,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::ONE_PAIR, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('Pair of Qs', $expectedResult->definition());
     }
 
     /** @test */
@@ -153,7 +153,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::HIGH_CARD, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('High Card - Q', $expectedResult->definition());
     }
 
     /** @test */
@@ -165,6 +165,6 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(SevenCardResult::HIGH_CARD, $expectedResult->rank());
         $this->assertEquals($expected->__toString(), $expectedResult->cards()->__toString());
-//        $this->assertEquals('High Card Q', $expectedResult->definition());
+        $this->assertEquals('High Card - A', $expectedResult->definition());
     }
 }

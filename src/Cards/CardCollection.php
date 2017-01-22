@@ -7,7 +7,12 @@ use Illuminate\Support\Collection;
 
 class CardCollection extends Collection
 {
-    public static function fromString($cards)
+    /**
+     * @var string
+     *
+     * @return static
+     */
+    public static function fromString(string $cards)
     {
         $cards = explode(' ', $cards);
 
@@ -17,11 +22,13 @@ class CardCollection extends Collection
     }
 
     /**
-     * @param $name
+     * Get cards where Suit value is...
+     *
+     * @param string $name
      *
      * @return static
      */
-    public function whereSuit($name)
+    public function whereSuit(string $name)
     {
         $name = rtrim($name, 's');
 
@@ -31,11 +38,13 @@ class CardCollection extends Collection
     }
 
     /**
-     * @param $value
+     * Get cards where Card Value is..
+     *
+     * @param int $value
      *
      * @return static
      */
-    public function whereValue($value)
+    public function whereValue(int $value)
     {
         return $this->filter(function (Card $card) use ($value) {
             return $card->value() === $value;
@@ -43,9 +52,11 @@ class CardCollection extends Collection
     }
 
     /**
+     * Sort cards by Suit value.
+     *
      * @param $sort
      *
-     * @return CardCollection
+     * @return static
      */
     public function sortBySuitValue()
     {
@@ -55,9 +66,11 @@ class CardCollection extends Collection
     }
 
     /**
+     * Sort cards by their value, and then by Suit.
+     *
      * @param int $sort
      *
-     * @return CardCollection
+     * @return static
      */
     public function sortByValue($sort = SORT_NUMERIC)
     {
@@ -76,9 +89,25 @@ class CardCollection extends Collection
     }
 
     /**
+     * Group cards by the value and sort by highest card count first.
+     *
+     * @return static
+     */
+    public function groupByValue()
+    {
+        return $this
+            ->groupBy(function (Card $card) {
+                return $card->value();
+            })
+            ->sortByDesc(function ($group) {
+                return count($group);
+            }, SORT_NUMERIC);
+    }
+
+    /**
      * Replaces any Aces found in the collection with values of 14.
      *
-     * @return CardCollection
+     * @return static
      */
     public function switchAceValue()
     {
@@ -95,7 +124,7 @@ class CardCollection extends Collection
      * @param string $name
      * @param array  $arguments
      *
-     * @return CardCollection
+     * @return static
      *
      * @throws BadMethodCallException
      */
