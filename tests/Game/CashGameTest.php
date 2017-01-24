@@ -2,16 +2,18 @@
 
 namespace xLink\Tests\Exceptions;
 
-use PHPUnit_Framework_TestCase;
-use TypeError;
-use xLink\Poker\Game\CashGame;
 use Ramsey\Uuid\Uuid;
+use TypeError;
+use xLink\Poker\Client;
+use xLink\Poker\Game\CashGame;
 use xLink\Poker\Game\Chips;
+use xLink\Poker\Game\Dealer;
 use xLink\Poker\Game\Player;
 use xLink\Poker\Game\PlayerCollection;
-use xLink\Poker\Client;
+use xLink\Poker\Game\TableCollection;
+use xLink\Poker\Table;
 
-class CashGameTest extends PHPUnit_Framework_TestCase
+class CashGameTest extends \PHPUnit_Framework_TestCase
 {
     /** @test */
     public function a_cash_game_can_be_setup()
@@ -153,6 +155,7 @@ class CashGameTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \xLink\Poker\Exceptions\GameException
+     * @test
      */
     public function test_an_exception_is_thrown_if_a_player_has_insufficient_funds_to_buy_in()
     {
@@ -162,5 +165,41 @@ class CashGameTest extends PHPUnit_Framework_TestCase
         $player = Client::register('xLink', Chips::fromAmount(0));
 
         $game->registerPlayer($player);
+    }
+
+    /** @test */
+    public function can_create_game_with_a_table()
+    {
+        $game = CashGame::setUp(Uuid::uuid4(), 'game name', Chips::fromAmount(100));
+
+        $xLink = Client::register('xLink', Chips::fromAmount(5500));
+        $jesus = Client::register('jesus', Chips::fromAmount(5500));
+
+        $game->registerPlayer($xLink, Chips::fromAmount(5000));
+        $game->registerPlayer($jesus, Chips::fromAmount(5000));
+
+        $game->assignPlayersToTables();
+
+        /** @var Table $firstTable */
+        $firstTable = $game->tables()->first();
+
+        $this->assertCount(1, $game->tables());
+        $this->assertInstanceOf(TableCollection::class, $game->tables());
+        $this->assertInstanceOf(Table::class, $firstTable);
+        $this->assertInstanceOf(Dealer::class, $firstTable->dealer());
+
+        $actualPlayer = $firstTable->players()->first(function (Player $player) use ($xLink) {
+            return $player->name() === $xLink->name();
+        });
+
+        $this->assertEquals($xLink->name(), $actualPlayer->name());
+        $this->assertEquals($xLink->wallet(), $actualPlayer->wallet());
+
+        $actualPlayer = $firstTable->players()->first(function (Player $player) use ($jesus) {
+            return $player->name() === $jesus->name();
+        });
+
+        $this->assertEquals($jesus->name(), $actualPlayer->name());
+        $this->assertEquals($jesus->wallet(), $actualPlayer->wallet());
     }
 }

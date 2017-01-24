@@ -3,8 +3,11 @@
 namespace xLink\Poker\Game;
 
 use Ramsey\Uuid\UuidInterface;
+use xLink\Poker\Cards\Deck;
+use xLink\Poker\Cards\Evaluators\SevenCard;
 use xLink\Poker\Client;
 use xLink\Poker\Exceptions\GameException;
+use xLink\Poker\Table;
 
 final class CashGame implements Game
 {
@@ -29,6 +32,11 @@ final class CashGame implements Game
     private $players;
 
     /**
+     * @var TableCollection
+     */
+    protected $tables;
+
+    /**
      * CashGame constructor.
      *
      * @param UuidInterface $id
@@ -41,6 +49,7 @@ final class CashGame implements Game
         $this->name = $name;
         $this->players = PlayerCollection::make();
         $this->minimumBuyIn = $minimumBuyIn;
+        $this->tables = TableCollection::make();
     }
 
     /**
@@ -119,5 +128,27 @@ final class CashGame implements Game
     public function __toString(): string
     {
         return $this->name;
+    }
+
+    /**
+     * TODO: Refactor out table creation to make it more readable.
+     */
+    public function assignPlayersToTables()
+    {
+        $groupedPlayers = $this->players()->shuffle()->chunk(9);
+
+        $this->tables = TableCollection::make($groupedPlayers->map(function (PlayerCollection $players) {
+            $dealer = Dealer::startWork(new Deck(), new SevenCard());
+
+            return Table::setUp($dealer, $players);
+        })->toArray());
+    }
+
+    /**
+     * @return TableCollection
+     */
+    public function tables(): TableCollection
+    {
+        return $this->tables;
     }
 }

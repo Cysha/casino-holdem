@@ -18,7 +18,7 @@ class SevenCard implements CardEvaluator
             return SevenCardResult::createRoyalFlush($result);
         }
 
-        if (($result = static::StraightFlush($cards)) !== false) {
+        if (($result = static::straightFlush($cards)) !== false) {
             return SevenCardResult::createStraightFlush($result);
         }
 
@@ -53,6 +53,11 @@ class SevenCard implements CardEvaluator
         return SevenCardResult::createHighCard(static::highCard($cards));
     }
 
+    /**
+     * @param CardCollection $cards
+     *
+     * @return bool|CardCollection
+     */
     public static function royalFlush(CardCollection $cards)
     {
         // check for straight flush
@@ -96,7 +101,7 @@ class SevenCard implements CardEvaluator
      */
     public static function fourOfAKind(CardCollection $cards)
     {
-        $judgedHand = self::nNumberOfCardsInCards($cards, 4);
+        $judgedHand = self::nNumberOfCardsInSet($cards, 4);
 
         if ($judgedHand === null) {
             return false;
@@ -117,8 +122,8 @@ class SevenCard implements CardEvaluator
      */
     public static function fullHouse(CardCollection $cards)
     {
-        $threeOfAKind = self::nNumberOfCardsInCards($cards, 3);
-        $twoOfAKind = self::nNumberOfCardsInCards($cards->diff($threeOfAKind), 2);
+        $threeOfAKind = self::nNumberOfCardsInSet($cards, 3);
+        $twoOfAKind = self::nNumberOfCardsInSet($cards->diff($threeOfAKind), 2);
 
         if ($threeOfAKind === null || $twoOfAKind === null) {
             return false;
@@ -138,7 +143,7 @@ class SevenCard implements CardEvaluator
             ->groupBy(function (Card $card) {
                 return $card->suit()->name();
             })
-            ->sort(function ($group) {
+            ->sortByDesc(function ($group) {
                 return count($group);
             });
 
@@ -182,7 +187,7 @@ class SevenCard implements CardEvaluator
      */
     public static function threeOfAKind(CardCollection $cards)
     {
-        $judgedHand = self::nNumberOfCardsInCards($cards, 3);
+        $judgedHand = self::nNumberOfCardsInSet($cards, 3);
 
         if ($judgedHand === null) {
             return false;
@@ -203,8 +208,8 @@ class SevenCard implements CardEvaluator
      */
     public static function twoPair(CardCollection $cards)
     {
-        $pairOne = self::nNumberOfCardsInCards($cards, 2);
-        $pairTwo = self::nNumberOfCardsInCards($cards->diff($pairOne), 2);
+        $pairOne = self::nNumberOfCardsInSet($cards, 2);
+        $pairTwo = self::nNumberOfCardsInSet($cards->diff($pairOne), 2);
 
         if ($pairTwo === null) {
             return false;
@@ -226,17 +231,19 @@ class SevenCard implements CardEvaluator
      */
     public static function onePair(CardCollection $cards)
     {
-        $pair = self::nNumberOfCardsInCards($cards, 2);
+        $pair = self::nNumberOfCardsInSet($cards, 2);
 
         if ($pair === null) {
             return false;
         }
 
-        return $pair
-            ->merge($cards->diff($pair)
-            ->sortByValue()
-            ->reverse()
-            ->take(3));
+        $otherCardsInResult = $cards->diff($pair)
+                                    ->sortByValue()
+                                    ->reverse()
+                                    ->take(3)
+        ;
+
+        return $pair->merge($otherCardsInResult);
     }
 
     /**
@@ -335,7 +342,7 @@ class SevenCard implements CardEvaluator
      *
      * @return CardCollection
      */
-    private static function nNumberOfCardsInCards(CardCollection $cards, int $numberOfCardsOfType)
+    private static function nNumberOfCardsInSet(CardCollection $cards, int $numberOfCardsOfType)
     {
         $judgedHand = $cards
             ->groupBy(function (Card $card) {

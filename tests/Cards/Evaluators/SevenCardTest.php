@@ -29,6 +29,19 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
+    public function fix_issue_with_descending_order_flushes()
+    {
+        $board = CardCollection::fromString('Ts 9h Qs Ks Js');
+        $hand = Hand::fromString('As 3d');
+
+        $result = SevenCard::evaluate($board, $hand);
+
+        $expected = CardCollection::fromString('10s Js Qs Ks 14s');
+        $expectedResult = SevenCardResult::createRoyalFlush($expected);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /** @test **/
     public function can_eval_hand_straight_flush()
     {
         $board = CardCollection::fromString('6d Tc 9c 6h Qc');
@@ -297,7 +310,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(7, Suit::diamond()),
         ]);
 
-        $result = SevenCard::straightflush($board->merge($hand));
+        $result = SevenCard::straightFlush($board->merge($hand));
 
         $this->assertFalse($result);
     }
