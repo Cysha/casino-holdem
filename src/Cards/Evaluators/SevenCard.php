@@ -82,12 +82,12 @@ class SevenCard implements CardEvaluator
     public static function straightFlush(CardCollection $cards)
     {
         // check for flush
-        if (static::flush($cards) === false) {
+        if (($flushCards = static::flush($cards)) === false) {
             return false;
         }
 
-        // check for straight
-        if (($straight = static::straight($cards)) === false) {
+        // check for straight, using the flush cards
+        if (($straight = static::straight($flushCards)) === false) {
             return false;
         }
 
@@ -140,6 +140,7 @@ class SevenCard implements CardEvaluator
     public static function flush(CardCollection $cards)
     {
         $groupedBySuit = $cards
+            ->switchAceValue()
             ->groupBy(function (Card $card) {
                 return $card->suit()->name();
             })
@@ -151,7 +152,11 @@ class SevenCard implements CardEvaluator
             return false;
         }
 
-        return $groupedBySuit->first()->sortByValue();
+        return $groupedBySuit
+            ->first()
+            ->sortByValue()
+            ->take(-5)
+            ->values();
     }
 
     /**
@@ -231,6 +236,7 @@ class SevenCard implements CardEvaluator
      */
     public static function onePair(CardCollection $cards)
     {
+        $cards = $cards->switchAceValue();
         $pair = self::nNumberOfCardsInSet($cards, 2);
 
         if ($pair === null) {
@@ -238,9 +244,9 @@ class SevenCard implements CardEvaluator
         }
 
         $otherCardsInResult = $cards->diff($pair)
-                                    ->sortByValue()
-                                    ->reverse()
-                                    ->take(3)
+            ->sortByValue()
+            ->reverse()
+            ->take(3)
         ;
 
         return $pair->merge($otherCardsInResult);

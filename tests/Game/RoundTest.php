@@ -20,7 +20,6 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round = Round::start($game->tables()->first());
 
         $this->assertCount(4, $round->players());
-//        $this->assertEquals($round->table()->playersSatDown(), $round->playerWithButton());
     }
 
     /** @test */

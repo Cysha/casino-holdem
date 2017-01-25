@@ -316,6 +316,27 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
+    public function straight_and_flush_dont_always_make_straight_flush()
+    {
+        $board = new CardCollection([
+            new Card(Card::KING, Suit::spade()),
+            new Card(9, Suit::spade()),
+            new Card(Card::JACK, Suit::spade()),
+            new Card(Card::QUEEN, Suit::heart()),
+            new Card(10, Suit::heart()),
+        ]);
+
+        $hand = new Hand([
+            new Card(Card::ACE, Suit::spade()),
+            new Card(3, Suit::spade()),
+        ]);
+
+        $result = SevenCard::straightFlush($board->merge($hand));
+
+        $this->assertFalse($result);
+    }
+
+    /** @test **/
     public function hand_evals_to_four_of_a_kind()
     {
         $board = new CardCollection([
@@ -443,6 +464,37 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::JACK, Suit::club()),
             new Card(Card::QUEEN, Suit::club()),
             new Card(Card::KING, Suit::club()),
+        ]);
+
+        $this->assertInstanceOf(CardCollection::class, $result);
+        $this->assertEquals($expected->__toString(), $result->__toString());
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test **/
+    public function hand_evals_to_flush_ace_high()
+    {
+        $board = new CardCollection([
+            new Card(Card::KING, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::diamond()),
+            new Card(Card::ACE, Suit::diamond()),
+            new Card(8, Suit::diamond()),
+            new Card(9, Suit::diamond()),
+        ]);
+
+        $hand = new Hand([
+            new Card(10, Suit::diamond()),
+            new Card(4, Suit::diamond()),
+        ]);
+
+        $result = SevenCard::flush($board->merge($hand));
+
+        $expected = new CardCollection([
+            new Card(9, Suit::diamond()),
+            new Card(10, Suit::diamond()),
+            new Card(Card::QUEEN, Suit::diamond()),
+            new Card(Card::KING, Suit::diamond()),
+            new Card(Card::ACE_HIGH, Suit::diamond()),
         ]);
 
         $this->assertInstanceOf(CardCollection::class, $result);

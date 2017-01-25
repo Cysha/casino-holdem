@@ -17,8 +17,8 @@ class DealerTest extends \PHPUnit_Framework_TestCase
     public function dealer_can_start_work_with_a_deck_and_a_ruleset()
     {
         $cardEvaluationRules = new SevenCard();
-        $deck                = new Deck();
-        $dealer              = Dealer::startWork($deck, $cardEvaluationRules);
+        $deck = new Deck();
+        $dealer = Dealer::startWork($deck, $cardEvaluationRules);
 
         $this->assertInstanceOf(Dealer::class, $dealer);
     }
@@ -71,5 +71,28 @@ class DealerTest extends \PHPUnit_Framework_TestCase
         $result = Dealer::evaluateHands($board, $player1, $player2, $player3);
 
         $this->assertCount(2, $result);
+
+        // make sure both hands are the same
+        $winningHand = CardCollection::fromString('Qh Qd 14s Th 9s');
+        $expectedResult = SevenCardResult::createOnePair($winningHand);
+        $this->assertEquals($expectedResult, $result->first());
+
+        $winningHand = CardCollection::fromString('Qs Qc 14s Th 9s');
+        $expectedResult = SevenCardResult::createOnePair($winningHand);
+        $this->assertEquals($expectedResult, $result->last());
+    }
+
+    /** @test */
+    public function when_comparing_2_quads_highest_quad_wins()
+    {
+        $board = CardCollection::fromString('As Qd 2s 2c Qh');
+        $player1 = Hand::fromString('2h 2d');
+        $player2 = Hand::fromString('Qs Qc');
+
+        $result = Dealer::evaluateHands($board, $player1, $player2);
+
+        $winningHand = CardCollection::fromString('Qc Qd Qh Qs 14s');
+        $expectedResult = SevenCardResult::createFourOfAKind($winningHand);
+        $this->assertEquals($expectedResult, $result->first());
     }
 }

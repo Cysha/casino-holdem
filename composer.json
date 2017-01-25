@@ -1,5 +1,5 @@
 {
-    "name": "xLink/poker-library",
+    "name": "xLink/lib-poker",
     "require": {
         "php": "^7.0",
         "beberlei/assert": "^2.7",

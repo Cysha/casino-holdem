@@ -2,6 +2,7 @@
 
 namespace xLink\Poker\Cards\Results;
 
+use xLink\Poker\Cards\Card;
 use xLink\Poker\Cards\CardCollection;
 use xLink\Poker\Cards\Contracts\CardResults;
 
@@ -21,15 +22,19 @@ class SevenCardResult implements CardResults
     /** @var int */
     private $handRank = 0;
 
+    /** @var array */
+    private $handValue = [];
+
     /** @var CardCollection */
     private $cards;
 
     /** @var string */
     private $definition = null;
 
-    private function __construct($rank, CardCollection $cards, string $definition)
+    private function __construct(int $rank, array $value, CardCollection $cards, string $definition)
     {
         $this->handRank = $rank;
+        $this->handValue = $value;
         $this->cards = $cards;
         $this->definition = $definition;
     }
@@ -40,6 +45,14 @@ class SevenCardResult implements CardResults
     public function rank(): int
     {
         return $this->handRank;
+    }
+
+    /**
+     * @return array
+     */
+    public function value(): array
+    {
+        return $this->handValue;
     }
 
     /**
@@ -65,7 +78,12 @@ class SevenCardResult implements CardResults
      */
     public static function createRoyalFlush(CardCollection $cards): self
     {
-        return new static(self::ROYAL_FLUSH, $cards, 'Royal Flush');
+        return new static(
+            self::ROYAL_FLUSH,
+            [0],
+            $cards,
+            'Royal Flush'
+        );
     }
 
     /**
@@ -78,7 +96,12 @@ class SevenCardResult implements CardResults
         $highCard = $cards->sortByValue()->take(-1);
         $definition = sprintf('Straight Flush to %s', $highCard->first()->name());
 
-        return new static(self::STRAIGHT_FLUSH, $cards, $definition);
+        return new static(
+            self::STRAIGHT_FLUSH,
+            [$highCard->first()->value()],
+            $cards,
+            $definition
+        );
     }
 
     /**
@@ -88,10 +111,19 @@ class SevenCardResult implements CardResults
      */
     public static function createFourOfAKind(CardCollection $cards): self
     {
-        $cardGroups = $cards->groupByValue()->take(1);
-        $definition = sprintf('4 of a Kind - %ss', $cardGroups->first()->first()->name());
+        $cardGroups = $cards->groupByValue();
 
-        return new static(self::FOUR_OF_A_KIND, $cards, $definition);
+        $firstGroup = $cardGroups->first()->first();
+        $kickerGroup = $cardGroups->last()->first();
+
+        $definition = sprintf('4 of a Kind - %ss', $firstGroup->name());
+
+        return new static(
+            self::FOUR_OF_A_KIND,
+            [$firstGroup->value(), $kickerGroup->value()],
+            $cards,
+            $definition
+        );
     }
 
     /**
@@ -102,13 +134,21 @@ class SevenCardResult implements CardResults
     public static function createFullHouse(CardCollection $cards): self
     {
         $cardGroups = $cards->groupByValue()->take(2);
+
+        $firstCardGroup = $cardGroups->first()->first();
+        $lastCardGroup = $cardGroups->last()->first();
         $definition = sprintf(
             'Full House - %ss over %ss',
-            $cardGroups->first()->first()->name(),
-            $cardGroups->last()->first()->name()
+            $firstCardGroup->name(),
+            $lastCardGroup->name()
         );
 
-        return new static(self::FULL_HOUSE, $cards, $definition);
+        return new static(
+            self::FULL_HOUSE,
+            [$firstCardGroup->value(), $lastCardGroup->value()],
+            $cards,
+            $definition
+        );
     }
 
     /**
@@ -121,7 +161,12 @@ class SevenCardResult implements CardResults
         $highCard = $cards->sortByValue()->take(-1);
         $definition = sprintf('Flush to %s', $highCard->first()->name());
 
-        return new static(self::FLUSH, $cards, $definition);
+        return new static(
+            self::FLUSH,
+            [$highCard->first()->value()],
+            $cards,
+            $definition
+        );
     }
 
     /**
@@ -134,7 +179,12 @@ class SevenCardResult implements CardResults
         $highCard = $cards->sortByValue()->take(-1);
         $definition = sprintf('Straight to %s', $highCard->first()->name());
 
-        return new static(self::STRAIGHT, $cards, $definition);
+        return new static(
+            self::STRAIGHT,
+            [$highCard->first()->value()],
+            $cards,
+            $definition
+        );
     }
 
     /**
@@ -144,10 +194,18 @@ class SevenCardResult implements CardResults
      */
     public static function createThreeOfAKind(CardCollection $cards): self
     {
-        $cardGroups = $cards->groupByValue()->take(1);
-        $definition = sprintf('3 of a Kind - %ss', $cardGroups->first()->first()->name());
+        $cardGroups = $cards->groupByValue();
 
-        return new static(self::THREE_OF_A_KIND, $cards, $definition);
+        $firstCard = $cardGroups->get(0)->first();
+        $kicker = $cardGroups->get(1)->first();
+        $definition = sprintf('3 of a Kind - %ss', $firstCard->name());
+
+        return new static(
+            self::THREE_OF_A_KIND,
+            [$firstCard->value(), $kicker->value()],
+            $cards,
+            $definition
+        );
     }
 
     /**
@@ -157,15 +215,23 @@ class SevenCardResult implements CardResults
      */
     public static function createTwoPair(CardCollection $cards): self
     {
-        $cardGroups = $cards->groupByValue()->take(2);
+        $cardGroups = $cards->groupByValue();
+        $firstCard = $cardGroups->get(0)->first();
+        $secondCard = $cardGroups->get(1)->first();
+        $kickerCard = $cardGroups->get(2)->first();
 
         $definition = sprintf(
             'Two Pair - %ss and %ss',
-            $cardGroups->first()->first()->name(),
-            $cardGroups->last()->first()->name()
+            $firstCard->name(),
+            $secondCard->name()
         );
 
-        return new static(self::TWO_PAIR, $cards, $definition);
+        return new static(
+            self::TWO_PAIR,
+            [$firstCard->value(), $secondCard->value(), $kickerCard->value()],
+            $cards,
+            $definition
+        );
     }
 
     /**
@@ -175,10 +241,18 @@ class SevenCardResult implements CardResults
      */
     public static function createOnePair(CardCollection $cards): self
     {
-        $cardGroups = $cards->groupByValue()->take(1);
-        $definition = sprintf('Pair of %ss', $cardGroups->first()->first()->name());
+        $cardGroups = $cards->groupByValue();
 
-        return new static(self::ONE_PAIR, $cards, $definition);
+        $pair = $cardGroups->get(0)->first();
+        $kicker = $cardGroups->get(1)->first();
+        $definition = sprintf('Pair of %ss', $pair->name());
+
+        return new static(
+            self::ONE_PAIR,
+            [$pair->value(), $kicker->value()],
+            $cards,
+            $definition
+        );
     }
 
     /**
@@ -188,9 +262,19 @@ class SevenCardResult implements CardResults
      */
     public static function createHighCard(CardCollection $cards): self
     {
-        $highCard = $cards->sortByValue()->take(-1);
-        $definition = sprintf('High Card - %s', $highCard->first()->name());
+        $cardValues = $cards->sortByValue()->values();
 
-        return new static(self::HIGH_CARD, $cards, $definition);
+        $highCard = $cardValues->get(4);
+
+        $definition = sprintf('High Card - %s', $highCard->name());
+
+        return new static(
+            self::HIGH_CARD,
+            $cardValues->map(function (Card $card) {
+                return $card->value();
+            })->toArray(),
+            $cards,
+            $definition
+        );
     }
 }

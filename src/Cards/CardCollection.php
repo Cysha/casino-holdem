@@ -96,12 +96,16 @@ class CardCollection extends Collection
     public function groupByValue()
     {
         return $this
+            ->sortByDesc(function (Card $card) {
+                return $card->value();
+            }, SORT_NUMERIC)
             ->groupBy(function (Card $card) {
                 return $card->value();
             })
             ->sortByDesc(function ($group) {
                 return count($group);
-            }, SORT_NUMERIC);
+            }, SORT_NUMERIC)
+            ->values();
     }
 
     /**
