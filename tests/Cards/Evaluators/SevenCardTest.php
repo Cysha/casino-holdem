@@ -117,6 +117,20 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
+    public function can_eval_hand_straight_on_the_board()
+    {
+        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $board = CardCollection::fromString('3d 4c 5c 6h 7d');
+        $hand = Hand::createUsingString('Kc Ad', $player);
+
+        $result = SevenCard::evaluate($board, $hand);
+
+        $expected = CardCollection::fromString('3d 4c 5c 6h 7d');
+        $expectedResult = SevenCardResult::createStraight($expected);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /** @test **/
     public function can_eval_hand_three_of_a_kind()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));

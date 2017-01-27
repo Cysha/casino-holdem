@@ -66,6 +66,20 @@ class CardCollection extends Collection
     }
 
     /**
+     * Sum cards by their value.
+     *
+     * @param int $sort
+     *
+     * @return static
+     */
+    public function sumByValue()
+    {
+        return $this->sum(function (Card $card) {
+            return $card->value();
+        });
+    }
+
+    /**
      * Sort cards by their value, and then by Suit.
      *
      * @param int $sort

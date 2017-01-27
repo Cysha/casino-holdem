@@ -96,6 +96,30 @@ class DealerTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function dealer_can_compare_2_high_card_hands_and_decide_its_a_split_pot()
+    {
+        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+
+        $board = CardCollection::fromString('5h 3s 7s 4c 6h');
+        $player1 = Hand::createUsingString('Kh Ah', $player1);
+        $player2 = Hand::createUsingString('Kc Qc', $player2);
+
+        $result = Dealer::evaluateHands($board, $player1, $player2);
+
+        $this->assertCount(2, $result);
+
+        // make sure both hands are the same
+        $winningHand = CardCollection::fromString('3s 4c 5h 6h 7s');
+        $expectedResult = SevenCardResult::createStraight($winningHand);
+        $this->assertEquals($expectedResult, $result->first());
+
+        $winningHand = CardCollection::fromString('3s 4c 5h 6h 7s');
+        $expectedResult = SevenCardResult::createStraight($winningHand);
+        $this->assertEquals($expectedResult, $result->last());
+    }
+
+    /** @test */
     public function when_comparing_2_quads_highest_quad_wins()
     {
         $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));

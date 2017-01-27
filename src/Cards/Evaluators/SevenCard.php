@@ -152,7 +152,6 @@ class SevenCard implements CardEvaluator
             ->sortByDesc(function ($group) {
                 return count($group);
             });
-
         if ($groupedBySuit->first()->count() < 5) {
             return false;
         }
@@ -176,13 +175,14 @@ class SevenCard implements CardEvaluator
             return false;
         }
 
-        $check = static::checkForHighLowStraight($cardCollection->sortByValue()->unique());
+        // check with ace == 1
+        $check = static::checkForStraight($cardCollection->sortByValue()->unique());
         if ($check !== false) {
             return $check;
         }
 
-        // check for straight with the current card list
-        $check = static::checkForStraight($cardCollection->sortByValue()->unique());
+        // check with ace == 14
+        $check = static::checkForStraight($cardCollection->switchAceValue()->sortByValue()->unique());
         if ($check !== false) {
             return $check;
         }
@@ -278,70 +278,52 @@ class SevenCard implements CardEvaluator
      *
      * @return bool|CardCollection
      */
-    private static function checkForHighLowStraight(CardCollection $cards)
+    private static function checkForStraight(CardCollection $cards)
     {
-        // check for aces before we write off the straight possibility
-        if (($aceCount = $cards->whereValue(Card::ACE)->count()) === 0) {
-            return false;
+        // check 0-4
+        $cardsToCheck = static::isStraight($cards->only(range(0, 4)));
+        if ($cardsToCheck !== false) {
+            return $cardsToCheck;
         }
 
-        // check for A2345 via card values
-        $lowAStraight = $cards->only(range(0, 4));
-        $lowSum = $lowAStraight
-            ->sum(function (Card $card) {
-                return $card->value();
-            });
-        if ($lowSum === 15) {
-            return $lowAStraight;
+        // check 1-5
+        $cardsToCheck = static::isStraight($cards->only(range(1, 5)));
+        if ($cardsToCheck !== false) {
+            return $cardsToCheck;
         }
 
-        // check for TJQKA via card values
-        $highAStraight = $cards
-            ->switchAceValue()
-            ->sortByValue()
-            ->only(range(6, 2))
-            ->values();
-
-        $highSum = $highAStraight->sum(function (Card $card) {
-            return $card->value();
-        });
-        if ($highSum === 60) {
-            return $highAStraight;
+        // check 2-6
+        $cardsToCheck = static::isStraight($cards->only(range(2, 6)));
+        if ($cardsToCheck !== false) {
+            return $cardsToCheck;
         }
 
         return false;
     }
 
     /**
+     * @author Derecho
+     *
      * @param CardCollection $cards
      *
      * @return bool|CardCollection
      */
-    private static function checkForStraight(CardCollection $cards)
+    private static function isStraight(CardCollection $cards)
     {
-        $runningLength = 0;
-        $highestSequentialPosition = 0;
+        $uniqueCards = $cards->map(function (Card $card) {
+            return $card->value();
+        })->unique();
 
-        $cardCount = $cards->count() - 1;
-        for ($i = 0; $i < $cardCount; ++$i) {
-            $nextCard = $cards->get($i + 1)->value();
-            $thisCard = $cards->get($i)->value();
-
-            $cardsAreNotSequential = $nextCard - $thisCard !== 1;
-            if ($cardsAreNotSequential) {
-                $runningLength = 0;
-            }
-
-            if ($cardsAreNotSequential === false) {
-                $highestSequentialPosition = $i + 1;
-                ++$runningLength;
-            }
+        if ($cards->count() !== 5
+            || $cards->count() !== $uniqueCards->count()) {
+            return false;
         }
 
-        if ($runningLength === 4) {
-            return $cards
-                ->only(range($highestSequentialPosition - 4, $highestSequentialPosition))
-                ->values();
+        if ($cards->sumByValue() === array_sum(range(
+            $cards->sortByValue()->first()->value(),
+            $cards->sortByValue()->last()->value()
+        ))) {
+            return $cards->sortByValue()->values();
         }
 
         return false;
