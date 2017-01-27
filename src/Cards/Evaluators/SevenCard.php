@@ -310,12 +310,14 @@ class SevenCard implements CardEvaluator
      */
     private static function isStraight(CardCollection $cards)
     {
+        if ($cards->count() !== 5) {
+            return false;
+        }
+
         $uniqueCards = $cards->map(function (Card $card) {
             return $card->value();
         })->unique();
-
-        if ($cards->count() !== 5
-            || $cards->count() !== $uniqueCards->count()) {
+        if ($cards->count() !== $uniqueCards->count()) {
             return false;
         }
 
