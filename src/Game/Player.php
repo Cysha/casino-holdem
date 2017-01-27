@@ -2,6 +2,7 @@
 
 namespace xLink\Poker\Game;
 
+use Assert\Assertion;
 use xLink\Poker\Client;
 
 class Player extends Client
@@ -35,8 +36,33 @@ class Player extends Client
         return new self($client->name(), $client->wallet(), $chipCount);
     }
 
+    /**
+     * @param Player $object
+     *
+     * @return bool
+     */
+    public function equals($object)
+    {
+        return static::class === get_class($object)
+            && $this->name() === $object->name()
+            && $this->wallet() === $object->wallet()
+            && $this->chipStack() === $object->chipStack();
+    }
+
+    /**
+     * @return Chips
+     */
     public function chipStack(): Chips
     {
         return $this->chipStack;
+    }
+
+    /**
+     * @param Chips $chips
+     */
+    public function bet(Chips $chips)
+    {
+        Assertion::greaterOrEqualThan($chips->amount(), 0);
+        $this->chipStack()->subtract($chips);
     }
 }

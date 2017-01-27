@@ -3,6 +3,7 @@
 namespace xLink\Poker\Game;
 
 use Illuminate\Support\Collection;
+use xLink\Poker\Cards\Card;
 use xLink\Poker\Cards\CardCollection;
 use xLink\Poker\Cards\Contracts\CardEvaluator;
 use xLink\Poker\Cards\Deck;
@@ -46,6 +47,22 @@ class Dealer
     }
 
     /**
+     * @return Deck
+     */
+    public function deck(): Deck
+    {
+        return $this->deck;
+    }
+
+    /**
+     * @return Card
+     */
+    public function dealCard(): Card
+    {
+        return $this->deck()->draw();
+    }
+
+    /**
      * @param CardCollection $board
      * @param Hand[]         $playerHands
      *
@@ -75,20 +92,26 @@ class Dealer
             })
         ;
 
-        // if all hands in the first collection are equal
+        // if there is only 1 hand in the collection
         if ($playerHands->first()->count() === 1) {
+            // return it
             return $playerHands->first();
         }
 
-        // sort hands in first collection by hand value and return it
-        return $playerHands->first()
-            ->flatten()
-            ->sortByDesc(function (SevenCardResult $result) {
+        // if all hands in the first collection are equal
+        $handsAreEqual = $playerHands
+            ->first()
+            ->map(function (SevenCardResult $result) {
                 return $result->value();
             })
-            ->groupBy(function (SevenCardResult $result) {
-                return $result->value();
-            })
-            ->first();
+            ->unique()
+        ;
+        // return em all
+        if ($handsAreEqual->count() === 1) {
+            return $playerHands->first();
+        }
+
+        // otherwise get the top hand and return that
+        return $playerHands->first()->take(1);
     }
 }

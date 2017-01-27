@@ -12,7 +12,7 @@ class SevenCard implements CardEvaluator
 {
     public static function evaluate(CardCollection $board, Hand $hand)
     {
-        $cards = $board->merge($hand);
+        $cards = $board->merge($hand->cards());
 
         if (($result = static::royalFlush($cards)) !== false) {
             return SevenCardResult::createRoyalFlush($result);
@@ -79,6 +79,11 @@ class SevenCard implements CardEvaluator
         return $royalFlushHand->sortByValue();
     }
 
+    /**
+     * @param CardCollection $cards
+     *
+     * @return bool|CardCollection
+     */
     public static function straightFlush(CardCollection $cards)
     {
         // check for flush

@@ -39,6 +39,8 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $result = Dealer::evaluateHands($board, $hand1, $hand2);
 
+        $this->assertCount(1, $result);
+
         $winningHand = CardCollection::fromString('3s 3d Jd Jh Qh');
         $expectedResult = SevenCardResult::createTwoPair($winningHand);
         $this->assertEquals($expectedResult, $result->first());
@@ -47,13 +49,20 @@ class DealerTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function dealer_can_compare_4_hands_to_select_winnner()
     {
+        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+        $player3 = Player::fromClient(Client::register('player3', Chips::fromAmount(500)));
+        $player4 = Player::fromClient(Client::register('player4', Chips::fromAmount(500)));
+
         $board = CardCollection::fromString('Ts 9h Qs Ks Js');
-        $player1 = Hand::fromString('As 3d');
-        $player2 = Hand::fromString('9s 9d');
-        $player3 = Hand::fromString('Ah 9c');
-        $player4 = Hand::fromString('Qh Qd');
+        $player1 = Hand::createUsingString('As 3d', $player1);
+        $player2 = Hand::createUsingString('9s 9d', $player2);
+        $player3 = Hand::createUsingString('Ah 9c', $player3);
+        $player4 = Hand::createUsingString('Qh Qd', $player4);
 
         $result = Dealer::evaluateHands($board, $player1, $player2, $player3, $player4);
+
+        $this->assertCount(1, $result);
 
         $winningHand = CardCollection::fromString('Ts Js Qs Ks 14s');
         $expectedResult = SevenCardResult::createRoyalFlush($winningHand);
@@ -63,10 +72,14 @@ class DealerTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function dealer_can_compare_2_hands_as_pairs_and_decide_its_a_split_pot()
     {
+        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+        $player3 = Player::fromClient(Client::register('player3', Chips::fromAmount(500)));
+
         $board = CardCollection::fromString('As 3d 9s 2c Th');
-        $player1 = Hand::fromString('Qh Qd');
-        $player2 = Hand::fromString('Qs Qc');
-        $player3 = Hand::fromString('6s 4c');
+        $player1 = Hand::createUsingString('Qh Qd', $player1);
+        $player2 = Hand::createUsingString('Qs Qc', $player2);
+        $player3 = Hand::createUsingString('6s 4c', $player3);
 
         $result = Dealer::evaluateHands($board, $player1, $player2, $player3);
 
@@ -85,14 +98,57 @@ class DealerTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function when_comparing_2_quads_highest_quad_wins()
     {
+        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+
         $board = CardCollection::fromString('As Qd 2s 2c Qh');
-        $player1 = Hand::fromString('2h 2d');
-        $player2 = Hand::fromString('Qs Qc');
+        $player1 = Hand::createUsingString('2h 2d', $player1);
+        $player2 = Hand::createUsingString('Qs Qc', $player2);
 
         $result = Dealer::evaluateHands($board, $player1, $player2);
 
+        $this->assertCount(1, $result);
+
         $winningHand = CardCollection::fromString('Qc Qd Qh Qs 14s');
         $expectedResult = SevenCardResult::createFourOfAKind($winningHand);
+        $this->assertEquals($expectedResult, $result->first());
+    }
+
+    /** @test */
+    public function compare_2_full_houses_highest_wins()
+    {
+        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+
+        $board = CardCollection::fromString('9s 2c Js Jh 2h');
+        $player1 = Hand::createUsingString('9c 9d', $player1);
+        $player2 = Hand::createUsingString('Ac Jc', $player2);
+
+        $result = Dealer::evaluateHands($board, $player1, $player2);
+
+        $this->assertCount(1, $result);
+
+        $winningHand = CardCollection::fromString('Js Jh Jc 2c 2h');
+        $expectedResult = SevenCardResult::createFullHouse($winningHand);
+        $this->assertEquals($expectedResult, $result->first());
+    }
+
+    /** @test */
+    public function compare_2_flushes_highest_wins()
+    {
+        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+
+        $board = CardCollection::fromString('5h 7h Jh 9h 5s');
+        $player1 = Hand::createUsingString('Kh Qs', $player1);
+        $player2 = Hand::createUsingString('Ah Tc', $player2);
+
+        $result = Dealer::evaluateHands($board, $player1, $player2);
+
+        $this->assertCount(1, $result);
+
+        $winningHand = CardCollection::fromString('5h 7h 9h Jh 14h');
+        $expectedResult = SevenCardResult::createFlush($winningHand);
         $this->assertEquals($expectedResult, $result->first());
     }
 }

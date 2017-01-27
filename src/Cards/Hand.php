@@ -4,8 +4,30 @@ namespace xLink\Poker\Cards;
 
 use xLink\Poker\Game\Player;
 
-class Hand extends CardCollection
+class Hand implements \Countable
 {
+    /**
+     * @var CardCollection
+     */
+    private $cards;
+
+    /**
+     * @var Player
+     */
+    private $player;
+
+    /**
+     * Hand constructor.
+     *
+     * @param CardCollection $cards
+     * @param Player         $player
+     */
+    private function __construct(CardCollection $cards, Player $player)
+    {
+        $this->cards = $cards;
+        $this->player = $player;
+    }
+
     /**
      * @var string
      * @var Player $player
@@ -16,9 +38,9 @@ class Hand extends CardCollection
     {
         $cards = explode(' ', $cards);
 
-        return static::make($cards)->map(function ($card) {
+        return static::create(CardCollection::make($cards)->map(function ($card) {
             return Card::fromString($card);
-        });
+        }), $player);
     }
 
     /**
@@ -27,8 +49,40 @@ class Hand extends CardCollection
      *
      * @return static
      */
-    public static function create(array $cards, Player $player)
+    public static function create(CardCollection $cards, Player $player)
     {
-        return static::make($cards);
+        return new static($cards, $player);
+    }
+
+    /**
+     * @return Player
+     */
+    public function player(): Player
+    {
+        return $this->player;
+    }
+
+    /**
+     * @return CardCollection
+     */
+    public function cards(): CardCollection
+    {
+        return $this->cards;
+    }
+
+    /**
+     * Count cards in the hand.
+     */
+    public function count(): int
+    {
+        return $this->cards()->count();
+    }
+
+    /**
+     * @param Card $card
+     */
+    public function addCard(Card $card)
+    {
+        $this->cards = $this->cards()->push($card);
     }
 }

@@ -20,10 +20,10 @@ class SevenCardResult implements CardResults
     const HIGH_CARD = 0;
 
     /** @var int */
-    private $handRank = 0;
+    private $rank = 0;
 
     /** @var array */
-    private $handValue = [];
+    private $value = [];
 
     /** @var CardCollection */
     private $cards;
@@ -33,8 +33,8 @@ class SevenCardResult implements CardResults
 
     private function __construct(int $rank, array $value, CardCollection $cards, string $definition)
     {
-        $this->handRank = $rank;
-        $this->handValue = $value;
+        $this->rank = $rank;
+        $this->value = $value;
         $this->cards = $cards;
         $this->definition = $definition;
     }
@@ -44,7 +44,7 @@ class SevenCardResult implements CardResults
      */
     public function rank(): int
     {
-        return $this->handRank;
+        return $this->rank;
     }
 
     /**
@@ -52,7 +52,7 @@ class SevenCardResult implements CardResults
      */
     public function value(): array
     {
-        return $this->handValue;
+        return $this->value;
     }
 
     /**
@@ -277,4 +277,31 @@ class SevenCardResult implements CardResults
             $definition
         );
     }
+//
+//    /**
+//     * @param SevenCardResult $object
+//     *
+//     * @return bool
+//     */
+//    public function equals($object)
+//    {
+//        return $this->rank() === $object->rank()
+//            && $this->value() === $object->value()
+//            && $this->definition() === $object->definition()
+//            && $this->cards()->__toString() === $object->cards()->__toString()
+//        ;
+//    }
+//
+//    /**
+//     * @return array
+//     */
+//    public function toArray(): array
+//    {
+//        return [
+//            'rank' => $this->rank(),
+//            'value' => $this->value(),
+//            'definition' => $this->definition(),
+//            'cards' => $this->cards()->__toString(),
+//        ];
+//    }
 }
