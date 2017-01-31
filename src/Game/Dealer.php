@@ -101,17 +101,11 @@ class Dealer
         // if all hands in the first collection are equal
         $handsAreEqual = $playerHands
             ->first()
-            ->map(function (SevenCardResult $result) {
-                return $result->value();
+            ->groupBy(function (SevenCardResult $result) {
+                return array_sum($result->value());
             })
-            ->unique()
         ;
-        // return em all
-        if ($handsAreEqual->count() === 1) {
-            return $playerHands->first();
-        }
 
-        // otherwise get the top hand and return that
-        return $playerHands->first()->take(1);
+        return $handsAreEqual->first();
     }
 }

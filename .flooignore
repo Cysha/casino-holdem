@@ -7,4 +7,4 @@ extern/
 node_modules/
 tmp
 vendor/
-!bin/*.php
+!bin\*.php

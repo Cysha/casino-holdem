@@ -17,17 +17,32 @@ class Round
     /**
      * @var ChipStackCollection
      */
-    private $chipStacks;
+    private $betStacks;
+
+    /**
+     * @var CardCollection
+     */
+    private $burnCards;
+
+    /**
+     * @var CardCollection
+     */
+    private $communityCards;
 
     /**
      * @var HandCollection
      */
-    private $hands = null;
+    private $hands;
 
     /**
      * @var PlayerCollection
      */
     private $foldedPlayers;
+
+    /**
+     * @var Chips
+     */
+    private $currentPot;
 
     /**
      * Round constructor.
@@ -37,14 +52,15 @@ class Round
     private function __construct(Table $table)
     {
         $this->table = $table;
-        $this->chipStacks = ChipStackCollection::make();
+        $this->betStacks = ChipStackCollection::make();
         $this->hands = HandCollection::make();
+        $this->communityCards = CardCollection::make();
+        $this->burnCards = CardCollection::make();
         $this->foldedPlayers = PlayerCollection::make();
+        $this->currentPot = Chips::zero();
 
         // init the chipstack for each player with zero chips
-        $this->players()->each(function (Player $player) {
-            $this->chipStacks->put($player->name(), Chips::zero());
-        });
+        $this->resetBetStacks();
     }
 
     /**
@@ -55,6 +71,19 @@ class Round
     public static function start(Table $table): Round
     {
         return new static($table);
+    }
+
+    public function end()
+    {
+        $this->collectChipTotal();
+    }
+
+    /**
+     * @return PlayerCollection
+     */
+    public function players(): PlayerCollection
+    {
+        return $this->table->players();
     }
 
     /**
@@ -73,6 +102,16 @@ class Round
         return $this->foldedPlayers;
     }
 
+    public function communityCards(): CardCollection
+    {
+        return $this->communityCards;
+    }
+
+    public function burnCards(): CardCollection
+    {
+        return $this->burnCards;
+    }
+
     /**
      * @param Player $actualPlayer
      *
@@ -83,14 +122,6 @@ class Round
         return $this->playersStillIn()->filter(function (Player $player) use ($actualPlayer) {
             return $player->name() === $actualPlayer->name();
         })->count() === 1;
-    }
-
-    /**
-     * @return PlayerCollection
-     */
-    public function players(): PlayerCollection
-    {
-        return $this->table->players();
     }
 
     /**
@@ -178,15 +209,15 @@ class Round
      */
     public function playerChipCount(Player $player): Chips
     {
-        return $this->chipStacks->get($player->name()) ?? Chips::zero();
+        return $this->betStacks->get($player->name()) ?? Chips::zero();
     }
 
     /**
      * @return ChipStackCollection
      */
-    public function chipStacks(): ChipStackCollection
+    public function betStacks(): ChipStackCollection
     {
-        return $this->chipStacks;
+        return $this->betStacks;
     }
 
     /**
@@ -198,7 +229,7 @@ class Round
         $player->chipStack()->subtract($chips);
 
         // Add chips to player's table stack
-        $this->chipStacks->put($player->name(), $chips);
+        $this->betStacks->put($player->name(), $chips);
     }
 
     /**
@@ -253,13 +284,72 @@ class Round
     }
 
     /**
+     * @return int
+     */
+    public function betStacksTotal(): int
+    {
+        return $this->betStacks()->total()->amount();
+    }
+
+    /**
+     * @return Chips
+     */
+    public function collectChipTotal(): Chips
+    {
+        $amount = $this->BetStacksTotal();
+        $this->resetBetStacks();
+
+        $this->currentPot->add(Chips::fromAmount($amount));
+
+        return $this->currentPot;
+    }
+
+    public function dealFlop()
+    {
+        $this->collectChipTotal();
+
+        // burn one
+        $this->burnCards()->push($this->table()->dealer()->dealCard());
+
+        // deal 3
+        $this->communityCards()->push($this->table()->dealer()->dealCard());
+        $this->communityCards()->push($this->table()->dealer()->dealCard());
+        $this->communityCards()->push($this->table()->dealer()->dealCard());
+    }
+
+    /**
+     * Deal the turn card.
+     */
+    public function dealTurn()
+    {
+        $this->collectChipTotal();
+
+        // burn one
+        $this->burnCards()->push($this->table()->dealer()->dealCard());
+
+        // deal
+        $this->communityCards()->push($this->table()->dealer()->dealCard());
+    }
+
+    /**
+     * Deal the river card.
+     */
+    public function dealRiver()
+    {
+        $this->dealTurn();
+    }
+
+    /**
      * @param Player $player
      */
     public function playerCalls(Player $player)
     {
         $chips = $this->highestBet();
 
-        $this->placeChipBet($player, $chips);
+        // current highest bet - currentPlayersChipStack
+        $amountLeftToBet = $chips->amount() - $this->playerChipCount($player)->amount();
+
+        $this->placeChipBet($player, Chips::fromAmount($amountLeftToBet));
     }
 
     /**
@@ -281,8 +371,6 @@ class Round
         }
 
         $this->foldedPlayers->push($player);
-
-        // transfer their table()->chipStack() to the round->pot(default)
     }
 
     /**
@@ -294,11 +382,19 @@ class Round
     }
 
     /**
+     * @param Player $player
+     */
+    public function playerChecks(Player $player)
+    {
+        // if there isnt a bet in the table stacks let it pass
+    }
+
+    /**
      * @return Chips
      */
     private function highestBet(): Chips
     {
-        return Chips::fromAmount($this->chipStacks()->max(function (Chips $chips) {
+        return Chips::fromAmount($this->betStacks()->max(function (Chips $chips) {
             return $chips->amount();
         }) ?? 0);
     }
@@ -318,5 +414,23 @@ class Round
 
         // then remove it off their actual stack
         $player->bet($chips);
+    }
+
+    /**
+     * Reset the chip stack for all players.
+     */
+    private function resetBetStacks()
+    {
+        $this->players()->each(function (Player $player) {
+            $this->betStacks->put($player->name(), Chips::zero());
+        });
+    }
+
+    /**
+     * @return Chips
+     */
+    public function totalPotAmount(): Chips
+    {
+        return $this->currentPot;
     }
 }

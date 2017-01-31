@@ -280,8 +280,8 @@ class SevenCard implements CardEvaluator
      */
     private static function checkForStraight(CardCollection $cards)
     {
-        // check 0-4
-        $cardsToCheck = static::isStraight($cards->only(range(0, 4)));
+        // check 2-6
+        $cardsToCheck = static::isStraight($cards->only(range(2, 6)));
         if ($cardsToCheck !== false) {
             return $cardsToCheck;
         }
@@ -292,8 +292,8 @@ class SevenCard implements CardEvaluator
             return $cardsToCheck;
         }
 
-        // check 2-6
-        $cardsToCheck = static::isStraight($cards->only(range(2, 6)));
+        // check 0-4
+        $cardsToCheck = static::isStraight($cards->only(range(0, 4)));
         if ($cardsToCheck !== false) {
             return $cardsToCheck;
         }
