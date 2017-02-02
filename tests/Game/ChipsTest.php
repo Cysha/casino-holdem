@@ -1,6 +1,6 @@
 <?php
 
-namespace xLink\Tests\Exceptions;
+namespace xLink\Tests\Game;
 
 use xLink\Poker\Game\Chips;
 

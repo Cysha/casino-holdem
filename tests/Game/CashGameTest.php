@@ -1,6 +1,6 @@
 <?php
 
-namespace xLink\Tests\Exceptions;
+namespace xLink\Tests\Game;
 
 use Ramsey\Uuid\Uuid;
 use TypeError;
@@ -48,7 +48,6 @@ class CashGameTest extends \PHPUnit_Framework_TestCase
 
         $game = CashGame::setUp($id, $name, $minimumBuyIn);
         $this->assertEquals($id, $game->id());
-        $this->assertEquals($id, $game->id());
     }
 
     /** @test */
@@ -60,7 +59,6 @@ class CashGameTest extends \PHPUnit_Framework_TestCase
 
         $game = CashGame::setUp($id, $name, $minimumBuyIn);
         $this->assertEquals($name, $game->name());
-        $this->assertEquals($name, $game->name());
     }
 
     /** @test */
@@ -71,7 +69,6 @@ class CashGameTest extends \PHPUnit_Framework_TestCase
         $minimumBuyIn = Chips::fromAmount(500);
 
         $game = CashGame::setUp($id, $name, $minimumBuyIn);
-        $this->assertEquals(PlayerCollection::make(), $game->players());
         $this->assertEquals(PlayerCollection::make(), $game->players());
         $this->assertEquals(0, $game->players()->count());
     }

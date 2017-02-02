@@ -1,6 +1,6 @@
 <?php
 
-namespace xLink\Tests\Cards\Evaluators;
+namespace xLink\Tests\Game;
 
 use xLink\Poker\Cards\CardCollection;
 use xLink\Poker\Cards\Deck;

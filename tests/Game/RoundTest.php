@@ -1,12 +1,15 @@
 <?php
 
-namespace xLink\Tests\Exceptions;
+namespace xLink\Tests\Game;
 
 use Ramsey\Uuid\Uuid;
 use xLink\Poker\Client;
+use xLink\Poker\Game\Action;
+use xLink\Poker\Game\ActionCollection;
 use xLink\Poker\Game\CashGame;
 use xLink\Poker\Game\Chips;
 use xLink\Poker\Game\Game;
+use xLink\Poker\Game\LeftToAct;
 use xLink\Poker\Game\Player;
 use xLink\Poker\Game\Round;
 use xLink\Poker\Table;
@@ -238,25 +241,6 @@ class RoundTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function fourth_player_in_proceedings_is_prompted_to_action_after()
-    {
-        $game = $this->createGenericGame();
-
-        /** @var Table $table */
-        $table = $game->tables()->first();
-        $player2 = $table->playersSatDown()->get(1);
-        $player3 = $table->playersSatDown()->get(2);
-        $player4 = $table->playersSatDown()->get(3);
-
-        $round = Round::start($table);
-
-        $round->postSmallBlind($player2);
-        $round->postBigBlind($player3);
-
-        $this->assertEquals($player4, $round->whosTurnIsIt());
-    }
-
-    /** @test */
     public function fifth_player_in_proceedings_is_prompted_to_action_after_round_start_when_player_4_is_stood_up()
     {
         $game = $this->createGenericGame(5);
@@ -271,7 +255,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round = Round::start($table);
 
-        $round->table()->sitPlayerOut($player4);
+        $round->sitPlayerOut($player4);
 
         $round->postSmallBlind($player2);
         $round->postBigBlind($player3);
@@ -408,6 +392,181 @@ class RoundTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function can_confirm_it_is_player_after_big_blinds_turn()
+    {
+        $game = $this->createGenericGame(4);
+
+        $table = $game->tables()->first();
+
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1); // SB - 25
+        $seat3 = $table->playersSatDown()->get(2); // BB - 50
+        $seat4 = $table->playersSatDown()->get(3); // Call - 50
+
+        $round = Round::start($table);
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $this->assertEquals($seat4, $round->whosTurnIsIt());
+        $round->playerCalls($seat4);
+
+        $this->assertEquals($seat1, $round->whosTurnIsIt());
+        $round->playerFoldsHand($seat1);
+
+        $this->assertEquals($seat2, $round->whosTurnIsIt());
+        $round->playerCalls($seat2);
+
+        $this->assertEquals($seat3, $round->whosTurnIsIt());
+        $round->playerCalls($seat3);
+
+        // no one else has to action
+        $this->assertEquals(false, $round->whosTurnIsIt());
+    }
+
+    /** @test */
+    public function actioned_player_gets_pushed_to_last_place_on_leftToAct_collection()
+    {
+        $game = $this->createGenericGame(9);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+
+        $seat4 = $table->playersSatDown()->get(4);
+
+        $round = Round::start($table);
+
+        $expected = LeftToAct::make([
+            ['player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player7', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player8', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player9', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+
+        $round->playerCalls($seat4);
+
+        $expected = LeftToAct::make([
+            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player7', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player8', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player9', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player2', 'action' => LeftToAct::ACTIONED],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+    }
+
+    /** @test */
+    public function aggressive_action_resets_all_actions()
+    {
+        $game = $this->createGenericGame(6);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+        $seat3 = $table->playersSatDown()->get(2);
+        $seat4 = $table->playersSatDown()->get(3);
+        $seat5 = $table->playersSatDown()->get(4);
+        $seat6 = $table->playersSatDown()->get(5);
+
+        $round = Round::start($table);
+
+        $expected = LeftToAct::make([
+            ['player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $round->playerCalls($seat4);
+        $round->playerCalls($seat5);
+        $round->playerCalls($seat6);
+        $round->playerPushesAllIn($seat1);
+
+        $expected = LeftToAct::make([
+            ['player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player1', 'action' => LeftToAct::AGGRESSIVELY_ACTIONED],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+    }
+
+    /** @test */
+    public function fold_action_gets_players_removed_from_leftToAct()
+    {
+        $game = $this->createGenericGame(6);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+        $seat3 = $table->playersSatDown()->get(2);
+        $seat4 = $table->playersSatDown()->get(3);
+        $seat5 = $table->playersSatDown()->get(4);
+        $seat6 = $table->playersSatDown()->get(5);
+
+        $round = Round::start($table);
+
+        $expected = LeftToAct::make([
+            ['player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $round->playerCalls($seat4);
+        $round->playerFoldsHand($seat5);
+
+        $expected = LeftToAct::make([
+            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player2', 'action' => LeftToAct::SMALL_BLIND],
+            ['player' => 'player3', 'action' => LeftToAct::BIG_BLIND],
+            ['player' => 'player4', 'action' => LeftToAct::ACTIONED],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+
+        $round->playerCalls($seat6);
+        $round->playerPushesAllIn($seat1);
+
+        $expected = LeftToAct::make([
+            ['player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
+            ['player' => 'player1', 'action' => LeftToAct::AGGRESSIVELY_ACTIONED],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+    }
+
+    /** @test */
     public function a_round_has_a_flop()
     {
         $game = $this->createGenericGame(4);
@@ -461,6 +620,42 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(5, $round->communityCards());
         $this->assertCount(3, $round->burnCards());
+    }
+
+    /** @test */
+    public function can_get_a_list_of_actions()
+    {
+        $game = $this->createGenericGame(4);
+
+        $table = $game->tables()->first();
+
+        $player1 = $table->playersSatDown()->first();
+        $player2 = $table->playersSatDown()->get(1);
+        $player3 = $table->playersSatDown()->get(2);
+        $player4 = $table->playersSatDown()->get(3);
+
+        $round = Round::start($table);
+
+        // deal some hands
+        $round->dealHands();
+
+        $round->postSmallBlind($player2); // 25
+        $round->postBigBlind($player3); // 50
+
+        $round->playerCalls($player4); // 50
+        $round->playerFoldsHand($player1);
+        $round->playerCalls($player2); // SB + 25
+        $round->playerChecks($player3); // BB
+
+        $expected = ActionCollection::make([
+            new Action($player2, Action::SB, Chips::fromAmount(25)),
+            new Action($player3, Action::BB, Chips::fromAmount(50)),
+            new Action($player4, Action::CALL, Chips::fromAmount(50)),
+            new Action($player1, Action::FOLD),
+            new Action($player2, Action::CALL, Chips::fromAmount(25)),
+            new Action($player3, Action::CHECK),
+        ]);
+        $this->assertEquals($expected, $round->playerActions());
     }
 
     /** @test */
@@ -682,5 +877,12 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $game->assignPlayersToTables(); // table has max of 9 or 5 players in holdem
 
         return $game;
+    }
+
+    public function check_for_action()
+    {
+        // Action performed
+            // Log action
+            // Check if all are equal == finish sub-round?
     }
 }
