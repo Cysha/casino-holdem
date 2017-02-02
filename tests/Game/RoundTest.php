@@ -190,10 +190,10 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         */
 
         $round->postSmallBlind($player2);
-        $this->assertEquals(Chips::fromAmount(25), $round->playerChipCount($player2));
+        $this->assertEquals(Chips::fromAmount(25), $round->playerBetStack($player2));
 
         $round->postBigBlind($player3);
-        $this->assertEquals(Chips::fromAmount(50), $round->playerChipCount($player3));
+        $this->assertEquals(Chips::fromAmount(50), $round->playerBetStack($player3));
     }
 
     /** @test */
@@ -282,7 +282,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->playerCalls($player4);
 
-        $this->assertEquals(50, $round->playerChipCount($player4)->amount());
+        $this->assertEquals(50, $round->playerBetStack($player4)->amount());
         $this->assertEquals(950, $player4->chipStack()->amount());
         $this->assertEquals(950, $round->players()->get(3)->chipStack()->amount());
         $this->assertEquals(125, $round->betStacks()->total()->amount());
@@ -309,7 +309,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round->playerCalls($player3); // 50
         $round->playerPushesAllIn($player4); // 1000
 
-        $this->assertEquals(1000, $round->playerChipCount($player4)->amount());
+        $this->assertEquals(1000, $round->playerBetStack($player4)->amount());
         $this->assertEquals(0, $player4->chipStack()->amount());
         $this->assertEquals(0, $round->players()->get(3)->chipStack()->amount());
         $this->assertEquals(1125, $round->betStacks()->total()->amount());
@@ -566,7 +566,10 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $round->leftToAct());
     }
 
-    /** @test */
+    /**
+     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @test
+     */
     public function a_round_has_a_flop()
     {
         $game = $this->createGenericGame(4);
@@ -577,13 +580,17 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round = Round::start($table);
 
         $round->dealHands();
+
         $round->dealFlop();
 
         $this->assertCount(3, $round->communityCards());
         $this->assertCount(1, $round->burnCards());
     }
 
-    /** @test */
+    /**
+     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @test
+     */
     public function a_round_has_a_turn()
     {
         $game = $this->createGenericGame(4);
@@ -595,14 +602,16 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->dealHands();
 
-        $round->dealFlop();
         $round->dealTurn();
 
         $this->assertCount(4, $round->communityCards());
         $this->assertCount(2, $round->burnCards());
     }
 
-    /** @test */
+    /**
+     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @test
+     */
     public function a_round_has_a_river()
     {
         $game = $this->createGenericGame(4);
@@ -614,8 +623,6 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->dealHands();
 
-        $round->dealFlop();
-        $round->dealTurn();
         $round->dealRiver();
 
         $this->assertCount(5, $round->communityCards());

@@ -253,7 +253,7 @@ class Round
      *
      * @return Chips
      */
-    public function playerChipCount(Player $player): Chips
+    public function playerBetStack(Player $player): Chips
     {
         return $this->betStacks->get($player->name()) ?? Chips::zero();
     }
@@ -356,7 +356,12 @@ class Round
 
     public function dealFlop()
     {
+        if ($player = $this->whosTurnIsIt()) {
+            throw RoundException::playerStillNeedsToAct($player);
+        }
+
         $this->collectChipTotal();
+        $this->leftToAct = $this->leftToAct->setup($this->playersStillIn());
 
         // burn one
         $this->burnCards()->push($this->table()->dealer()->dealCard());
@@ -372,7 +377,12 @@ class Round
      */
     public function dealTurn()
     {
+        if ($player = $this->whosTurnIsIt()) {
+            throw RoundException::playerStillNeedsToAct($player);
+        }
+
         $this->collectChipTotal();
+        $this->leftToAct = $this->leftToAct->setup($this->playersStillIn());
 
         // burn one
         $this->burnCards()->push($this->table()->dealer()->dealCard());
@@ -397,11 +407,11 @@ class Round
         $chips = $this->highestBet();
 
         // current highest bet - currentPlayersChipStack
-        $amountLeftToBet = Chips::fromAmount($chips->amount() - $this->playerChipCount($player)->amount());
-
-        $this->placeChipBet($player, $amountLeftToBet);
+        $amountLeftToBet = Chips::fromAmount($chips->amount() - $this->playerBetStack($player)->amount());
 
         $this->playerActions()->push(new Action($player, Action::CALL, $amountLeftToBet));
+
+        $this->placeChipBet($player, $amountLeftToBet);
         $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::ACTIONED);
     }
 
@@ -411,9 +421,9 @@ class Round
      */
     public function playerRaises(Player $player, Chips $chips)
     {
-        $this->placeChipBet($player, $chips);
-
         $this->playerActions()->push(new Action($player, Action::RAISE, $chips));
+
+        $this->placeChipBet($player, $chips);
         $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::AGGRESSIVELY_ACTIONED);
     }
 
@@ -426,9 +436,9 @@ class Round
             throw RoundException::playerHasNoActiveHand($player);
         }
 
-        $this->foldedPlayers->push($player);
-
         $this->playerActions()->push(new Action($player, Action::FOLD));
+
+        $this->foldedPlayers->push($player);
         $this->leftToAct = $this->leftToAct->removePlayer($player);
     }
 
@@ -438,9 +448,11 @@ class Round
     public function playerPushesAllIn(Player $player)
     {
         $chips = $player->chipStack();
-        $this->placeChipBet($player, $chips);
 
-        $this->playerActions()->push(new Action($player, Action::ALLIN, $chips));
+        // gotta create a new chip obj here cause of PHPs /awesome/ objRef ability :D
+        $this->playerActions()->push(new Action($player, Action::ALLIN, Chips::fromAmount($chips->amount())));
+
+        $this->placeChipBet($player, $chips);
         $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::AGGRESSIVELY_ACTIONED);
     }
 
@@ -476,7 +488,7 @@ class Round
         }
 
         // add the chips to the players tableStack first
-        $this->playerChipCount($player)->add($chips);
+        $this->playerBetStack($player)->add($chips);
 
         // then remove it off their actual stack
         $player->bet($chips);
