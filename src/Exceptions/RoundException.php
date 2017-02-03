@@ -65,4 +65,43 @@ class RoundException extends DomainException
 
         return new static($message);
     }
+
+    /**
+     * @param null|string $message
+     *
+     * @return static
+     */
+    public static function flopHasBeenDealt($message = null)
+    {
+        $defaultMessage = 'The Flop has already been dealt!';
+        $message = null === $message ? $defaultMessage : $message;
+
+        return new static($message);
+    }
+
+    /**
+     * @param null|string $message
+     *
+     * @return static
+     */
+    public static function turnHasBeenDealt($message = null)
+    {
+        $defaultMessage = 'The Turn has already been dealt!';
+        $message = null === $message ? $defaultMessage : $message;
+
+        return new static($message);
+    }
+
+    /**
+     * @param null|string $message
+     *
+     * @return static
+     */
+    public static function riverHasBeenDealt($message = null)
+    {
+        $defaultMessage = 'The River has already been dealt!';
+        $message = null === $message ? $defaultMessage : $message;
+
+        return new static($message);
+    }
 }

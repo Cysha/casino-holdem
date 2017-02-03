@@ -52,39 +52,38 @@ class Action
 
     public function toString()
     {
+        $message = null;
         switch ($this->action) {
             case 6:
-                return sprintf('%s has posted Big Blind (%d).', $this->player->name(), $this->chips->amount());
+                $message = sprintf('%s has posted Big Blind (%d).', $this->player->name(), $this->chips->amount());
             break;
 
             case 5:
-                return sprintf('%s has posted Small Blind (%d).', $this->player->name(), $this->chips->amount());
+                $message = sprintf('%s has posted Small Blind (%d).', $this->player->name(), $this->chips->amount());
             break;
 
             case 4:
-                return sprintf('%s has pushed ALL IN (%d).', $this->player->name(), $this->chips->amount());
+                $message = sprintf('%s has pushed ALL IN (%d).', $this->player->name(), $this->chips->amount());
             break;
 
             case 3:
-                return sprintf('%s has folded.', $this->player->name());
+                $message = sprintf('%s has folded.', $this->player->name());
             break;
 
             case 2:
-                return sprintf('%s has raised %d.', $this->player->name(), $this->chips->amount());
+                $message = sprintf('%s has raised %d.', $this->player->name(), $this->chips->amount());
             break;
 
             case 1:
-                return sprintf('%s has called %d.', $this->player->name(), $this->chips->amount());
+                $message = sprintf('%s has called %d.', $this->player->name(), $this->chips->amount());
             break;
 
             case 0:
-                return sprintf('%s has checked.', $this->player->name());
-            break;
-
-            default:
-                return sprintf('%s did something...', $this->player->name());
+                $message = sprintf('%s has checked.', $this->player->name());
             break;
         }
+
+        return $message;
     }
 
     public function __toString()

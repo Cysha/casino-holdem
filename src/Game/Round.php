@@ -159,9 +159,13 @@ class Round
      */
     public function playerIsStillIn(Player $actualPlayer)
     {
-        return $this->playersStillIn()->filter(function (Player $player) use ($actualPlayer) {
-            return $player->name() === $actualPlayer->name();
-        })->count() === 1;
+        $playerCount = $this->playersStillIn()
+            ->filter(function (Player $player) use ($actualPlayer) {
+                return $player->name() === $actualPlayer->name();
+            })
+            ->count();
+
+        return $playerCount === 1;
     }
 
     /**
@@ -354,10 +358,16 @@ class Round
         return $this->currentPot;
     }
 
+    /**
+     * Deal the Flop.
+     */
     public function dealFlop()
     {
         if ($player = $this->whosTurnIsIt()) {
             throw RoundException::playerStillNeedsToAct($player);
+        }
+        if ($this->communityCards()->count() !== 0) {
+            throw RoundException::flopHasBeenDealt();
         }
 
         $this->collectChipTotal();
@@ -380,7 +390,33 @@ class Round
         if ($player = $this->whosTurnIsIt()) {
             throw RoundException::playerStillNeedsToAct($player);
         }
+        if ($this->communityCards()->count() !== 3) {
+            throw RoundException::turnHasBeenDealt();
+        }
 
+        $this->dealCommunityCard();
+    }
+
+    /**
+     * Deal the river card.
+     */
+    public function dealRiver()
+    {
+        if ($player = $this->whosTurnIsIt()) {
+            throw RoundException::playerStillNeedsToAct($player);
+        }
+        if ($this->communityCards()->count() !== 4) {
+            throw RoundException::riverHasBeenDealt();
+        }
+
+        $this->dealCommunityCard();
+    }
+
+    /**
+     * Adds a card to the BurnCards(), also Adds a card to the CommunityCards().
+     */
+    private function dealCommunityCard()
+    {
         $this->collectChipTotal();
         $this->leftToAct = $this->leftToAct->setup($this->playersStillIn());
 
@@ -389,14 +425,6 @@ class Round
 
         // deal
         $this->communityCards()->push($this->table()->dealer()->dealCard());
-    }
-
-    /**
-     * Deal the river card.
-     */
-    public function dealRiver()
-    {
-        $this->dealTurn();
     }
 
     /**

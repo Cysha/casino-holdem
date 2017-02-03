@@ -570,7 +570,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
      * @expectedException xLink\Poker\Exceptions\RoundException
      * @test
      */
-    public function a_round_has_a_flop()
+    public function cant_deal_flop_whilst_players_still_have_to_act()
     {
         $game = $this->createGenericGame(4);
 
@@ -582,16 +582,79 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round->dealHands();
 
         $round->dealFlop();
+    }
 
-        $this->assertCount(3, $round->communityCards());
-        $this->assertCount(1, $round->burnCards());
+    /** @test */
+    public function a_round_has_a_flop()
+    {
+        $game = $this->createGenericGame(6);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+        $seat3 = $table->playersSatDown()->get(2);
+        $seat4 = $table->playersSatDown()->get(3);
+        $seat5 = $table->playersSatDown()->get(4);
+        $seat6 = $table->playersSatDown()->get(5);
+
+        $round = Round::start($table);
+
+        $round->dealHands();
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $round->playerCalls($seat4);
+        $round->playerCalls($seat5);
+        $round->playerCalls($seat6);
+        $round->playerCalls($seat1);
+        $round->playerCalls($seat2);
+        $round->playerChecks($seat3);
+
+        $round->dealFlop();
     }
 
     /**
      * @expectedException xLink\Poker\Exceptions\RoundException
      * @test
      */
-    public function a_round_has_a_turn()
+    public function cant_deal_the_flop_more_than_once_a_round()
+    {
+        $game = $this->createGenericGame(6);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+        $seat3 = $table->playersSatDown()->get(2);
+        $seat4 = $table->playersSatDown()->get(3);
+        $seat5 = $table->playersSatDown()->get(4);
+        $seat6 = $table->playersSatDown()->get(5);
+
+        $round = Round::start($table);
+
+        $round->dealHands();
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $round->playerCalls($seat4);
+        $round->playerCalls($seat5);
+        $round->playerCalls($seat6);
+        $round->playerCalls($seat1);
+        $round->playerCalls($seat2);
+        $round->playerChecks($seat3);
+
+        $round->dealFlop();
+        $round->dealFlop();
+    }
+
+    /**
+     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @test
+     */
+    public function cant_deal_turn_whilst_players_still_have_to_act()
     {
         $game = $this->createGenericGame(4);
 
@@ -603,16 +666,97 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round->dealHands();
 
         $round->dealTurn();
+    }
 
-        $this->assertCount(4, $round->communityCards());
-        $this->assertCount(2, $round->burnCards());
+    /** @test */
+    public function a_round_has_a_turn()
+    {
+        $game = $this->createGenericGame(6);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+        $seat3 = $table->playersSatDown()->get(2);
+        $seat4 = $table->playersSatDown()->get(3);
+        $seat5 = $table->playersSatDown()->get(4);
+        $seat6 = $table->playersSatDown()->get(5);
+
+        $round = Round::start($table);
+
+        $round->dealHands();
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $round->playerCalls($seat4);
+        $round->playerCalls($seat5);
+        $round->playerCalls($seat6);
+        $round->playerCalls($seat1);
+        $round->playerCalls($seat2);
+        $round->playerChecks($seat3);
+
+        $round->dealFlop();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+        $round->playerChecks($seat3);
+        $round->playerChecks($seat4);
+        $round->playerChecks($seat5);
+        $round->playerChecks($seat6);
+
+        $round->dealTurn();
     }
 
     /**
      * @expectedException xLink\Poker\Exceptions\RoundException
      * @test
      */
-    public function a_round_has_a_river()
+    public function cant_deal_the_turn_more_than_once_per_round()
+    {
+        $game = $this->createGenericGame(6);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+        $seat3 = $table->playersSatDown()->get(2);
+        $seat4 = $table->playersSatDown()->get(3);
+        $seat5 = $table->playersSatDown()->get(4);
+        $seat6 = $table->playersSatDown()->get(5);
+
+        $round = Round::start($table);
+
+        $round->dealHands();
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $round->playerCalls($seat4);
+        $round->playerCalls($seat5);
+        $round->playerCalls($seat6);
+        $round->playerCalls($seat1);
+        $round->playerCalls($seat2);
+        $round->playerChecks($seat3);
+
+        $round->dealFlop();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+        $round->playerChecks($seat3);
+        $round->playerChecks($seat4);
+        $round->playerChecks($seat5);
+        $round->playerChecks($seat6);
+
+        $round->dealTurn();
+        $round->dealTurn();
+    }
+
+    /**
+     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @test
+     */
+    public function cant_deal_river_whilst_players_still_have_to_act()
     {
         $game = $this->createGenericGame(4);
 
@@ -624,9 +768,108 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round->dealHands();
 
         $round->dealRiver();
+    }
 
-        $this->assertCount(5, $round->communityCards());
-        $this->assertCount(3, $round->burnCards());
+    /** @test */
+    public function a_round_has_a_river()
+    {
+        $game = $this->createGenericGame(6);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+        $seat3 = $table->playersSatDown()->get(2);
+        $seat4 = $table->playersSatDown()->get(3);
+        $seat5 = $table->playersSatDown()->get(4);
+        $seat6 = $table->playersSatDown()->get(5);
+
+        $round = Round::start($table);
+
+        $round->dealHands();
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $round->playerCalls($seat4);
+        $round->playerCalls($seat5);
+        $round->playerCalls($seat6);
+        $round->playerCalls($seat1);
+        $round->playerCalls($seat2);
+        $round->playerChecks($seat3);
+
+        $round->dealFlop();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+        $round->playerChecks($seat3);
+        $round->playerChecks($seat4);
+        $round->playerChecks($seat5);
+        $round->playerChecks($seat6);
+
+        $round->dealTurn();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+        $round->playerChecks($seat3);
+        $round->playerChecks($seat4);
+        $round->playerChecks($seat5);
+        $round->playerChecks($seat6);
+
+        $round->dealRiver();
+    }
+
+    /**
+     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @test
+     */
+    public function cant_deal_the_river_more_than_once_per_round()
+    {
+        $game = $this->createGenericGame(6);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+        $seat3 = $table->playersSatDown()->get(2);
+        $seat4 = $table->playersSatDown()->get(3);
+        $seat5 = $table->playersSatDown()->get(4);
+        $seat6 = $table->playersSatDown()->get(5);
+
+        $round = Round::start($table);
+
+        $round->dealHands();
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $round->playerCalls($seat4);
+        $round->playerCalls($seat5);
+        $round->playerCalls($seat6);
+        $round->playerCalls($seat1);
+        $round->playerCalls($seat2);
+        $round->playerChecks($seat3);
+
+        $round->dealFlop();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+        $round->playerChecks($seat3);
+        $round->playerChecks($seat4);
+        $round->playerChecks($seat5);
+        $round->playerChecks($seat6);
+
+        $round->dealTurn();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+        $round->playerChecks($seat3);
+        $round->playerChecks($seat4);
+        $round->playerChecks($seat5);
+        $round->playerChecks($seat6);
+
+        $round->dealRiver();
+        $round->dealRiver();
     }
 
     /** @test */
