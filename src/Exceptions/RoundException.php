@@ -104,4 +104,17 @@ class RoundException extends DomainException
 
         return new static($message);
     }
+
+    /**
+     * @param null|string $message
+     *
+     * @return static
+     */
+    public static function playerTryingToActOutOfTurn(Player $player, Player $actualPlayer, $message = null)
+    {
+        $defaultMessage = sprintf('%s tried to act out of turn! It\'s %ss turn.', $player, $actualPlayer);
+        $message = null === $message ? $defaultMessage : $message;
+
+        return new static($message);
+    }
 }

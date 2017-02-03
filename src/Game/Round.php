@@ -363,11 +363,11 @@ class Round
      */
     public function dealFlop()
     {
-        if ($player = $this->whosTurnIsIt()) {
-            throw RoundException::playerStillNeedsToAct($player);
-        }
         if ($this->communityCards()->count() !== 0) {
             throw RoundException::flopHasBeenDealt();
+        }
+        if ($player = $this->whosTurnIsIt()) {
+            throw RoundException::playerStillNeedsToAct($player);
         }
 
         $this->collectChipTotal();
@@ -387,11 +387,11 @@ class Round
      */
     public function dealTurn()
     {
-        if ($player = $this->whosTurnIsIt()) {
-            throw RoundException::playerStillNeedsToAct($player);
-        }
         if ($this->communityCards()->count() !== 3) {
             throw RoundException::turnHasBeenDealt();
+        }
+        if ($player = $this->whosTurnIsIt()) {
+            throw RoundException::playerStillNeedsToAct($player);
         }
 
         $this->dealCommunityCard();
@@ -402,11 +402,11 @@ class Round
      */
     public function dealRiver()
     {
-        if ($player = $this->whosTurnIsIt()) {
-            throw RoundException::playerStillNeedsToAct($player);
-        }
         if ($this->communityCards()->count() !== 4) {
             throw RoundException::riverHasBeenDealt();
+        }
+        if ($player = $this->whosTurnIsIt()) {
+            throw RoundException::playerStillNeedsToAct($player);
         }
 
         $this->dealCommunityCard();
@@ -428,10 +428,23 @@ class Round
     }
 
     /**
+     * @throws RoundException
+     */
+    public function checkPlayerTryingToAct(Player $player)
+    {
+        $actualPlayer = $this->whosTurnIsIt();
+        if ($player !== $actualPlayer) {
+            throw RoundException::playerTryingToActOutOfTurn($player, $actualPlayer);
+        }
+    }
+
+    /**
      * @param Player $player
      */
     public function playerCalls(Player $player)
     {
+        $this->checkPlayerTryingToAct($player);
+
         $chips = $this->highestBet();
 
         // current highest bet - currentPlayersChipStack
@@ -449,6 +462,8 @@ class Round
      */
     public function playerRaises(Player $player, Chips $chips)
     {
+        $this->checkPlayerTryingToAct($player);
+
         $this->playerActions()->push(new Action($player, Action::RAISE, $chips));
 
         $this->placeChipBet($player, $chips);
@@ -460,6 +475,8 @@ class Round
      */
     public function playerFoldsHand(Player $player)
     {
+        $this->checkPlayerTryingToAct($player);
+
         if ($this->playerIsStillIn($player) === false) {
             throw RoundException::playerHasNoActiveHand($player);
         }
@@ -475,6 +492,8 @@ class Round
      */
     public function playerPushesAllIn(Player $player)
     {
+        $this->checkPlayerTryingToAct($player);
+
         $chips = $player->chipStack();
 
         // gotta create a new chip obj here cause of PHPs /awesome/ objRef ability :D
@@ -489,7 +508,7 @@ class Round
      */
     public function playerChecks(Player $player)
     {
-        // if there isnt a bet in the table stacks let it pass
+        $this->checkPlayerTryingToAct($player);
 
         $this->playerActions()->push(new Action($player, Action::CHECK));
         $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::ACTIONED);

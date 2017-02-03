@@ -291,7 +291,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function player_pushes_all_in()
     {
-        $game = $this->createGenericGame(5);
+        $game = $this->createGenericGame(4);
 
         /** @var Table $table */
         $table = $game->tables()->first();
@@ -303,15 +303,15 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round = Round::start($table);
 
-        $round->postSmallBlind($player1); // 25
-        $round->postBigBlind($player2); // 50
+        $round->postSmallBlind($player2); // 25
+        $round->postBigBlind($player3); // 50
 
-        $round->playerCalls($player3); // 50
-        $round->playerPushesAllIn($player4); // 1000
+        $round->playerCalls($player4); // 50
+        $round->playerPushesAllIn($player1); // 1000
 
-        $this->assertEquals(1000, $round->playerBetStack($player4)->amount());
-        $this->assertEquals(0, $player4->chipStack()->amount());
-        $this->assertEquals(0, $round->players()->get(3)->chipStack()->amount());
+        $this->assertEquals(1000, $round->playerBetStack($player1)->amount());
+        $this->assertEquals(0, $player1->chipStack()->amount());
+        $this->assertEquals(0, $round->players()->get(0)->chipStack()->amount());
         $this->assertEquals(1125, $round->betStacks()->total()->amount());
     }
 
@@ -432,7 +432,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         /** @var Table $table */
         $table = $game->tables()->first();
 
-        $seat4 = $table->playersSatDown()->get(4);
+        $seat2 = $table->playersSatDown()->get(1);
 
         $round = Round::start($table);
 
@@ -449,7 +449,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->assertEquals($expected, $round->leftToAct());
 
-        $round->playerCalls($seat4);
+        $round->playerCalls($seat2);
 
         $expected = LeftToAct::make([
             ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
@@ -1008,7 +1008,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round->postSmallBlind($player1); // 25
         $round->postBigBlind($player2); // 50
         $round->playerCalls($player1); // 25
-        $round->playerChecks($player1);
+        $round->playerChecks($player2);
 
         $this->assertEquals(100, $round->betStacksTotal());
         $this->assertCount(2, $round->playersStillIn());
@@ -1056,6 +1056,32 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, $round->betStacksTotal());
         $this->assertEquals(0, $round->players()->get(0)->chipStack()->amount());
         $this->assertEquals(0, $round->players()->get(1)->chipStack()->amount());
+    }
+
+    /**
+     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @test
+     */
+    public function player_cant_call_out_of_turn()
+    {
+        $game = $this->createGenericGame(2);
+
+        $table = $game->tables()->first();
+
+        $player1 = $table->playersSatDown()->get(0);
+        $player2 = $table->playersSatDown()->get(1);
+
+        $round = Round::start($table);
+
+        // deal some hands
+        $round->dealHands();
+
+        // make sure we start with no chips on the table
+        $this->assertEquals(0, $round->betStacksTotal());
+
+        $round->postSmallBlind($player1); // 25
+        $round->postBigBlind($player2); // 50
+        $round->playerChecks($player2); // 50
     }
 
     /** @te3st */
