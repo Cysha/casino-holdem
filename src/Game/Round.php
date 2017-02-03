@@ -564,7 +564,13 @@ class Round
      */
     private function setupLeftToAct()
     {
-        $this->leftToAct = $this->leftToAct->setupWithoutDealer($this->players());
+        if ($this->players()->count() > 2) {
+            $this->leftToAct = $this->leftToAct->setupWithoutDealer($this->players());
+
+            return;
+        }
+
+        $this->leftToAct = $this->leftToAct->setup($this->players());
     }
 
     public function sitPlayerOut(Player $player)

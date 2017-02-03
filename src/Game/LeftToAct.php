@@ -43,10 +43,8 @@ class LeftToAct extends Collection
     {
         $collection = $this->setup($players);
 
-        if ($players->count() > 2) {
-            // move the dealer to last
-            $collection = $collection->movePlayerToLastInQueue();
-        }
+        // move the dealer to last
+        $collection = $collection->movePlayerToLastInQueue();
 
         return self::make($collection->toArray());
     }
