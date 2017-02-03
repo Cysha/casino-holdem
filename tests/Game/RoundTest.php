@@ -987,6 +987,77 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, $round->players()->get(3)->chipStack()->amount());
     }
 
+    /** @test */
+    public function a_headsup_round_can_be_completed()
+    {
+        $game = $this->createGenericGame(2);
+
+        $table = $game->tables()->first();
+
+        $player1 = $table->playersSatDown()->get(0);
+        $player2 = $table->playersSatDown()->get(1);
+
+        $round = Round::start($table);
+
+        // deal some hands
+        $round->dealHands();
+
+        // make sure we start with no chips on the table
+        $this->assertEquals(0, $round->betStacksTotal());
+
+        $round->postSmallBlind($player1); // 25
+        $round->postBigBlind($player2); // 50
+        $round->playerCalls($player1); // 25
+        $round->playerChecks($player1);
+
+        $this->assertEquals(100, $round->betStacksTotal());
+        $this->assertCount(2, $round->playersStillIn());
+        $this->assertEquals(950, $round->players()->get(0)->chipStack()->amount());
+        $this->assertEquals(950, $round->players()->get(1)->chipStack()->amount());
+
+        // collect the chips, burn a card, deal the flop
+        $round->dealFlop();
+        $this->assertEquals(100, $round->totalPotAmount()->amount());
+        $this->assertEquals(0, $round->betStacksTotal());
+
+        $round->playerChecks($player1); // 0
+        $round->playerRaises($player2, Chips::fromAmount(250)); // 250
+        $round->playerCalls($player1); // 250
+
+        $this->assertEquals(500, $round->betStacksTotal());
+        $this->assertCount(2, $round->playersStillIn());
+        $this->assertEquals(700, $round->players()->get(0)->chipStack()->amount());
+        $this->assertEquals(700, $round->players()->get(1)->chipStack()->amount());
+
+        // collect chips, burn 1, deal 1
+        $round->dealTurn();
+        $this->assertEquals(600, $round->totalPotAmount()->amount());
+        $this->assertEquals(0, $round->betStacksTotal());
+
+        $round->playerRaises($player1, Chips::fromAmount(450)); // 450
+        $round->playerCalls($player2); // 450
+
+        $this->assertEquals(900, $round->betStacksTotal());
+        $this->assertCount(2, $round->playersStillIn());
+        $this->assertEquals(250, $round->players()->get(0)->chipStack()->amount());
+        $this->assertEquals(250, $round->players()->get(1)->chipStack()->amount());
+
+        // collect chips, burn 1, deal 1
+        $round->dealRiver();
+        $this->assertEquals(1500, $round->totalPotAmount()->amount());
+        $this->assertEquals(0, $round->betStacksTotal());
+
+        $round->playerChecks($player1); // 0
+        $round->playerPushesAllIn($player2); // 250
+        $round->playerCalls($player1); // 250
+
+        $round->end();
+        $this->assertEquals(2000, $round->totalPotAmount()->amount());
+        $this->assertEquals(0, $round->betStacksTotal());
+        $this->assertEquals(0, $round->players()->get(0)->chipStack()->amount());
+        $this->assertEquals(0, $round->players()->get(1)->chipStack()->amount());
+    }
+
     /** @te3st */
     public function split_pot_with_3_players()
     {
@@ -1127,12 +1198,5 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $game->assignPlayersToTables(); // table has max of 9 or 5 players in holdem
 
         return $game;
-    }
-
-    public function check_for_action()
-    {
-        // Action performed
-            // Log action
-            // Check if all are equal == finish sub-round?
     }
 }
