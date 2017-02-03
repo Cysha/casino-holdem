@@ -91,7 +91,7 @@ class LeftToAct extends Collection
      */
     public function setActivity($player, int $activity): self
     {
-        $collection = $this->put($this->keys()->last(), [
+        $this->put($this->keys()->last(), [
             'player' => $player,
             'action' => $activity,
         ]);
@@ -123,7 +123,7 @@ class LeftToAct extends Collection
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getNextPlayer()
     {
