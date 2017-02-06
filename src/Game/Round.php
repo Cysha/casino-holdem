@@ -477,10 +477,6 @@ class Round
     {
         $this->checkPlayerTryingToAct($player);
 
-        if ($this->playerIsStillIn($player) === false) {
-            throw RoundException::playerHasNoActiveHand($player);
-        }
-
         $this->playerActions()->push(new Action($player, Action::FOLD));
 
         $this->foldedPlayers->push($player);

@@ -44,20 +44,6 @@ class RoundException extends DomainException
      *
      * @return static
      */
-    public static function playerHasNoActiveHand(Player $player, $message = null)
-    {
-        $defaultMessage = sprintf('%s does not have an active hand', $player);
-        $message = null === $message ? $defaultMessage : $message;
-
-        return new static($message);
-    }
-
-    /**
-     * @param Player      $player
-     * @param null|string $message
-     *
-     * @return static
-     */
     public static function playerStillNeedsToAct(Player $player, $message = null)
     {
         $defaultMessage = sprintf('%s still needs to act.', $player);
