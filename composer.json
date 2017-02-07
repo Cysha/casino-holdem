@@ -3,7 +3,7 @@
     "require": {
         "php": "^7.0",
         "beberlei/assert": "^2.7",
-        "tightenco/collect": "^5.3",
+        "tightenco/collect": "^5.4",
         "ramsey/uuid": "^3.5"
     },
     "require-dev": {
