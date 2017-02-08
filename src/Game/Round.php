@@ -55,6 +55,11 @@ class Round
     private $leftToAct;
 
     /**
+     * @var Player
+     */
+    private $winningPlayer = null;
+
+    /**
      * Round constructor.
      *
      * @param Table $table
@@ -96,6 +101,9 @@ class Round
     public function end()
     {
         $this->collectChipTotal();
+
+        $this->determineWinningHands();
+        $this->distributeWinnings();
     }
 
     /**
@@ -257,7 +265,7 @@ class Round
     /**
      * @return Chips
      */
-    public function totalPotAmount(): Chips
+    public function currentPot(): Chips
     {
         return $this->currentPot;
     }
@@ -365,12 +373,12 @@ class Round
         $this->leftToAct = $this->leftToAct->setup($this->playersStillIn());
 
         // burn one
-        $this->burnCards()->push($this->table()->dealer()->dealCard());
+        $this->burnCards->push($this->table()->dealer()->dealCard());
 
         // deal 3
-        $this->communityCards()->push($this->table()->dealer()->dealCard());
-        $this->communityCards()->push($this->table()->dealer()->dealCard());
-        $this->communityCards()->push($this->table()->dealer()->dealCard());
+        $this->communityCards->push($this->table()->dealer()->dealCard());
+        $this->communityCards->push($this->table()->dealer()->dealCard());
+        $this->communityCards->push($this->table()->dealer()->dealCard());
     }
 
     /**
@@ -412,10 +420,10 @@ class Round
         $this->leftToAct = $this->leftToAct->setup($this->playersStillIn());
 
         // burn one
-        $this->burnCards()->push($this->table()->dealer()->dealCard());
+        $this->burnCards->push($this->table()->dealer()->dealCard());
 
         // deal
-        $this->communityCards()->push($this->table()->dealer()->dealCard());
+        $this->communityCards->push($this->table()->dealer()->dealCard());
     }
 
     /**
@@ -443,7 +451,7 @@ class Round
         // current highest bet - currentPlayersChipStack
         $amountLeftToBet = Chips::fromAmount($chips->amount() - $this->playerBetStack($player)->amount());
 
-        $this->playerActions()->push(new Action($player, Action::CALL, $amountLeftToBet));
+        $this->playerActions->push(new Action($player, Action::CALL, $amountLeftToBet));
 
         $this->placeChipBet($player, $amountLeftToBet);
         $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::ACTIONED);
@@ -459,7 +467,7 @@ class Round
     {
         $this->checkPlayerTryingToAct($player);
 
-        $this->playerActions()->push(new Action($player, Action::RAISE, $chips));
+        $this->playerActions->push(new Action($player, Action::RAISE, $chips));
 
         $this->placeChipBet($player, $chips);
         $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::AGGRESSIVELY_ACTIONED);
@@ -569,5 +577,29 @@ class Round
     {
         $this->table()->sitPlayerOut($player);
         $this->leftToAct = $this->leftToAct()->removePlayer($player);
+    }
+
+    private function determineWinningHands()
+    {
+        $winningResults = $this->table()->dealer()->evaluateHands($this->communityCards, $this->hands);
+        $winningHands = $winningResults->map->hand();
+        $this->winningPlayer = $winningHands->first()->player();
+
+        return $this->winningPlayer;
+    }
+
+    private function distributeWinnings()
+    {
+        $this->winningPlayer->chipStack()->add($this->currentPot);
+        $this->currentPot = Chips::zero();
+    }
+
+    public function winningPlayer(): Player
+    {
+        if ($this->winningPlayer === null) {
+            throw RoundException::callingWinnerBeforeRoundEnd();
+        }
+
+        return $this->winningPlayer;
     }
 }

@@ -2,55 +2,114 @@
 
 namespace xLink\Poker\Cards\Evaluators;
 
-use xLink\Poker\Cards\Contracts\CardEvaluator;
-use xLink\Poker\Cards\Results\SevenCardResult;
-use xLink\Poker\Cards\CardCollection;
+use Illuminate\Support\Collection;
 use xLink\Poker\Cards\Card;
+use xLink\Poker\Cards\CardCollection;
+use xLink\Poker\Cards\Contracts\CardEvaluator;
 use xLink\Poker\Cards\Hand;
+use xLink\Poker\Cards\Results\SevenCardResult;
+use xLink\Poker\Cards\SevenCardResultCollection;
+use xLink\Poker\Game\HandCollection;
 
 class SevenCard implements CardEvaluator
 {
+    /**
+     * @param CardCollection $board
+     * @param Hand           $hand
+     *
+     * @return SevenCardResult
+     */
     public static function evaluate(CardCollection $board, Hand $hand)
     {
         $cards = $board->merge($hand->cards());
 
         if (($result = static::royalFlush($cards)) !== false) {
-            return SevenCardResult::createRoyalFlush($result);
+            return SevenCardResult::createRoyalFlush($result, $hand);
         }
 
         if (($result = static::straightFlush($cards)) !== false) {
-            return SevenCardResult::createStraightFlush($result);
+            return SevenCardResult::createStraightFlush($result, $hand);
         }
 
         if (($result = static::fourOfAKind($cards)) !== false) {
-            return SevenCardResult::createFourOfAKind($result);
+            return SevenCardResult::createFourOfAKind($result, $hand);
         }
 
         if (($result = static::fullHouse($cards)) !== false) {
-            return SevenCardResult::createFullHouse($result);
+            return SevenCardResult::createFullHouse($result, $hand);
         }
 
         if (($result = static::flush($cards)) !== false) {
-            return SevenCardResult::createFlush($result);
+            return SevenCardResult::createFlush($result, $hand);
         }
 
         if (($result = static::straight($cards)) !== false) {
-            return SevenCardResult::createStraight($result);
+            return SevenCardResult::createStraight($result, $hand);
         }
 
         if (($result = static::threeOfAKind($cards)) !== false) {
-            return SevenCardResult::createThreeOfAKind($result);
+            return SevenCardResult::createThreeOfAKind($result, $hand);
         }
 
         if (($result = static::twoPair($cards)) !== false) {
-            return SevenCardResult::createTwoPair($result);
+            return SevenCardResult::createTwoPair($result, $hand);
         }
 
         if (($result = static::onePair($cards)) !== false) {
-            return SevenCardResult::createOnePair($result);
+            return SevenCardResult::createOnePair($result, $hand);
         }
 
-        return SevenCardResult::createHighCard(static::highCard($cards));
+        return SevenCardResult::createHighCard(static::highCard($cards), $hand);
+    }
+
+    /**
+     * @param CardCollection $board
+     * @param HandCollection $playerHands
+     *
+     * @return SevenCardResultCollection
+     */
+    public function evaluateHands(CardCollection $board, HandCollection $playerHands): SevenCardResultCollection
+    {
+        $playerHands = $playerHands
+            // evaluate hands
+            ->map(function (Hand $hand) use ($board) {
+
+                return static::evaluate($board, $hand);
+            })
+
+            // sort the hands by their hand rank
+            ->sortByDesc(function (SevenCardResult $result) {
+                return [$result->rank(), $result->value()];
+            })
+
+            // group by the hand rank
+            ->groupBy(function (SevenCardResult $result) {
+                return $result->rank();
+            })
+
+            // sort the collection by the count
+            ->sortByDesc(function (Collection $collection) {
+                return $collection->count();
+            })
+        ;
+
+//        // if there is only 1 hand in the collection
+//        if ($playerHands->first()->count() === 1) {
+//            // return it
+//            return $playerHands->first();
+//        }
+
+        // if all hands in the first collection are equal
+        $handsAreEqual = $playerHands
+            ->first()
+            ->groupBy(function (SevenCardResult $result) {
+                return array_sum($result->value());
+            })
+        ;
+
+        $winningResults = SevenCardResultCollection::make($handsAreEqual->first()->toArray());
+
+        return $winningResults;
     }
 
     /**

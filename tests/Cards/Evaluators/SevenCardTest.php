@@ -28,7 +28,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('10c Jc Qc Kc 14c');
-        $expectedResult = SevenCardResult::createRoyalFlush($expected);
+        $expectedResult = SevenCardResult::createRoyalFlush($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -42,7 +42,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('10s Js Qs Ks 14s');
-        $expectedResult = SevenCardResult::createRoyalFlush($expected);
+        $expectedResult = SevenCardResult::createRoyalFlush($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -56,7 +56,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('9c Tc Jc Qc Kc');
-        $expectedResult = SevenCardResult::createStraightFlush($expected);
+        $expectedResult = SevenCardResult::createStraightFlush($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -70,7 +70,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('Tc Qc Qd Qh Qs');
-        $expectedResult = SevenCardResult::createFourOfAKind($expected);
+        $expectedResult = SevenCardResult::createFourOfAKind($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -84,7 +84,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('Qc Qd Qh 8d 8h');
-        $expectedResult = SevenCardResult::createFullHouse($expected);
+        $expectedResult = SevenCardResult::createFullHouse($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -98,7 +98,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('7c Tc Jc Qc Kc');
-        $expectedResult = SevenCardResult::createFlush($expected);
+        $expectedResult = SevenCardResult::createFlush($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -112,7 +112,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('5c 6h 7d 8d 9d');
-        $expectedResult = SevenCardResult::createStraight($expected);
+        $expectedResult = SevenCardResult::createStraight($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -126,7 +126,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('3d 4c 5c 6h 7d');
-        $expectedResult = SevenCardResult::createStraight($expected);
+        $expectedResult = SevenCardResult::createStraight($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -140,7 +140,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('8d 10c Qd Qh Qs');
-        $expectedResult = SevenCardResult::createThreeOfAKind($expected);
+        $expectedResult = SevenCardResult::createThreeOfAKind($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -154,7 +154,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('Qc Qd 8d 8h 10c');
-        $expectedResult = SevenCardResult::createTwoPair($expected);
+        $expectedResult = SevenCardResult::createTwoPair($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -168,7 +168,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('Qc Qd 10c 8d 7s');
-        $expectedResult = SevenCardResult::createOnePair($expected);
+        $expectedResult = SevenCardResult::createOnePair($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -182,7 +182,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('7s 8d 10c Jc Qd');
-        $expectedResult = SevenCardResult::createHighCard($expected);
+        $expectedResult = SevenCardResult::createHighCard($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -196,7 +196,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
         $result = SevenCard::evaluate($board, $hand);
 
         $expected = CardCollection::fromString('8d 10c Jc Qd 14s');
-        $expectedResult = SevenCardResult::createHighCard($expected);
+        $expectedResult = SevenCardResult::createHighCard($expected, $hand);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -217,7 +217,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::KING, Suit::club()),
         ]), $player);
 
-        $result = SevenCard::royalFlush($board->merge($hand->cards()));
+        $result = SevenCard::royalFlush($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(10, Suit::club()),
@@ -248,7 +248,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::KING, Suit::club()),
         ]), $player);
 
-        $result = SevenCard::royalFlush($board->merge($hand->cards()));
+        $result = SevenCard::royalFlush($board->merge($hand->cards()), $hand);
 
         $this->assertFalse($result);
     }
@@ -270,7 +270,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::KING, Suit::club()),
         ]), $player);
 
-        $result = SevenCard::royalFlush($board->merge($hand->cards()));
+        $result = SevenCard::royalFlush($board->merge($hand->cards()), $hand);
 
         $this->assertFalse($result);
     }
@@ -292,7 +292,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::KING, Suit::club()),
         ]), $player);
 
-        $result = SevenCard::straightFlush($board->merge($hand->cards()));
+        $result = SevenCard::straightFlush($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(9, Suit::club()),
@@ -323,7 +323,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::KING, Suit::club()),
         ]), $player);
 
-        $result = SevenCard::straightflush($board->merge($hand->cards()));
+        $result = SevenCard::straightflush($board->merge($hand->cards()), $hand);
 
         $this->assertFalse($result);
     }
@@ -345,7 +345,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(7, Suit::diamond()),
         ]), $player);
 
-        $result = SevenCard::straightFlush($board->merge($hand->cards()));
+        $result = SevenCard::straightFlush($board->merge($hand->cards()), $hand);
 
         $this->assertFalse($result);
     }
@@ -367,7 +367,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(3, Suit::spade()),
         ]), $player);
 
-        $result = SevenCard::straightFlush($board->merge($hand->cards()));
+        $result = SevenCard::straightFlush($board->merge($hand->cards()), $hand);
 
         $this->assertFalse($result);
     }
@@ -389,7 +389,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::QUEEN, Suit::heart()),
         ]), $player);
 
-        $result = SevenCard::fourOfAKind($board->merge($hand->cards()));
+        $result = SevenCard::fourOfAKind($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(10, Suit::club()),
@@ -421,7 +421,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::QUEEN, Suit::heart()),
         ]), $player);
 
-        $result = SevenCard::fourOfAKind($board->merge($hand->cards()));
+        $result = SevenCard::fourOfAKind($board->merge($hand->cards()), $hand);
 
         $this->assertFalse($result);
     }
@@ -443,7 +443,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::QUEEN, Suit::heart()),
         ]), $player);
 
-        $result = SevenCard::fullHouse($board->merge($hand->cards()));
+        $result = SevenCard::fullHouse($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(Card::QUEEN, Suit::club()),
@@ -475,7 +475,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::KING, Suit::club()),
         ]), $player);
 
-        $result = SevenCard::fullHouse($board->merge($hand->cards()));
+        $result = SevenCard::fullHouse($board->merge($hand->cards()), $hand);
 
         $this->assertFalse($result);
     }
@@ -497,7 +497,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::KING, Suit::club()),
         ]), $player);
 
-        $result = SevenCard::flush($board->merge($hand->cards()));
+        $result = SevenCard::flush($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(7, Suit::club()),
@@ -529,7 +529,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(4, Suit::diamond()),
         ]), $player);
 
-        $result = SevenCard::flush($board->merge($hand->cards()));
+        $result = SevenCard::flush($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(9, Suit::diamond()),
@@ -561,7 +561,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(7, Suit::diamond()),
         ]), $player);
 
-        $result = SevenCard::straight($board->merge($hand->cards()));
+        $result = SevenCard::straight($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(5, Suit::club()),
@@ -592,7 +592,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::KING, Suit::club()),
         ]), $player);
 
-        $result = SevenCard::straight($board->merge($hand->cards()));
+        $result = SevenCard::straight($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(10, Suit::club()),
@@ -623,7 +623,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(3, Suit::club()),
         ]), $player);
 
-        $result = SevenCard::straight($board->merge($hand->cards()));
+        $result = SevenCard::straight($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(Card::ACE, Suit::diamond()),
@@ -654,7 +654,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(3, Suit::club()),
         ]), $player);
 
-        $result = SevenCard::straight($board->merge($hand->cards()));
+        $result = SevenCard::straight($board->merge($hand->cards()), $hand);
         $this->assertFalse($result);
     }
 
@@ -675,7 +675,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(Card::QUEEN, Suit::heart()),
         ]), $player);
 
-        $result = SevenCard::threeOfAKind($board->merge($hand->cards()));
+        $result = SevenCard::threeOfAKind($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(8, Suit::diamond()),
@@ -707,7 +707,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(6, Suit::heart()),
         ]), $player);
 
-        $result = SevenCard::twoPair($board->merge($hand->cards()));
+        $result = SevenCard::twoPair($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(Card::QUEEN, Suit::club()),
@@ -739,7 +739,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(6, Suit::heart()),
         ]), $player);
 
-        $result = SevenCard::twoPair($board->merge($hand->cards()));
+        $result = SevenCard::twoPair($board->merge($hand->cards()), $hand);
 
         $this->assertFalse($result);
     }
@@ -761,7 +761,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(6, Suit::heart()),
         ]), $player);
 
-        $result = SevenCard::onePair($board->merge($hand->cards()));
+        $result = SevenCard::onePair($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(Card::QUEEN, Suit::club()),
@@ -793,7 +793,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(6, Suit::heart()),
         ]), $player);
 
-        $result = SevenCard::highCard($board->merge($hand->cards()));
+        $result = SevenCard::highCard($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(7, Suit::spade()),
@@ -825,7 +825,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(6, Suit::heart()),
         ]), $player);
 
-        $result = SevenCard::highCard($board->merge($hand->cards()));
+        $result = SevenCard::highCard($board->merge($hand->cards()), $hand);
 
         $expected = new CardCollection([
             new Card(8, Suit::diamond()),
@@ -857,7 +857,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
             new Card(6, Suit::heart()),
         ]), $player);
 
-        $result = SevenCard::onePair($board->merge($hand->cards()));
+        $result = SevenCard::onePair($board->merge($hand->cards()), $hand);
 
         $this->assertFalse($result);
     }

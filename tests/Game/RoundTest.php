@@ -3,14 +3,21 @@
 namespace xLink\Tests\Game;
 
 use Ramsey\Uuid\Uuid;
+use xLink\Poker\Cards\Deck;
+use xLink\Poker\Cards\Evaluators\SevenCard;
+use xLink\Poker\Cards\Hand;
+use xLink\Poker\Cards\Results\SevenCardResult;
+use xLink\Poker\Cards\SevenCardResultCollection;
 use xLink\Poker\Client;
 use xLink\Poker\Game\Action;
 use xLink\Poker\Game\ActionCollection;
 use xLink\Poker\Game\CashGame;
 use xLink\Poker\Game\Chips;
+use xLink\Poker\Game\Dealer;
 use xLink\Poker\Game\Game;
 use xLink\Poker\Game\LeftToAct;
 use xLink\Poker\Game\Player;
+use xLink\Poker\Game\PlayerCollection;
 use xLink\Poker\Game\Round;
 use xLink\Poker\Table;
 
@@ -1038,7 +1045,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         // collect the chips, burn a card, deal the flop
         $round->dealFlop();
-        $this->assertEquals(150, $round->totalPotAmount()->amount());
+        $this->assertEquals(150, $round->currentPot()->amount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerChecks($player2); // 0
@@ -1054,7 +1061,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         // collect chips, burn 1, deal 1
         $round->dealTurn();
-        $this->assertEquals(650, $round->totalPotAmount()->amount());
+        $this->assertEquals(650, $round->currentPot()->amount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerRaises($player3, Chips::fromAmount(450)); // 450
@@ -1067,17 +1074,16 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         // collect chips, burn 1, deal 1
         $round->dealRiver();
-        $this->assertEquals(1550, $round->totalPotAmount()->amount());
+        $this->assertEquals(1550, $round->currentPot()->amount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerPushesAllIn($player3); // 250
         $round->playerCalls($player4); // 250
 
+        $round->collectChipTotal();
+        $this->assertEquals(2050, $round->currentPot()->amount());
         $round->end();
-        $this->assertEquals(2050, $round->totalPotAmount()->amount());
         $this->assertEquals(0, $round->betStacksTotal());
-        $this->assertEquals(0, $round->players()->get(2)->chipStack()->amount());
-        $this->assertEquals(0, $round->players()->get(3)->chipStack()->amount());
     }
 
     /** @test */
@@ -1110,7 +1116,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         // collect the chips, burn a card, deal the flop
         $round->dealFlop();
-        $this->assertEquals(100, $round->totalPotAmount()->amount());
+        $this->assertEquals(100, $round->currentPot()->amount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerChecks($player1); // 0
@@ -1124,7 +1130,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         // collect chips, burn 1, deal 1
         $round->dealTurn();
-        $this->assertEquals(600, $round->totalPotAmount()->amount());
+        $this->assertEquals(600, $round->currentPot()->amount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerRaises($player1, Chips::fromAmount(450)); // 450
@@ -1137,18 +1143,17 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         // collect chips, burn 1, deal 1
         $round->dealRiver();
-        $this->assertEquals(1500, $round->totalPotAmount()->amount());
+        $this->assertEquals(1500, $round->currentPot()->amount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerChecks($player1); // 0
         $round->playerPushesAllIn($player2); // 250
         $round->playerCalls($player1); // 250
 
+        $round->collectChipTotal();
+        $this->assertEquals(2000, $round->currentPot()->amount());
         $round->end();
-        $this->assertEquals(2000, $round->totalPotAmount()->amount());
         $this->assertEquals(0, $round->betStacksTotal());
-        $this->assertEquals(0, $round->players()->get(0)->chipStack()->amount());
-        $this->assertEquals(0, $round->players()->get(1)->chipStack()->amount());
     }
 
     /**
@@ -1174,8 +1179,51 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round->playerChecks($player2); // 50
     }
 
-    public function can_run_full_round_with_known_cards()
+    /** @test */
+    public function winning_player_get_entire_pot_added_to_chipstack()
     {
+        $client1 = Client::register('player1', Chips::fromAmount(5500));
+        $client2 = Client::register('player2', Chips::fromAmount(5500));
+        $client3 = Client::register('player3', Chips::fromAmount(5500));
+        $player1 = Player::fromClient($client1, Chips::fromAmount(5500));
+        $player2 = Player::fromClient($client2, Chips::fromAmount(5500));
+        $player3 = Player::fromClient($client3, Chips::fromAmount(5500));
+
+        $players = PlayerCollection::make([
+            $player1,
+            $player2,
+            $player3,
+        ]);
+
+        $board = Hand::createUsingString('3s 3h 8h 2s 4c', $player1)->cards();
+        $winningHand = Hand::createUsingString('As Ad', $player1);
+
+        /** @var SevenCard $evaluator */
+        $evaluator = $this->createMock(SevenCard::class);
+        $evaluator->method('evaluateHands')
+            ->with($this->anything(), $this->anything())
+            ->will($this->returnValue(SevenCardResultCollection::make([
+                SevenCardResult::createTwoPair($board->merge($winningHand->cards()), $winningHand),
+            ])));
+
+        // Do game
+        $dealer = Dealer::startWork(new Deck(), $evaluator);
+        $table = Table::setUp($dealer, $players);
+
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+        $seat3 = $table->playersSatDown()->get(2);
+
+        $round = Round::start($table);
+
+        $this->dealHandsAndPlayGame($round, $seat2, $seat3, $seat1);
+
+        $this->assertEquals(150, $round->currentPot()->amount());
+        $round->end();
+
+        $this->assertEquals($winningHand->player(), $round->winningPlayer());
+        $this->assertEquals(0, $round->currentPot()->amount());
+        $this->assertEquals(5600, $round->players()->get(0)->chipStack()->amount());
     }
 
     /** @te3st */
@@ -1318,5 +1366,37 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $game->assignPlayersToTables(); // table has max of 9 or 5 players in holdem
 
         return $game;
+    }
+
+    /**
+     * @param $round
+     * @param $seat2
+     * @param $seat3
+     * @param $seat1
+     */
+    private function dealHandsAndPlayGame(Round $round, $seat2, $seat3, $seat1)
+    {
+        $round->dealHands();
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $round->playerCalls($seat1);
+        $round->playerCalls($seat2);
+        $round->playerChecks($seat3);
+
+        $round->dealFlop();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+        $round->playerChecks($seat3);
+
+        $round->dealTurn();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+        $round->playerChecks($seat3);
+
+        $round->dealRiver();
     }
 }

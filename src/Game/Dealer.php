@@ -2,14 +2,11 @@
 
 namespace xLink\Poker\Game;
 
-use Illuminate\Support\Collection;
 use xLink\Poker\Cards\Card;
 use xLink\Poker\Cards\CardCollection;
 use xLink\Poker\Cards\Contracts\CardEvaluator;
 use xLink\Poker\Cards\Deck;
-use xLink\Poker\Cards\Evaluators\SevenCard;
-use xLink\Poker\Cards\Hand;
-use xLink\Poker\Cards\Results\SevenCardResult;
+use xLink\Poker\Cards\SevenCardResultCollection;
 
 class Dealer
 {
@@ -72,48 +69,12 @@ class Dealer
 
     /**
      * @param CardCollection $board
-     * @param Hand[]         $playerHands
+     * @param HandCollection $playerHands
      *
-     * @return Hand
+     * @return SevenCardResultCollection
      */
-    public static function evaluateHands(CardCollection $board, Hand ...$playerHands)
+    public function evaluateHands(CardCollection $board, HandCollection $playerHands): SevenCardResultCollection
     {
-        $playerHands = collect($playerHands)
-            // evaluate hands
-            ->map(function (Hand $hand) use ($board) {
-                return SevenCard::evaluate($board, $hand);
-            })
-
-            // sort the hands by their hand rank
-            ->sortByDesc(function (SevenCardResult $result) {
-                return [$result->rank(), $result->value()];
-            })
-
-            // group by the hand rank
-            ->groupBy(function (SevenCardResult $result) {
-                return $result->rank();
-            })
-
-            // sort the collection by the count
-            ->sortByDesc(function (Collection $collection) {
-                return $collection->count();
-            })
-        ;
-
-        // if there is only 1 hand in the collection
-        if ($playerHands->first()->count() === 1) {
-            // return it
-            return $playerHands->first();
-        }
-
-        // if all hands in the first collection are equal
-        $handsAreEqual = $playerHands
-            ->first()
-            ->groupBy(function (SevenCardResult $result) {
-                return array_sum($result->value());
-            })
-        ;
-
-        return $handsAreEqual->first();
+        return $this->cardEvaluationRules->evaluateHands($board, $playerHands);
     }
 }
