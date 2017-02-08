@@ -6,8 +6,8 @@ use Illuminate\Support\Collection;
 
 class LeftToAct extends Collection
 {
-    const BIG_BLIND = 5;
-    const SMALL_BLIND = 4;
+    const BIG_BLIND = 6;
+    const SMALL_BLIND = 5;
     const AGGRESSIVELY_ACTIONED = 2;
     const STILL_TO_ACT = 1;
     const ACTIONED = 0;

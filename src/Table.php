@@ -2,7 +2,10 @@
 
 namespace xLink\Poker;
 
+use xLink\Poker\Cards\CardCollection;
+use xLink\Poker\Cards\Hand;
 use xLink\Poker\Game\Dealer;
+use xLink\Poker\Game\HandCollection;
 use xLink\Poker\Game\Player;
 use xLink\Poker\Game\PlayerCollection;
 
@@ -87,5 +90,32 @@ class Table
     public function playersSatDown(): PlayerCollection
     {
         return $this->players()->diff($this->playersSatOut)->values();
+    }
+
+    /**
+     * @return HandCollection
+     */
+    public function dealCardsToPlayers(): HandCollection
+    {
+        $this->hands = HandCollection::make();
+
+        $this->playersSatDown()->each(function (Player $player) {
+            $this->hands->push(Hand::create(CardCollection::make([
+                $this->dealer()->dealCard(),
+            ]), $player));
+        });
+
+        // Because xLink wants it done "properly"... Cunt.
+        $this->playersSatDown()->each(function (Player $player) {
+            $this->hands->map(function (Hand $hand) use ($player) {
+                if ($hand->player()->equals($player) === false) {
+                    return false;
+                }
+
+                return $hand->addCard($this->dealer()->dealCard());
+            });
+        });
+
+        return $this->hands;
     }
 }

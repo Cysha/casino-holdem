@@ -88,6 +88,9 @@ final class CashGame implements Game
         return $this->minimumBuyIn;
     }
 
+    /**
+     * @return PlayerCollection
+     */
     public function players(): PlayerCollection
     {
         return $this->players;

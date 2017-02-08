@@ -71,6 +71,8 @@ class Round
         $this->playerActions = ActionCollection::make();
         $this->leftToAct = LeftToAct::make();
 
+        $this->table()->dealer()->shuffleDeck();
+
         // init the betStacks and actions for each player
         $this->resetBetStacks();
         $this->setupLeftToAct();
@@ -159,11 +161,7 @@ class Round
      */
     public function playerIsStillIn(Player $actualPlayer)
     {
-        $playerCount = $this->playersStillIn()
-            ->filter(function (Player $player) use ($actualPlayer) {
-                return $player->name() === $actualPlayer->name();
-            })
-            ->count();
+        $playerCount = $this->playersStillIn()->filter->equals($actualPlayer)->count();
 
         return $playerCount === 1;
     }
@@ -185,6 +183,8 @@ class Round
     }
 
     /**
+     * TODO: Fix to make use of locatePlayerWithButton().
+     *
      * @return Player
      */
     public function playerWithSmallBlind(): Player
@@ -197,6 +197,8 @@ class Round
     }
 
     /**
+     * TODO: Fix to make use of locatePlayerWithButton().
+     *
      * @return Player
      */
     public function playerWithBigBlind(): Player
@@ -218,7 +220,7 @@ class Round
 
         $this->postBlind($player, $chips);
 
-        $this->playerActions()->push(new Action($player, Action::SB, $this->smallBlind()));
+        $this->playerActions()->push(new Action($player, Action::SMALL_BLIND, $this->smallBlind()));
         $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::SMALL_BLIND);
     }
 
@@ -232,7 +234,7 @@ class Round
 
         $this->postBlind($player, $chips);
 
-        $this->playerActions()->push(new Action($player, Action::BB, $this->bigBlind()));
+        $this->playerActions()->push(new Action($player, Action::BIG_BLIND, $this->bigBlind()));
         $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::BIG_BLIND);
     }
 
@@ -250,6 +252,14 @@ class Round
     private function bigBlind(): Chips
     {
         return Chips::fromAmount(50);
+    }
+
+    /**
+     * @return Chips
+     */
+    public function totalPotAmount(): Chips
+    {
+        return $this->currentPot;
     }
 
     /**
@@ -287,24 +297,7 @@ class Round
      */
     public function dealHands()
     {
-        $this->hands = HandCollection::make();
-
-        $this->table()->playersSatDown()->each(function (Player $player) {
-            $this->hands->push(Hand::create(CardCollection::make([
-                $this->table()->dealer()->dealCard(),
-            ]), $player));
-        });
-
-        // Because xLink wants it done "properly"... Cunt.
-        $this->table()->playersSatDown()->each(function (Player $player) {
-            $this->hands->map(function (Hand $hand) use ($player) {
-                if ($hand->player()->equals($player) === false) {
-                    return false;
-                }
-
-                return $hand->addCard($this->table()->dealer()->dealCard());
-            });
-        });
+        $this->hands = $this->table()->dealCardsToPlayers();
     }
 
     /**
@@ -314,9 +307,7 @@ class Round
      */
     public function playerHand(Player $player): Hand
     {
-        $hand = $this->hands->first(function (Hand $hand) use ($player) {
-            return $player->name() === $hand->player()->name();
-        });
+        $hand = $this->hands->findByPlayer($player);
 
         if ($hand === null) {
             throw RoundException::playerHasNoHand($player);
@@ -440,6 +431,8 @@ class Round
 
     /**
      * @param Player $player
+     *
+     * @throws RoundException
      */
     public function playerCalls(Player $player)
     {
@@ -459,6 +452,8 @@ class Round
     /**
      * @param Player $player
      * @param Chips  $chips
+     *
+     * @throws RoundException
      */
     public function playerRaises(Player $player, Chips $chips)
     {
@@ -472,6 +467,8 @@ class Round
 
     /**
      * @param Player $player
+     *
+     * @throws RoundException
      */
     public function playerFoldsHand(Player $player)
     {
@@ -485,6 +482,8 @@ class Round
 
     /**
      * @param Player $player
+     *
+     * @throws RoundException
      */
     public function playerPushesAllIn(Player $player)
     {
@@ -501,6 +500,8 @@ class Round
 
     /**
      * @param Player $player
+     *
+     * @throws RoundException
      */
     public function playerChecks(Player $player)
     {
@@ -548,14 +549,6 @@ class Round
     }
 
     /**
-     * @return Chips
-     */
-    public function totalPotAmount(): Chips
-    {
-        return $this->currentPot;
-    }
-
-    /**
      * Reset the leftToAct collection.
      */
     private function setupLeftToAct()
@@ -569,6 +562,9 @@ class Round
         $this->leftToAct = $this->leftToAct->setup($this->players());
     }
 
+    /**
+     * @param Player $player
+     */
     public function sitPlayerOut(Player $player)
     {
         $this->table()->sitPlayerOut($player);

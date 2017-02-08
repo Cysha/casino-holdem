@@ -991,8 +991,8 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round->playerChecks($player3); // BB
 
         $expected = ActionCollection::make([
-            new Action($player2, Action::SB, Chips::fromAmount(25)),
-            new Action($player3, Action::BB, Chips::fromAmount(50)),
+            new Action($player2, Action::SMALL_BLIND, Chips::fromAmount(25)),
+            new Action($player3, Action::BIG_BLIND, Chips::fromAmount(50)),
             new Action($player4, Action::CALL, Chips::fromAmount(50)),
             new Action($player1, Action::FOLD),
             new Action($player2, Action::CALL, Chips::fromAmount(25)),
@@ -1169,12 +1169,13 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         // deal some hands
         $round->dealHands();
 
-        // make sure we start with no chips on the table
-        $this->assertEquals(0, $round->betStacksTotal());
-
         $round->postSmallBlind($player1); // 25
         $round->postBigBlind($player2); // 50
         $round->playerChecks($player2); // 50
+    }
+
+    public function can_run_full_round_with_known_cards()
+    {
     }
 
     /** @te3st */

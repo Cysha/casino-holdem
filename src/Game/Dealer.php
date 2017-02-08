@@ -63,6 +63,14 @@ class Dealer
     }
 
     /**
+     * Shuffles the deck.
+     */
+    public function shuffleDeck()
+    {
+        $this->deck()->shuffle();
+    }
+
+    /**
      * @param CardCollection $board
      * @param Hand[]         $playerHands
      *

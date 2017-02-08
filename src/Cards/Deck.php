@@ -102,6 +102,8 @@ class Deck
 
     /**
      * Reset the deck, and shuffles the cards.
+     *
+     * @return bool
      */
     public function shuffle()
     {

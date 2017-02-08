@@ -97,7 +97,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $client = Client::register('xLink');
         $player = Player::fromClient($client);
 
-        $action = new Action($player, Action::SB, Chips::fromAmount(25));
+        $action = new Action($player, Action::SMALL_BLIND, Chips::fromAmount(25));
         $this->assertInstanceOf(Action::class, $action);
         $this->assertEquals('xLink has posted Small Blind (25).', $action->toString());
         $this->assertEquals('xLink has posted Small Blind (25).', $action->__toString());
@@ -109,7 +109,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $client = Client::register('xLink');
         $player = Player::fromClient($client);
 
-        $action = new Action($player, Action::BB, Chips::fromAmount(50));
+        $action = new Action($player, Action::BIG_BLIND, Chips::fromAmount(50));
         $this->assertInstanceOf(Action::class, $action);
         $this->assertEquals('xLink has posted Big Blind (50).', $action->toString());
         $this->assertEquals('xLink has posted Big Blind (50).', $action->__toString());

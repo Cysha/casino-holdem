@@ -7,4 +7,8 @@ extern/
 node_modules/
 tmp
 vendor/
-!bin\*.php
+!bin/test.php
+!bin/rules.php
+!bin/evaluator.php
+!bin/dealer.php
+!bin/bot.php

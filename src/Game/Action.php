@@ -4,8 +4,8 @@ namespace xLink\Poker\Game;
 
 class Action
 {
-    const BB = 6;
-    const SB = 5;
+    const BIG_BLIND = 6;
+    const SMALL_BLIND = 5;
     const ALLIN = 4;
     const FOLD = 3;
     const RAISE = 2;
@@ -54,31 +54,31 @@ class Action
     {
         $message = null;
         switch ($this->action) {
-            case 6:
+            case static::BIG_BLIND:
                 $message = sprintf('%s has posted Big Blind (%d).', $this->player->name(), $this->chips->amount());
             break;
 
-            case 5:
+            case static::SMALL_BLIND:
                 $message = sprintf('%s has posted Small Blind (%d).', $this->player->name(), $this->chips->amount());
             break;
 
-            case 4:
+            case static::ALLIN:
                 $message = sprintf('%s has pushed ALL IN (%d).', $this->player->name(), $this->chips->amount());
             break;
 
-            case 3:
+            case static::FOLD:
                 $message = sprintf('%s has folded.', $this->player->name());
             break;
 
-            case 2:
+            case static::RAISE:
                 $message = sprintf('%s has raised %d.', $this->player->name(), $this->chips->amount());
             break;
 
-            case 1:
+            case static::CALL:
                 $message = sprintf('%s has called %d.', $this->player->name(), $this->chips->amount());
             break;
 
-            case 0:
+            case static::CHECK:
                 $message = sprintf('%s has checked.', $this->player->name());
             break;
         }
