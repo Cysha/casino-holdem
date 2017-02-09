@@ -44,7 +44,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2,
+        ]));
 
         $this->assertCount(1, $result);
 
@@ -69,7 +71,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2, $hand3, $hand4]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2, $hand3, $hand4,
+        ]));
 
         $this->assertCount(1, $result);
 
@@ -104,7 +108,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2, $hand3, $hand4, $hand5, $hand6, $hand7, $hand8, $hand9]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2, $hand3, $hand4, $hand5, $hand6, $hand7, $hand8, $hand9,
+        ]));
 
         $this->assertCount(9, $result);
     }
@@ -135,7 +141,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2, $hand3, $hand4, $hand5, $hand6, $hand7, $hand8, $hand9]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2, $hand3, $hand4, $hand5, $hand6, $hand7, $hand8, $hand9,
+        ]));
 
         $this->assertCount(3, $result);
     }
@@ -154,7 +162,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2, $hand3]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2, $hand3,
+        ]));
 
         $this->assertCount(2, $result);
 
@@ -180,7 +190,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2,
+        ]));
 
         $this->assertCount(2, $result);
 
@@ -206,7 +218,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2,
+        ]));
 
         $this->assertCount(1, $result);
 
@@ -227,7 +241,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2,
+        ]));
 
         $this->assertCount(1, $result);
 
@@ -248,7 +264,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2,
+        ]));
 
         $this->assertCount(1, $result);
 
@@ -269,7 +287,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2,
+        ]));
 
         $this->assertCount(1, $result);
 
@@ -290,7 +310,9 @@ class DealerTest extends \PHPUnit_Framework_TestCase
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $result = $dealer->evaluateHands($board, HandCollection::make([$hand1, $hand2]));
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2,
+        ]));
 
         $this->assertCount(1, $result);
 

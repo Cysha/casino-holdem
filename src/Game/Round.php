@@ -163,6 +163,14 @@ class Round
     }
 
     /**
+     * @return Table
+     */
+    public function table(): Table
+    {
+        return $this->table;
+    }
+
+    /**
      * @param Player $actualPlayer
      *
      * @return bool
@@ -172,14 +180,6 @@ class Round
         $playerCount = $this->playersStillIn()->filter->equals($actualPlayer)->count();
 
         return $playerCount === 1;
-    }
-
-    /**
-     * @return Table
-     */
-    public function table(): Table
-    {
-        return $this->table;
     }
 
     /**
@@ -579,7 +579,10 @@ class Round
         $this->leftToAct = $this->leftToAct()->removePlayer($player);
     }
 
-    private function determineWinningHands()
+    /**
+     * @return Player
+     */
+    private function determineWinningHands(): Player
     {
         $winningResults = $this->table()->dealer()->evaluateHands($this->communityCards, $this->hands);
         $winningHands = $winningResults->map->hand();
@@ -588,12 +591,18 @@ class Round
         return $this->winningPlayer;
     }
 
+    /**
+     * Moves the chips from the currentPot to the players ChipStack.
+     */
     private function distributeWinnings()
     {
         $this->winningPlayer->chipStack()->add($this->currentPot);
         $this->currentPot = Chips::zero();
     }
 
+    /**
+     * @return Player
+     */
     public function winningPlayer(): Player
     {
         if ($this->winningPlayer === null) {
