@@ -21,9 +21,10 @@ class LeftToAct extends Collection
      */
     public function setup(PlayerCollection $players): self
     {
-        $collection = $players->map(function (Player $player) {
+        $collection = $players->map(function (Player $player, $seatNumber) {
             // everyone is still left to act
             return [
+                'seat' => $seatNumber,
                 'player' => $player->name(),
                 'action' => self::STILL_TO_ACT,
             ];
@@ -33,7 +34,7 @@ class LeftToAct extends Collection
     }
 
     /**
-     * Resets all players, and move BTN/SB/BB to bottom of queue.
+     * Resets all players, and move dealer to the bottom of queue.
      *
      * @param PlayerCollection $players
      *
@@ -46,41 +47,52 @@ class LeftToAct extends Collection
         // move the dealer to last
         $collection = $collection->movePlayerToLastInQueue();
 
-        return self::make($collection->toArray());
+        return self::make($collection->values()->toArray());
     }
 
     /**
-     * @param LeftToAct $collection
-     *
      * @return LeftToAct
      */
-    public function reset(LeftToAct $collection)
+    public function resetActions(): self
     {
-        $collection = $collection
-            ->map(function ($array) {
-                return [
-                    'player' => $array['player'],
-                    'action' => self::STILL_TO_ACT,
-                ];
-            })
-            ->toArray();
+        $collection = $this
+            ->transform(function ($array) {
+                $array['action'] = self::STILL_TO_ACT;
 
-        return self::make($collection);
+                return $array;
+            })
+            ->values();
+
+        return self::make($collection->values()->toArray());
+    }
+
+    /**
+     * @return LeftToAct
+     */
+    public function sortBySeats(): self
+    {
+        $collection = $this
+            ->sortBy(function ($array) {
+                return $array['seat'];
+            }, SORT_NUMERIC)
+            ->values();
+
+        return self::make($collection->values()->toArray());
     }
 
     /**
      * @return self
      */
-    public function playerHasActioned(int $value = 0): self
+    public function playerHasActioned(Player $player, int $value = 0): self
     {
         $collection = $this->movePlayerToLastInQueue();
-
         if ($value === self::AGGRESSIVELY_ACTIONED) {
-            $collection = $this->reset($collection);
+            $collection = $collection->resetActions();
         }
-        $collection->setActivity($collection->last()['player'], $value);
 
-        return new self($collection->toArray());
+        $collection->setActivity($player->name(), $value);
+
+        return self::make($collection->values()->toArray());
     }
 
     /**
@@ -91,12 +103,18 @@ class LeftToAct extends Collection
      */
     public function setActivity($player, int $activity): self
     {
-        $this->put($this->keys()->last(), [
-            'player' => $player,
-            'action' => $activity,
-        ]);
+        // var_dump($this);
+        $result = $this
+            ->filter(function ($array) use ($player) {
+                return $array['player'] === $player;
+            })
+        ;
 
-        return new self($this);
+        $array = $result->first();
+        $array['action'] = $activity;
+        $this->put($result->keys()->first(), $array);
+
+        return self::make($this->values()->toArray());
     }
 
     /**
@@ -104,22 +122,43 @@ class LeftToAct extends Collection
      */
     public function movePlayerToLastInQueue(): self
     {
-        return new self($this->splice(1)->merge($this->splice(0, 1)));
+        $collection = $this->splice(1)->merge($this->splice(0, 1));
+
+        return self::make($collection->values()->toArray());
     }
 
     /**
      * @return LeftToAct
      */
-    public function removePlayer(Player $player)
+    public function resetPlayerListFromSeat(int $seatNumber): self
+    {
+        $firstPlayer = $this->first();
+        if ($seatNumber === $firstPlayer['seat']) {
+            return self::make($this->values()->toArray());
+        }
+
+        $new = $this->sortBy(function ($value) use ($seatNumber) {
+            if ($value['seat'] < $seatNumber) {
+                return ($value['seat'] + 1) * 10;
+            }
+
+            return $value['seat'];
+        });
+
+        return new self($new->values());
+    }
+
+    /**
+     * @return LeftToAct
+     */
+    public function removePlayer(Player $player): self
     {
         $collection = $this
             ->reject(function ($array) use ($player) {
                 return $array['player'] === $player->name();
-            })
-            ->values()
-            ->toArray();
+            });
 
-        return new self($collection);
+        return self::make($collection->values()->toArray());
     }
 
     /**

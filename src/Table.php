@@ -4,6 +4,7 @@ namespace xLink\Poker;
 
 use xLink\Poker\Cards\CardCollection;
 use xLink\Poker\Cards\Hand;
+use xLink\Poker\Exceptions\TableException;
 use xLink\Poker\Game\Dealer;
 use xLink\Poker\Game\HandCollection;
 use xLink\Poker\Game\Player;
@@ -25,6 +26,11 @@ class Table
      * @var PlayerCollection
      */
     private $playersSatOut;
+
+    /**
+     * @var int
+     */
+    private $button = 0;
 
     /**
      * Table constructor.
@@ -59,6 +65,14 @@ class Table
     }
 
     /**
+     * @return int
+     */
+    public function button(): int
+    {
+        return $this->button;
+    }
+
+    /**
      * @return PlayerCollection
      */
     public function players(): PlayerCollection
@@ -73,7 +87,7 @@ class Table
      */
     public function locatePlayerWithButton(): Player
     {
-        return $this->playersSatDown()->first();
+        return $this->playersSatDown()->get($this->button);
     }
 
     /**
@@ -90,6 +104,50 @@ class Table
     public function playersSatDown(): PlayerCollection
     {
         return $this->players()->diff($this->playersSatOut)->values();
+    }
+
+    /**
+     * @param Player $player
+     *
+     * @throws TableException
+     */
+    public function giveButtonToPlayer(Player $player)
+    {
+        $playerIndex = $this->playersSatDown()
+            ->filter
+            ->equals($player)
+            ->keys()
+            ->first();
+
+        if ($playerIndex === null) {
+            throw TableException::invalidButtonPosition();
+        }
+
+        $this->button = $playerIndex;
+    }
+
+    /**
+     * Moves the button along the table seats.
+     */
+    public function moveButton()
+    {
+        ++$this->button;
+
+        if ($this->button >= $this->playersSatDown()->count()) {
+            $this->button = 0;
+        }
+    }
+
+    /**
+     * @param Player $player
+     *
+     * @return int
+     */
+    public function findSeat(Player $findPlayer): int
+    {
+        return $this->players()->filter(function (Player $player) use ($findPlayer) {
+            return $player->equals($findPlayer);
+        })->keys()->first();
     }
 
     /**

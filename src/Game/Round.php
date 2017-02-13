@@ -171,6 +171,39 @@ class Round
     }
 
     /**
+     * @return ChipStackCollection
+     */
+    public function betStacks(): ChipStackCollection
+    {
+        return $this->betStacks;
+    }
+
+    /**
+     * Deal the hands to the players.
+     */
+    public function dealHands()
+    {
+        $this->hands = $this->table()->dealCardsToPlayers();
+    }
+
+    /**
+     * @return int
+     */
+    public function betStacksTotal(): int
+    {
+        return $this->betStacks()->total()->amount();
+    }
+
+    /**
+     * Moves the chips from the currentPot to the players ChipStack.
+     */
+    private function distributeWinnings()
+    {
+        $this->winningPlayer->chipStack()->add($this->currentPot);
+        $this->currentPot = Chips::zero();
+    }
+
+    /**
      * @param Player $actualPlayer
      *
      * @return bool
@@ -201,7 +234,7 @@ class Round
             return $this->table()->playersSatDown()->get(0);
         }
 
-        return $this->table()->playersSatDown()->get(1);
+        return $this->table()->playersSatDown()->get($this->table()->button() + 1);
     }
 
     /**
@@ -215,7 +248,7 @@ class Round
             return $this->table()->playersSatDown()->get(1);
         }
 
-        return $this->table()->playersSatDown()->get(2);
+        return $this->table()->playersSatDown()->get($this->table()->button() + 2);
     }
 
     /**
@@ -229,7 +262,7 @@ class Round
         $this->postBlind($player, $chips);
 
         $this->playerActions()->push(new Action($player, Action::SMALL_BLIND, $this->smallBlind()));
-        $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::SMALL_BLIND);
+        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::SMALL_BLIND);
     }
 
     /**
@@ -243,7 +276,7 @@ class Round
         $this->postBlind($player, $chips);
 
         $this->playerActions()->push(new Action($player, Action::BIG_BLIND, $this->bigBlind()));
-        $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::BIG_BLIND);
+        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::BIG_BLIND);
     }
 
     /**
@@ -281,14 +314,6 @@ class Round
     }
 
     /**
-     * @return ChipStackCollection
-     */
-    public function betStacks(): ChipStackCollection
-    {
-        return $this->betStacks;
-    }
-
-    /**
      * @param Player $player
      * @param Chips  $chips
      */
@@ -298,14 +323,6 @@ class Round
 
         // Add chips to player's table stack
         $this->betStacks->put($player->name(), $chips);
-    }
-
-    /**
-     * Deal the hands to the players.
-     */
-    public function dealHands()
-    {
-        $this->hands = $this->table()->dealCardsToPlayers();
     }
 
     /**
@@ -337,14 +354,6 @@ class Round
     }
 
     /**
-     * @return int
-     */
-    public function betStacksTotal(): int
-    {
-        return $this->betStacks()->total()->amount();
-    }
-
-    /**
      * @return Chips
      */
     public function collectChipTotal(): Chips
@@ -370,7 +379,12 @@ class Round
         }
 
         $this->collectChipTotal();
-        $this->leftToAct = $this->leftToAct->setup($this->playersStillIn());
+
+        $seat = $this->table()->findSeat($this->playerWithSmallBlind());
+        $this->leftToAct = $this->leftToAct
+            ->resetActions()
+            ->sortBySeats()
+            ->resetPlayerListFromSeat($seat);
 
         // burn one
         $this->burnCards->push($this->table()->dealer()->dealCard());
@@ -389,7 +403,7 @@ class Round
         if ($this->communityCards()->count() !== 3) {
             throw RoundException::turnHasBeenDealt();
         }
-        if ($player = $this->whosTurnIsIt()) {
+        if (($player = $this->whosTurnIsIt()) !== false) {
             throw RoundException::playerStillNeedsToAct($player);
         }
 
@@ -404,7 +418,7 @@ class Round
         if ($this->communityCards()->count() !== 4) {
             throw RoundException::riverHasBeenDealt();
         }
-        if ($player = $this->whosTurnIsIt()) {
+        if (($player = $this->whosTurnIsIt()) !== false) {
             throw RoundException::playerStillNeedsToAct($player);
         }
 
@@ -417,7 +431,12 @@ class Round
     private function dealCommunityCard()
     {
         $this->collectChipTotal();
-        $this->leftToAct = $this->leftToAct->setup($this->playersStillIn());
+
+        $seat = $this->table()->findSeat($this->playerWithSmallBlind());
+        $this->leftToAct = $this->leftToAct
+            ->resetActions()
+            ->sortBySeats()
+            ->resetPlayerListFromSeat($seat);
 
         // burn one
         $this->burnCards->push($this->table()->dealer()->dealCard());
@@ -432,6 +451,9 @@ class Round
     public function checkPlayerTryingToAct(Player $player)
     {
         $actualPlayer = $this->whosTurnIsIt();
+        if ($actualPlayer === false) {
+            throw RoundException::noPlayerActionsNeeded();
+        }
         if ($player !== $actualPlayer) {
             throw RoundException::playerTryingToActOutOfTurn($player, $actualPlayer);
         }
@@ -454,7 +476,7 @@ class Round
         $this->playerActions->push(new Action($player, Action::CALL, $amountLeftToBet));
 
         $this->placeChipBet($player, $amountLeftToBet);
-        $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::ACTIONED);
+        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::ACTIONED);
     }
 
     /**
@@ -470,7 +492,7 @@ class Round
         $this->playerActions->push(new Action($player, Action::RAISE, $chips));
 
         $this->placeChipBet($player, $chips);
-        $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::AGGRESSIVELY_ACTIONED);
+        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::AGGRESSIVELY_ACTIONED);
     }
 
     /**
@@ -503,7 +525,7 @@ class Round
         $this->playerActions()->push(new Action($player, Action::ALLIN, Chips::fromAmount($chips->amount())));
 
         $this->placeChipBet($player, $chips);
-        $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::AGGRESSIVELY_ACTIONED);
+        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::AGGRESSIVELY_ACTIONED);
     }
 
     /**
@@ -516,7 +538,7 @@ class Round
         $this->checkPlayerTryingToAct($player);
 
         $this->playerActions()->push(new Action($player, Action::CHECK));
-        $this->leftToAct = $this->leftToAct->playerHasActioned(LeftToAct::ACTIONED);
+        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::ACTIONED);
     }
 
     /**
@@ -561,13 +583,15 @@ class Round
      */
     private function setupLeftToAct()
     {
-        if ($this->players()->count() > 2) {
-            $this->leftToAct = $this->leftToAct->setupWithoutDealer($this->players());
+        if ($this->players()->count() === 2) {
+            $this->leftToAct = $this->leftToAct->setup($this->players());
 
             return;
         }
 
-        $this->leftToAct = $this->leftToAct->setup($this->players());
+        $this->leftToAct = $this->leftToAct
+            ->setup($this->players())
+            ->resetPlayerListFromSeat($this->table()->button() + 1);
     }
 
     /**
@@ -589,15 +613,6 @@ class Round
         $this->winningPlayer = $winningHands->first()->player();
 
         return $this->winningPlayer;
-    }
-
-    /**
-     * Moves the chips from the currentPot to the players ChipStack.
-     */
-    private function distributeWinnings()
-    {
-        $this->winningPlayer->chipStack()->add($this->currentPot);
-        $this->currentPot = Chips::zero();
     }
 
     /**

@@ -23,7 +23,7 @@ class Action
     private $action;
 
     /**
-     * @car Chips
+     * @var Chips
      */
     private $chips;
 

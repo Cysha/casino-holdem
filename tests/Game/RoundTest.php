@@ -3,6 +3,7 @@
 namespace xLink\Tests\Game;
 
 use Ramsey\Uuid\Uuid;
+use xLink\Poker\Cards\CardCollection;
 use xLink\Poker\Cards\Deck;
 use xLink\Poker\Cards\Evaluators\SevenCard;
 use xLink\Poker\Cards\Hand;
@@ -15,7 +16,6 @@ use xLink\Poker\Game\CashGame;
 use xLink\Poker\Game\Chips;
 use xLink\Poker\Game\Dealer;
 use xLink\Poker\Game\Game;
-use xLink\Poker\Game\LeftToAct;
 use xLink\Poker\Game\Player;
 use xLink\Poker\Game\PlayerCollection;
 use xLink\Poker\Game\Round;
@@ -431,148 +431,6 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $round->whosTurnIsIt());
     }
 
-    /** @test */
-    public function actioned_player_gets_pushed_to_last_place_on_leftToAct_collection()
-    {
-        $game = $this->createGenericGame(9);
-
-        /** @var Table $table */
-        $table = $game->tables()->first();
-
-        $seat2 = $table->playersSatDown()->get(1);
-
-        $round = Round::start($table);
-
-        $expected = LeftToAct::make([
-            ['player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player7', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player8', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player9', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
-        ]);
-        $this->assertEquals($expected, $round->leftToAct());
-
-        $round->playerCalls($seat2);
-
-        $expected = LeftToAct::make([
-            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player7', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player8', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player9', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player2', 'action' => LeftToAct::ACTIONED],
-        ]);
-        $this->assertEquals($expected, $round->leftToAct());
-    }
-
-    /** @test */
-    public function aggressive_action_resets_all_actions()
-    {
-        $game = $this->createGenericGame(6);
-
-        /** @var Table $table */
-        $table = $game->tables()->first();
-
-        $seat1 = $table->playersSatDown()->get(0);
-        $seat2 = $table->playersSatDown()->get(1);
-        $seat3 = $table->playersSatDown()->get(2);
-        $seat4 = $table->playersSatDown()->get(3);
-        $seat5 = $table->playersSatDown()->get(4);
-        $seat6 = $table->playersSatDown()->get(5);
-
-        $round = Round::start($table);
-
-        $expected = LeftToAct::make([
-            ['player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
-        ]);
-        $this->assertEquals($expected, $round->leftToAct());
-
-        $round->postSmallBlind($seat2);
-        $round->postBigBlind($seat3);
-
-        $round->playerCalls($seat4);
-        $round->playerCalls($seat5);
-        $round->playerCalls($seat6);
-        $round->playerPushesAllIn($seat1);
-
-        $expected = LeftToAct::make([
-            ['player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player1', 'action' => LeftToAct::AGGRESSIVELY_ACTIONED],
-        ]);
-        $this->assertEquals($expected, $round->leftToAct());
-    }
-
-    /** @test */
-    public function fold_action_gets_players_removed_from_leftToAct()
-    {
-        $game = $this->createGenericGame(6);
-
-        /** @var Table $table */
-        $table = $game->tables()->first();
-
-        $seat1 = $table->playersSatDown()->get(0);
-        $seat2 = $table->playersSatDown()->get(1);
-        $seat3 = $table->playersSatDown()->get(2);
-        $seat4 = $table->playersSatDown()->get(3);
-        $seat5 = $table->playersSatDown()->get(4);
-        $seat6 = $table->playersSatDown()->get(5);
-
-        $round = Round::start($table);
-
-        $expected = LeftToAct::make([
-            ['player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
-        ]);
-        $this->assertEquals($expected, $round->leftToAct());
-
-        $round->postSmallBlind($seat2);
-        $round->postBigBlind($seat3);
-
-        $round->playerCalls($seat4);
-        $round->playerFoldsHand($seat5);
-
-        $expected = LeftToAct::make([
-            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player2', 'action' => LeftToAct::SMALL_BLIND],
-            ['player' => 'player3', 'action' => LeftToAct::BIG_BLIND],
-            ['player' => 'player4', 'action' => LeftToAct::ACTIONED],
-        ]);
-        $this->assertEquals($expected, $round->leftToAct());
-
-        $round->playerCalls($seat6);
-        $round->playerPushesAllIn($seat1);
-
-        $expected = LeftToAct::make([
-            ['player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['player' => 'player1', 'action' => LeftToAct::AGGRESSIVELY_ACTIONED],
-        ]);
-        $this->assertEquals($expected, $round->leftToAct());
-    }
-
     /**
      * @expectedException xLink\Poker\Exceptions\RoundException
      * @test
@@ -707,12 +565,12 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->dealFlop();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
         $round->playerChecks($seat6);
+        $round->playerChecks($seat1);
 
         $round->dealTurn();
     }
@@ -750,12 +608,12 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->dealFlop();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
         $round->playerChecks($seat6);
+        $round->playerChecks($seat1);
 
         $round->dealTurn();
         $round->dealTurn();
@@ -794,11 +652,11 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->dealFlop();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
+        $round->playerChecks($seat1);
 
         $round->dealTurn();
     }
@@ -851,21 +709,21 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->dealFlop();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
         $round->playerChecks($seat6);
+        $round->playerChecks($seat1);
 
         $round->dealTurn();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
         $round->playerChecks($seat6);
+        $round->playerChecks($seat1);
 
         $round->dealRiver();
     }
@@ -903,21 +761,21 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->dealFlop();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
         $round->playerChecks($seat6);
+        $round->playerChecks($seat1);
 
         $round->dealTurn();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
         $round->playerChecks($seat6);
+        $round->playerChecks($seat1);
 
         $round->dealRiver();
         $round->dealRiver();
@@ -956,20 +814,20 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->dealFlop();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
         $round->playerChecks($seat6);
+        $round->playerChecks($seat1);
 
         $round->dealTurn();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
+        $round->playerChecks($seat1);
 
         $round->dealRiver();
     }
@@ -1007,21 +865,21 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->dealFlop();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
         $round->playerChecks($seat6);
+        $round->playerChecks($seat1);
 
         $round->dealTurn();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
         $round->playerChecks($seat6);
+        $round->playerChecks($seat1);
 
         $round->dealRiver();
         $round->winningPlayer();
@@ -1250,7 +1108,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
             $player3,
         ]);
 
-        $board = Hand::createUsingString('3s 3h 8h 2s 4c', $player1)->cards();
+        $board = CardCollection::fromString('3s 3h 8h 2s 4c');
         $winningHand = Hand::createUsingString('As Ad', $player1);
 
         /** @var SevenCard $evaluator */
@@ -1442,15 +1300,15 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         $round->dealFlop();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
+        $round->playerChecks($seat1);
 
         $round->dealTurn();
 
-        $round->playerChecks($seat1);
         $round->playerChecks($seat2);
         $round->playerChecks($seat3);
+        $round->playerChecks($seat1);
 
         $round->dealRiver();
     }

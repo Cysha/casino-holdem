@@ -116,4 +116,30 @@ class RoundException extends DomainException
 
         return new static($message);
     }
+
+    /**
+     * @param null $message
+     *
+     * @return static
+     */
+    public static function invalidButtonPosition($message = null)
+    {
+        $defaultMessage = sprintf('Tried giving the button to a player that is not sat down.');
+        $message = null === $message ? $defaultMessage : $message;
+
+        return new static($message);
+    }
+
+    /**
+     * @param null $message
+     *
+     * @return static
+     */
+    public static function noPlayerActionsNeeded($message = null)
+    {
+        $defaultMessage = sprintf('A player is trying to act when there is no valid player actions left.');
+        $message = null === $message ? $defaultMessage : $message;
+
+        return new static($message);
+    }
 }
