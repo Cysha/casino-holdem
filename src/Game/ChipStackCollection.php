@@ -12,4 +12,12 @@ class ChipStackCollection extends Collection
             return $chips->amount();
         }));
     }
+
+    /**
+     * @return Chips
+     */
+    public function findByPlayer(Player $player): Chips
+    {
+        return $this->get($player->name()) ?? Chips::zero();
+    }
 }

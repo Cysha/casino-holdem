@@ -68,12 +68,12 @@ class Round
     private function __construct(Table $table)
     {
         $this->table = $table;
+        $this->currentPot = Chips::zero();
         $this->betStacks = ChipStackCollection::make();
         $this->hands = HandCollection::make();
         $this->communityCards = CardCollection::make();
         $this->burnCards = CardCollection::make();
         $this->foldedPlayers = PlayerCollection::make();
-        $this->currentPot = Chips::zero();
         $this->playerActions = ActionCollection::make();
         $this->leftToAct = LeftToAct::make();
 
@@ -312,7 +312,7 @@ class Round
      */
     public function playerBetStack(Player $player): Chips
     {
-        return $this->betStacks->get($player->name()) ?? Chips::zero();
+        return $this->betStacks->findByPlayer($player);
     }
 
     /**
@@ -523,11 +523,32 @@ class Round
 
         $chips = $player->chipStack();
 
+        $stacks = $this->playersStillIn()
+            ->map(function (Player $player) {
+                return $player->chipStack()->amount();
+            })
+            ->merge($this->betStacks()->map(function (Chips $chips) {
+                return $chips->amount();
+            }));
+
+        if ($chips->amount() > $stacks->max()) {
+            $nextHighest = $stacks
+                ->reject(function ($stack) use ($chips) {
+                    return $stack === $chips->amount();
+                })
+                ->max();
+            $betStackAmount = $this->betStacks()
+                ->findByPlayer($player)
+                ->amount();
+
+            $chips = Chips::fromAmount(($nextHighest - $betStackAmount));
+        }
+
         // gotta create a new chip obj here cause of PHPs /awesome/ objRef ability :D
         $this->playerActions()->push(new Action($player, Action::ALLIN, Chips::fromAmount($chips->amount())));
 
         $this->placeChipBet($player, $chips);
-        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::AGGRESSIVELY_ACTIONED);
+        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::ALL_IN);
     }
 
     /**

@@ -431,6 +431,39 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $round->whosTurnIsIt());
     }
 
+    /** @test */
+    public function can_confirm_whos_turn_it_is_with_all_ins()
+    {
+        $game = $this->createGenericGame(4);
+
+        $table = $game->tables()->first();
+
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1); // SB - 25
+        $seat3 = $table->playersSatDown()->get(2); // BB - 50
+        $seat4 = $table->playersSatDown()->get(3); // Call - 50
+
+        $round = Round::start($table);
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $this->assertEquals($seat4, $round->whosTurnIsIt());
+        $round->playerPushesAllIn($seat4);
+
+        $this->assertEquals($seat1, $round->whosTurnIsIt());
+        $round->playerFoldsHand($seat1);
+
+        $this->assertEquals($seat2, $round->whosTurnIsIt());
+        $round->playerPushesAllIn($seat2);
+
+        $this->assertEquals($seat3, $round->whosTurnIsIt());
+        $round->playerFoldsHand($seat3);
+
+        // no one else has to action
+        $this->assertEquals(false, $round->whosTurnIsIt());
+    }
+
     /**
      * @expectedException xLink\Poker\Exceptions\RoundException
      * @test
@@ -1159,24 +1192,25 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         /** @var Table $table */
         $table = $game->tables()->first();
 
-        /** @var Player $player1 */
-        $player1 = $table->playersSatDown()->first();
-        $player2 = $table->playersSatDown()->get(1);
-        $player3 = $table->playersSatDown()->get(2);
+        /* @var Player $player1 */
+        $xLink = $table->playersSatDown()->first();
+        $jesus = $table->playersSatDown()->get(1);
+        $melk = $table->playersSatDown()->get(2);
 
         $round = Round::start($table);
 
-        $round->postSmallBlind($player2);
-        $round->postBigBlind($player3);
+        $round->postSmallBlind($jesus); // 25
+        $round->postBigBlind($melk); // 50
 
-        $round->playerPushesAllIn($player1); // 150
-        $round->playerPushesAllIn($player2); // SB + 275
+        $round->playerPushesAllIn($xLink); // 150
+        $round->playerPushesAllIn($jesus); // SB + 275  (300)
 
-        // if they call, then calling to 300
-        $round->playerCalls($player3);
-
-        // if they _last_ to act, player can only put in the biggest amount on the table
-        $round->playerPushesAllIn($player3);
+        // if the _last_ to act, player can only put in the second biggest amount on the table
+        $round->playerPushesAllIn($melk);
+        dump($round->leftToAct());
+        $this->assertEquals(0, $xLink->chipStack()->amount());
+        $this->assertEquals(0, $jesus->chipStack()->amount());
+        $this->assertEquals(500, $melk->chipStack()->amount());
 
         /*
         # Pot
@@ -1191,7 +1225,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         */
 
         //total table amount
-        $this->assertEquals(800, $round->betStacks()->total()->amount());
+        $this->assertEquals(750, $round->betStacks()->total()->amount());
     }
 
     /** @te3st */

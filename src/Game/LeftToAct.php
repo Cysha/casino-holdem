@@ -8,6 +8,7 @@ class LeftToAct extends Collection
 {
     const BIG_BLIND = 6;
     const SMALL_BLIND = 5;
+    const ALL_IN = 3;
     const AGGRESSIVELY_ACTIONED = 2;
     const STILL_TO_ACT = 1;
     const ACTIONED = 0;
@@ -57,7 +58,9 @@ class LeftToAct extends Collection
     {
         $collection = $this
             ->transform(function ($array) {
-                $array['action'] = self::STILL_TO_ACT;
+                if ($array['action'] !== self::ALL_IN) {
+                    $array['action'] = self::STILL_TO_ACT;
+                }
 
                 return $array;
             })
@@ -86,7 +89,7 @@ class LeftToAct extends Collection
     public function playerHasActioned(Player $player, int $value = 0): self
     {
         $collection = $this->movePlayerToLastInQueue();
-        if ($value === self::AGGRESSIVELY_ACTIONED) {
+        if (in_array($value, [self::AGGRESSIVELY_ACTIONED, self::ALL_IN])) {
             $collection = $collection->resetActions();
         }
 
@@ -168,7 +171,7 @@ class LeftToAct extends Collection
     {
         return $this
             ->reject(function ($value) {
-                return in_array($value['action'], [self::ACTIONED, self::AGGRESSIVELY_ACTIONED]);
+                return in_array($value['action'], [self::ACTIONED, self::AGGRESSIVELY_ACTIONED, self::ALL_IN]);
             })
             ->first()
         ;

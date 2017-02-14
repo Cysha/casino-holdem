@@ -199,6 +199,37 @@ class LeftToActTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function player_can_all_in()
+    {
+        $game = $this->createGenericGame(4);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+        $seat1 = $table->playersSatDown()->get(0);
+
+        $leftToAct = LeftToAct::make([])
+            ->setup($table->playersSatDown());
+
+        $expected = LeftToAct::make([
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
+            ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
+            ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
+            ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
+        ]);
+        $this->assertEquals($expected, $leftToAct);
+
+        $leftToAct = $leftToAct->playerHasActioned($seat1, LeftToAct::ALL_IN);
+
+        $expected = LeftToAct::make([
+            ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
+            ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
+            ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALL_IN],
+        ]);
+        $this->assertEquals($expected, $leftToAct);
+    }
+
+    /** @test */
     public function checks_leftToAct_throughout_a_complete_round()
     {
         $game = $this->createGenericGame(4);
@@ -388,7 +419,7 @@ class LeftToActTest extends \PHPUnit_Framework_TestCase
             ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
             ['seat' => 4, 'player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
             ['seat' => 5, 'player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::AGGRESSIVELY_ACTIONED],
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALL_IN],
         ]);
 
         $this->assertEquals($expected, $round->leftToAct());
@@ -444,7 +475,7 @@ class LeftToActTest extends \PHPUnit_Framework_TestCase
             ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
             ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
             ['seat' => 5, 'player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::AGGRESSIVELY_ACTIONED],
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALL_IN],
         ]);
         $this->assertEquals($expected, $round->leftToAct());
     }

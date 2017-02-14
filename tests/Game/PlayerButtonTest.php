@@ -35,7 +35,6 @@ class PlayerButtonTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($seat1, $table->locatePlayerWithButton());
 
         $table->moveButton();
-
         $this->assertEquals($seat2, $table->locatePlayerWithButton());
     }
 
@@ -51,11 +50,9 @@ class PlayerButtonTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($seat1, $table->locatePlayerWithButton());
 
         $table->moveButton();
-
         $this->assertEquals($seat2, $table->locatePlayerWithButton());
 
         $table->moveButton();
-
         $this->assertEquals($seat1, $table->locatePlayerWithButton());
     }
 
@@ -70,11 +67,9 @@ class PlayerButtonTest extends \PHPUnit_Framework_TestCase
         $seat3 = $table->playersSatDown()->get(2);
 
         $table->sitPlayerOut($seat2);
-
         $this->assertEquals($seat1, $table->locatePlayerWithButton());
 
         $table->moveButton();
-
         $this->assertEquals($seat3, $table->locatePlayerWithButton());
     }
 
@@ -106,15 +101,12 @@ class PlayerButtonTest extends \PHPUnit_Framework_TestCase
         $seat4 = $table->playersSatDown()->get(3);
 
         $table->giveButtonToPlayer($seat3);
-
         $this->assertEquals($seat3, $table->locatePlayerWithButton());
 
         $table->moveButton();
-
         $this->assertEquals($seat4, $table->locatePlayerWithButton());
 
         $table->moveButton();
-
         $this->assertEquals($seat1, $table->locatePlayerWithButton());
     }
 
@@ -151,13 +143,13 @@ class PlayerButtonTest extends \PHPUnit_Framework_TestCase
         $hands = $this->createMock(HandCollection::class);
 
         $evaluator->method('evaluateHands')
-                  ->willReturn($results);
+            ->willReturn($results);
 
         $results->method('map')
-                ->willReturn($hands);
+            ->willReturn($hands);
 
         $hands->method('first')
-                ->willReturn(Hand::createUsingString('4c 2s', $player));
+            ->willReturn(Hand::createUsingString('4c 2s', $player));
 
         $dealer = Dealer::startWork(new Deck(), $evaluator);
         $players = $game->players();
