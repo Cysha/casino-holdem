@@ -299,20 +299,34 @@ class LeftToActTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->assertEquals($expected, $round->leftToAct());
 
-        /*$round->playerRaises($player3, Chips::fromAmount(450)); // 450
+        $round->playerRaises($player3, Chips::fromAmount(450)); // 450
         $round->playerCalls($player4); // 450
 
+        $expected = LeftToAct::make([
+            ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::AGGRESSIVELY_ACTIONED],
+            ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::ACTIONED],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+
         // collect chips, burn 1, deal 1
-        // var_dump($round->leftToAct()->map(function ($player) { return implode(' / ', $player); }));
         $round->dealRiver();
 
-        // var_dump($round->leftToAct()->map(function ($player) { return implode(' / ', $player); }));
+        $expected = LeftToAct::make([
+            ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
+            ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
 
         $round->playerPushesAllIn($player3); // 250
         $round->playerCalls($player4); // 250
-        // var_dump($round->leftToAct()->map(function ($player) { return implode(' / ', $player); }));
 
-        $round->end();*/
+        $expected = LeftToAct::make([
+            ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::ALL_IN],
+            ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::ACTIONED],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+
+        $round->end();
     }
 
     /** @test */
