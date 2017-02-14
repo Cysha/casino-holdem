@@ -4,6 +4,7 @@ namespace xLink\Poker\Game;
 
 use xLink\Poker\Cards\CardCollection;
 use xLink\Poker\Cards\Hand;
+use xLink\Poker\Cards\Results\SevenCardResult;
 use xLink\Poker\Exceptions\RoundException;
 use xLink\Poker\Table;
 
@@ -104,6 +105,7 @@ class Round
 
         $this->determineWinningHands();
         $this->distributeWinnings();
+        $this->table()->moveButton();
     }
 
     /**
@@ -609,7 +611,9 @@ class Round
     private function determineWinningHands(): Player
     {
         $winningResults = $this->table()->dealer()->evaluateHands($this->communityCards, $this->hands);
-        $winningHands = $winningResults->map->hand();
+        $winningHands = $winningResults->map(function (SevenCardResult $result) {
+            return $result->hand();
+        });
         $this->winningPlayer = $winningHands->first()->player();
 
         return $this->winningPlayer;

@@ -3,11 +3,19 @@
 namespace xLink\Tests\Game;
 
 use Ramsey\Uuid\Uuid;
+use xLink\Poker\Cards\Deck;
+use xLink\Poker\Cards\Evaluators\SevenCard;
+use xLink\Poker\Cards\Hand;
+use xLink\Poker\Cards\SevenCardResultCollection;
 use xLink\Poker\Client;
 use xLink\Poker\Game\CashGame;
 use xLink\Poker\Game\Chips;
+use xLink\Poker\Game\Dealer;
 use xLink\Poker\Game\Game;
+use xLink\Poker\Game\HandCollection;
+use xLink\Poker\Game\Player;
 use xLink\Poker\Game\Round;
+use xLink\Poker\Table;
 
 class PlayerButtonTest extends \PHPUnit_Framework_TestCase
 {
@@ -131,6 +139,35 @@ class PlayerButtonTest extends \PHPUnit_Framework_TestCase
         $round->postBigBlind($seat1);
 
         $this->assertEquals($seat2, $round->whosTurnIsIt());
+    }
+
+    /** @test */
+    public function button_moves_after_round_ends()
+    {
+        $game = $this->createGenericGame(5);
+        $evaluator = $this->createMock(SevenCard::class);
+        $results = $this->createMock(SevenCardResultCollection::class);
+        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(5000)), Chips::fromAmount(500));
+        $hands = $this->createMock(HandCollection::class);
+
+        $evaluator->method('evaluateHands')
+                  ->willReturn($results);
+
+        $results->method('map')
+                ->willReturn($hands);
+
+        $hands->method('first')
+                ->willReturn(Hand::createUsingString('4c 2s', $player));
+
+        $dealer = Dealer::startWork(new Deck(), $evaluator);
+        $players = $game->players();
+
+        $table = Table::setUp($dealer, $players);
+
+        $round = Round::start($table);
+        $round->end();
+
+        $this->assertEquals($table->locatePlayerWithButton(), $players->get(1));
     }
 
     /**
