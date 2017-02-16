@@ -2,22 +2,19 @@
 
 namespace xLink\Tests\Game;
 
-use Ramsey\Uuid\Uuid;
 use xLink\Poker\Cards\Deck;
 use xLink\Poker\Cards\Evaluators\SevenCard;
 use xLink\Poker\Cards\Hand;
 use xLink\Poker\Cards\SevenCardResultCollection;
 use xLink\Poker\Client;
-use xLink\Poker\Game\CashGame;
 use xLink\Poker\Game\Chips;
 use xLink\Poker\Game\Dealer;
-use xLink\Poker\Game\Game;
 use xLink\Poker\Game\HandCollection;
 use xLink\Poker\Game\Player;
 use xLink\Poker\Game\Round;
 use xLink\Poker\Table;
 
-class PlayerButtonTest extends \PHPUnit_Framework_TestCase
+class PlayerButtonTest extends BaseGameTestCase
 {
     public function setUp()
     {
@@ -160,30 +157,5 @@ class PlayerButtonTest extends \PHPUnit_Framework_TestCase
         $round->end();
 
         $this->assertEquals($table->locatePlayerWithButton(), $players->get(1));
-    }
-
-    /**
-     * @param int $playerCount
-     *
-     * @return Game
-     */
-    private function createGenericGame($playerCount = 4): Game
-    {
-        $players = [];
-        for ($i = 0; $i < $playerCount; ++$i) {
-            $players[] = Client::register('player'.($i + 1), Chips::fromAmount(5500));
-        }
-
-        // we got a game
-        $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', Chips::fromAmount(500));
-
-        // register clients to game
-        foreach ($players as $player) {
-            $game->registerPlayer($player, Chips::fromAmount(1000));
-        }
-
-        $game->assignPlayersToTables(); // table has max of 9 or 5 players in holdem
-
-        return $game;
     }
 }

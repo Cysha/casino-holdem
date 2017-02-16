@@ -6,7 +6,7 @@ use xLink\Poker\Client;
 use xLink\Poker\Game\Chips;
 use xLink\Poker\Game\Player;
 
-class PlayerTest extends \PHPUnit_Framework_TestCase
+class PlayerTest extends BaseGameTestCase
 {
     /** @test */
     public function it_can_be_created_from_a_client()

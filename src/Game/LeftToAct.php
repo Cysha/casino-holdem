@@ -84,7 +84,7 @@ class LeftToAct extends Collection
     }
 
     /**
-     * @return self
+     * @return LeftToAct
      */
     public function playerHasActioned(Player $player, int $value = 0): self
     {

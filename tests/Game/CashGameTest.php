@@ -13,7 +13,7 @@ use xLink\Poker\Game\PlayerCollection;
 use xLink\Poker\Game\TableCollection;
 use xLink\Poker\Table;
 
-class CashGameTest extends \PHPUnit_Framework_TestCase
+class CashGameTest extends BaseGameTestCase
 {
     /** @test */
     public function a_cash_game_can_be_setup()

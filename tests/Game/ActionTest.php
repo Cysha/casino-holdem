@@ -7,7 +7,7 @@ use xLink\Poker\Game\Action;
 use xLink\Poker\Game\Chips;
 use xLink\Poker\Game\Player;
 
-class ActionTest extends \PHPUnit_Framework_TestCase
+class ActionTest extends BaseGameTestCase
 {
     /** @test */
     public function can_get_player_from_action()

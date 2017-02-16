@@ -41,7 +41,12 @@ class Round
     private $foldedPlayers;
 
     /**
-     * @var Chips
+     * @var ChipPotCollection
+     */
+    private $chipPots;
+
+    /**
+     * @var ChipPot
      */
     private $currentPot;
 
@@ -68,7 +73,8 @@ class Round
     private function __construct(Table $table)
     {
         $this->table = $table;
-        $this->currentPot = Chips::zero();
+        $this->chipPots = ChipPotCollection::make();
+        $this->currentPot = ChipPot::create();
         $this->betStacks = ChipStackCollection::make();
         $this->hands = HandCollection::make();
         $this->communityCards = CardCollection::make();
@@ -77,7 +83,11 @@ class Round
         $this->playerActions = ActionCollection::make();
         $this->leftToAct = LeftToAct::make();
 
+        // shuffle the deck ready
         $this->table()->dealer()->shuffleDeck();
+
+        // add the default pot to the chipPots
+        $this->chipPots->push($this->currentPot);
 
         // init the betStacks and actions for each player
         $this->resetBetStacks();
@@ -298,9 +308,9 @@ class Round
     }
 
     /**
-     * @return Chips
+     * @return ChipPot
      */
-    public function currentPot(): Chips
+    public function currentPot(): ChipPot
     {
         return $this->currentPot;
     }
@@ -356,14 +366,60 @@ class Round
     }
 
     /**
-     * @return Chips
+     * @return ChipPot
      */
-    public function collectChipTotal(): Chips
+    public function collectChipTotal(): ChipPot
     {
-        $amount = $this->betStacksTotal();
-        $this->resetBetStacks();
+        if (!$this->playerActions->hasAction(Action::ALLIN)) {
+            $this->betStacks()->each(function (Chips $chips, $playerName) {
+                $player = $this->playersStillIn()->findByName($playername);
 
-        $this->currentPot->add(Chips::fromAmount($amount));
+                $this->currentPot->addChips(Chips::fromAmount($amount), $player);
+            });
+            $this->resetBetStacks();
+        } else {
+            $betStacks = $this->betStacks()
+
+                // sort the stacks so lowest stack is first
+                ->sortBy(function (Chips $chips) {
+                    return $chips->amount();
+                }, SORT_NUMERIC)
+
+            // loop over all the stacks
+                ->each(function (Chips $chips) {
+                    dump('----');
+                    $chipAmount = $chips;
+
+                    dump($chips->amount());
+                    dump($this->betStacks);
+                    $this->betStacks = $this->betStacks()
+                        ->each(function (Chips $chips) use ($chipAmount) {
+                            if ($chips->amount() === 0) {
+                                return;
+                            }
+                            $chips = $chips->subtract($chipAmount);
+                        })
+                        ->tap(function (ChipStackCollection $chips) {
+                           return dump($chips);
+                        })
+                    ;
+
+                })
+
+                ->tap(function (ChipStackCollection $chips) {
+                   return dump($chips);
+                })
+
+                // get the first one, and add it to a pot
+
+                // grab that much from each of the stacks avail
+
+                // rinse and repeat
+
+            ;
+
+            // any left over chips goes into a seperate pot and returned to player
+        }
 
         return $this->currentPot;
     }
@@ -521,28 +577,8 @@ class Round
     {
         $this->checkPlayerTryingToAct($player);
 
+        // got the players chipStack
         $chips = $player->chipStack();
-
-        $stacks = $this->playersStillIn()
-            ->map(function (Player $player) {
-                return $player->chipStack()->amount();
-            })
-            ->merge($this->betStacks()->map(function (Chips $chips) {
-                return $chips->amount();
-            }));
-
-        if ($chips->amount() > $stacks->max()) {
-            $nextHighest = $stacks
-                ->reject(function ($stack) use ($chips) {
-                    return $stack === $chips->amount();
-                })
-                ->max();
-            $betStackAmount = $this->betStacks()
-                ->findByPlayer($player)
-                ->amount();
-
-            $chips = Chips::fromAmount(($nextHighest - $betStackAmount));
-        }
 
         // gotta create a new chip obj here cause of PHPs /awesome/ objRef ability :D
         $this->playerActions()->push(new Action($player, Action::ALLIN, Chips::fromAmount($chips->amount())));

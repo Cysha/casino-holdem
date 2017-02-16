@@ -4,7 +4,7 @@ namespace xLink\Tests\Game;
 
 use xLink\Poker\Game\Chips;
 
-class ChipsTest extends \PHPUnit_Framework_TestCase
+class ChipsTest extends BaseGameTestCase
 {
     /** @test */
     public function it_can_be_created_from_0()

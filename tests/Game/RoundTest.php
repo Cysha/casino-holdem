@@ -21,7 +21,7 @@ use xLink\Poker\Game\PlayerCollection;
 use xLink\Poker\Game\Round;
 use xLink\Poker\Table;
 
-class RoundTest extends \PHPUnit_Framework_TestCase
+class RoundTest extends BaseGameTestCase
 {
     /** @test */
     public function it_can_start_a_round_on_a_table()
@@ -1168,11 +1168,12 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round->end();
 
         $this->assertEquals($winningHand->player(), $round->winningPlayer());
+        $this->assertEquals(0, $round->chipPots()->get(0)->amount());
         $this->assertEquals(0, $round->currentPot()->amount());
         $this->assertEquals(5600, $round->players()->get(0)->chipStack()->amount());
     }
 
-    /** @te3st */
+    /** @test */
     public function split_pot_with_3_players()
     {
         $xLink = Client::register('xLink', Chips::fromAmount(650));
@@ -1192,8 +1193,7 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         /** @var Table $table */
         $table = $game->tables()->first();
 
-        /* @var Player $player1 */
-        $xLink = $table->playersSatDown()->first();
+        $xLink = $table->playersSatDown()->get(0);
         $jesus = $table->playersSatDown()->get(1);
         $melk = $table->playersSatDown()->get(2);
 
@@ -1205,27 +1205,35 @@ class RoundTest extends \PHPUnit_Framework_TestCase
         $round->playerPushesAllIn($xLink); // 150
         $round->playerPushesAllIn($jesus); // SB + 275  (300)
 
-        // if the _last_ to act, player can only put in the second biggest amount on the table
-        $round->playerPushesAllIn($melk);
-        dump($round->leftToAct());
+        $round->playerPushesAllIn($melk); // 800 (300)
+
         $this->assertEquals(0, $xLink->chipStack()->amount());
         $this->assertEquals(0, $jesus->chipStack()->amount());
-        $this->assertEquals(500, $melk->chipStack()->amount());
+        $this->assertEquals(0, $melk->chipStack()->amount());
+
+        $this->assertEquals(150, $round->betStacks()->findByPlayer($xLink)->amount());
+        $this->assertEquals(300, $round->betStacks()->findByPlayer($jesus)->amount());
+        $this->assertEquals(800, $round->betStacks()->findByPlayer($melk)->amount());
 
         /*
+        # Bet Stacks
+        Player1: 150
+        Player2: 300
+        Player3: 800
+
         # Pot
         1: Blinds: 150, Player1: 100, Player2: 100, Player3: 100 == 450
-        2: Player1: 0, Player2: 175, Player3: 175 == 350
-
-        # Stacks
-        Player1: 450,
-        Player2: 350,
-        Player3: -325 (Blind: 50, Pot1: 100, Pot2: 175)
+        2: Player1: 0, Player2: 150, Player3: 150 == 300
+        3: Player3: 500 //remainder
 
         */
 
-        //total table amount
-        $this->assertEquals(750, $round->betStacks()->total()->amount());
+        $round->end();
+
+        // chipPots
+        $this->assertEquals(450, $round->chipPots()->get(0)->amount());
+        $this->assertEquals(300, $round->chipPots()->get(1)->amount());
+        $this->assertEquals(500, $round->chipPots()->get(3)->amount());
     }
 
     /** @te3st */
@@ -1288,31 +1296,6 @@ class RoundTest extends \PHPUnit_Framework_TestCase
 
         //total table amount
         $this->assertEquals(800, $round->betStacks()->total()->amount());
-    }
-
-    /**
-     * @param int $playerCount
-     *
-     * @return Game
-     */
-    private function createGenericGame($playerCount = 4): Game
-    {
-        $players = [];
-        for ($i = 0; $i < $playerCount; ++$i) {
-            $players[] = Client::register('player'.($i + 1), Chips::fromAmount(5500));
-        }
-
-        // we got a game
-        $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', Chips::fromAmount(500));
-
-        // register clients to game
-        foreach ($players as $player) {
-            $game->registerPlayer($player, Chips::fromAmount(1000));
-        }
-
-        $game->assignPlayersToTables(); // table has max of 9 or 5 players in holdem
-
-        return $game;
     }
 
     /**

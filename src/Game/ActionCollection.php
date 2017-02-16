@@ -14,4 +14,20 @@ class ActionCollection extends Collection
             })
             ->toArray();
     }
+
+    /**
+     * @param int $actionValue
+     *
+     * @return bool
+     */
+    public function hasAction(int $actionValue): bool
+    {
+        $count = $this
+            ->filter(function (Action $action) use ($actionValue) {
+                return $action->action() === $actionValue;
+            })
+            ->count();
+
+        return $count > 0 ? true : false;
+    }
 }

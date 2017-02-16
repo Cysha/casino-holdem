@@ -13,7 +13,7 @@ use xLink\Poker\Game\Dealer;
 use xLink\Poker\Game\HandCollection;
 use xLink\Poker\Game\Player;
 
-class DealerTest extends \PHPUnit_Framework_TestCase
+class DealerTest extends BaseGameTestCase
 {
     public function setUp()
     {

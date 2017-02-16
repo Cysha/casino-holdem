@@ -151,6 +151,20 @@ class Table
     }
 
     /**
+     * @param string $playerName
+     *
+     * @return Player
+     */
+    public function findPlayerByName($playerName): Player
+    {
+        return $this->players()
+            ->filter(function (Player $player) use ($playerName) {
+                return $player->name() === $playerName;
+            })
+            ->first();
+    }
+
+    /**
      * @return HandCollection
      */
     public function dealCardsToPlayers(): HandCollection

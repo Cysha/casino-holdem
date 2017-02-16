@@ -35,6 +35,14 @@ class Action
     }
 
     /**
+     * @return int
+     */
+    public function action(): int
+    {
+        return $this->action;
+    }
+
+    /**
      * @return Player
      */
     public function player(): Player

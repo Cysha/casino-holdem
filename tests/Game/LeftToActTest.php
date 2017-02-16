@@ -2,16 +2,12 @@
 
 namespace xLink\Tests\Game;
 
-use Ramsey\Uuid\Uuid;
-use xLink\Poker\Client;
-use xLink\Poker\Game\CashGame;
 use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\Game;
 use xLink\Poker\Game\LeftToAct;
 use xLink\Poker\Game\Round;
 use xLink\Poker\Table;
 
-class LeftToActTest extends \PHPUnit_Framework_TestCase
+class LeftToActTest extends BaseGameTestCase
 {
     /** @test */
     public function can_create_collection_with_player_collection()
@@ -492,30 +488,5 @@ class LeftToActTest extends \PHPUnit_Framework_TestCase
             ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALL_IN],
         ]);
         $this->assertEquals($expected, $round->leftToAct());
-    }
-
-    /**
-     * @param int $playerCount
-     *
-     * @return Game
-     */
-    private function createGenericGame($playerCount = 4): Game
-    {
-        $players = [];
-        for ($i = 0; $i < $playerCount; ++$i) {
-            $players[] = Client::register('player'.($i + 1), Chips::fromAmount(5500));
-        }
-
-        // we got a game
-        $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', Chips::fromAmount(500));
-
-        // register clients to game
-        foreach ($players as $player) {
-            $game->registerPlayer($player, Chips::fromAmount(1000));
-        }
-
-        $game->assignPlayersToTables(); // table has max of 9 or 5 players in holdem
-
-        return $game;
     }
 }
