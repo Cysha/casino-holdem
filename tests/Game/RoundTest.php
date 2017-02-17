@@ -466,6 +466,41 @@ class RoundTest extends BaseGameTestCase
 
     /**
      * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
+     * @test */
+    public function when_no_player_left_to_act_throw_exception_when_checkPlayerTryingToAct()
+    {
+        $game = $this->createGenericGame(4);
+
+        $table = $game->tables()->first();
+
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1); // SB - 25
+        $seat3 = $table->playersSatDown()->get(2); // BB - 50
+        $seat4 = $table->playersSatDown()->get(3); // Call - 50
+
+        $round = Round::start($table);
+
+        $round->postSmallBlind($seat2);
+        $round->postBigBlind($seat3);
+
+        $this->assertEquals($seat4, $round->whosTurnIsIt());
+        $round->playerPushesAllIn($seat4);
+
+        $this->assertEquals($seat1, $round->whosTurnIsIt());
+        $round->playerFoldsHand($seat1);
+
+        $this->assertEquals($seat2, $round->whosTurnIsIt());
+        $round->playerPushesAllIn($seat2);
+
+        $this->assertEquals($seat3, $round->whosTurnIsIt());
+        $round->playerFoldsHand($seat3);
+
+        // no one else has to action
+        $round->checkPlayerTryingToAct($seat4);
+    }
+
+    /**
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function cant_deal_flop_whilst_players_still_have_to_act()
@@ -689,7 +724,7 @@ class RoundTest extends BaseGameTestCase
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
-        $round->playerChecks($seat1);
+        $round->playerChecks($seat6);
 
         $round->dealTurn();
     }
@@ -860,7 +895,7 @@ class RoundTest extends BaseGameTestCase
         $round->playerChecks($seat3);
         $round->playerChecks($seat4);
         $round->playerChecks($seat5);
-        $round->playerChecks($seat1);
+        $round->playerChecks($seat6);
 
         $round->dealRiver();
     }

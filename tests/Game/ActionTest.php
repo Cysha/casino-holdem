@@ -17,6 +17,7 @@ class ActionTest extends BaseGameTestCase
 
         $action = new Action($player, Action::CALL, Chips::fromAmount(250));
         $this->assertInstanceOf(Action::class, $action);
+        $this->assertEquals(Action::CALL, $action->action());
         $this->assertInstanceOf(Player::class, $action->player());
     }
 

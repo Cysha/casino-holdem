@@ -43,5 +43,6 @@ class ChipPotTest extends BaseGameTestCase
         $this->assertInstanceOf(ChipPot::class, $chipPot);
         $this->assertEquals(1000, $chipPot->total()->amount());
         $this->assertEquals($expectedPlayers, $chipPot->players());
+        $this->assertEquals('[1000] [player1]', $chipPot->__toString());
     }
 }
