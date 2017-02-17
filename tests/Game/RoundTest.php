@@ -1178,18 +1178,6 @@ class RoundTest extends BaseGameTestCase
     /** @test */
     public function split_pot_with_3_players_new()
     {
-        /*
-        # Bet Stacks
-        Player1: 150
-        Player2: 300
-        Player3: 800
-
-        # Pot
-        1: Player1: 150, Player2: 150, Player3: 150 == 450
-        2: Player1: 0, Player2: 150, Player3: 150 == 300
-        3: Player3: 500 //remainder
-
-        */
         $players = PlayerCollection::make([
             Player::fromClient(Client::register('xLink', Chips::fromAmount(800)), Chips::fromAmount(800)),
             Player::fromClient(Client::register('jesus', Chips::fromAmount(300)), Chips::fromAmount(300)),
@@ -1231,12 +1219,23 @@ class RoundTest extends BaseGameTestCase
 
         $round->end();
 
+        /*
+        xLink: 800, Jesus: 300, Melk: 150, 
+
+        Pot1: (melk smallest...) melk -150, jesus -150, xlink -150 = 450
+            xLink: 650, Jesus: 150, Melk: 0
+
+        Pot2: (jesus smallest...)  jesus -150, xlink -150 = 300
+            xLink: 500, Jesus: 0
+
+        Pot3: xLink w/ 500
+        */
         $this->assertEquals(450, $round->chipPots()->get(0)->total()->amount());
         $this->assertEquals(300, $round->chipPots()->get(1)->total()->amount());
         $this->assertEquals(500, $round->chipPots()->get(2)->total()->amount());
     }
 
-    /** @te3st */
+    /** @test */
     public function test_the_oshit_scenario()
     {
         $players = PlayerCollection::make([
@@ -1288,9 +1287,9 @@ class RoundTest extends BaseGameTestCase
         $round->end();
 
         /*
-            xLink: 2000, Jesus: 300, Melk: 50, BOB: 150
+        xLink: 2000, Jesus: 300, Melk: 50, BOB: 150
 
-        Pot1: (melk smallest...) Melk -50, bob -50, jesus -50, xlink -50 = 200
+        Pot1: (melk smallest...) melk -50, bob -50, jesus -50, xlink -50 = 200
             xLink: 1950, Jesus: 250, Melk: 0, BOB: 100
 
         Pot2: (bob smallest...) bob -100, jesus -100, xlink -100 = 300
