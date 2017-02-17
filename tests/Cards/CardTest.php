@@ -1,10 +1,10 @@
 <?php
 
-namespace xLink\Tests\Cards;
+namespace Cysha\Casino\Holdem\Tests\Cards;
 
 use InvalidArgumentException;
-use xLink\Poker\Cards\Card;
-use xLink\Poker\Cards\Suit;
+use Cysha\Casino\Holdem\Cards\Card;
+use Cysha\Casino\Holdem\Cards\Suit;
 
 class CardTest extends \PHPUnit_Framework_TestCase
 {
@@ -129,7 +129,7 @@ class CardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \xLink\Poker\Exceptions\CardException
+     * @expectedException \Cysha\Casino\Holdem\Exceptions\CardException
      * @test
      */
     public function cannot_create_card_from_invalid_suit_number()
@@ -138,7 +138,7 @@ class CardTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \xLink\Poker\Exceptions\CardException
+     * @expectedException \Cysha\Casino\Holdem\Exceptions\CardException
      * @test
      */
     public function cannot_create_card_from_invalid_card_number()

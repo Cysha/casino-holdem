@@ -1,9 +1,9 @@
 <?php
 
-namespace xLink\Poker\Cards;
+namespace Cysha\Casino\Holdem\Cards;
 
-use xLink\Poker\Cards\Providers\StandardDeck;
-use xLink\Poker\Cards\Contracts\CardProvider;
+use Cysha\Casino\Holdem\Cards\Providers\StandardDeck;
+use Cysha\Casino\Holdem\Cards\Contracts\CardProvider;
 
 class Deck
 {

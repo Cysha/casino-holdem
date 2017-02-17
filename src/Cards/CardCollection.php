@@ -1,6 +1,6 @@
 <?php
 
-namespace xLink\Poker\Cards;
+namespace Cysha\Casino\Holdem\Cards;
 
 use BadMethodCallException;
 use Illuminate\Support\Collection;

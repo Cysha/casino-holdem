@@ -1,12 +1,12 @@
 <?php
 
-namespace xLink\Poker\Game;
+namespace Cysha\Casino\Holdem\Game;
 
-use xLink\Poker\Cards\Card;
-use xLink\Poker\Cards\CardCollection;
-use xLink\Poker\Cards\Contracts\CardEvaluator;
-use xLink\Poker\Cards\Deck;
-use xLink\Poker\Cards\SevenCardResultCollection;
+use Cysha\Casino\Holdem\Cards\Card;
+use Cysha\Casino\Holdem\Cards\CardCollection;
+use Cysha\Casino\Holdem\Cards\Contracts\CardEvaluator;
+use Cysha\Casino\Holdem\Cards\Deck;
+use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
 
 class Dealer
 {

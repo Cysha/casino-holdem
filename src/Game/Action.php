@@ -1,6 +1,6 @@
 <?php
 
-namespace xLink\Poker\Game;
+namespace Cysha\Casino\Holdem\Game;
 
 class Action
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace xLink\Poker\Game;
+namespace Cysha\Casino\Holdem\Game;
 
 use Ramsey\Uuid\UuidInterface;
-use xLink\Poker\Cards\Deck;
-use xLink\Poker\Cards\Evaluators\SevenCard;
-use xLink\Poker\Client;
-use xLink\Poker\Exceptions\GameException;
-use xLink\Poker\Table;
+use Cysha\Casino\Holdem\Cards\Deck;
+use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
+use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Holdem\Exceptions\GameException;
+use Cysha\Casino\Holdem\Table;
 
 final class CashGame implements Game
 {

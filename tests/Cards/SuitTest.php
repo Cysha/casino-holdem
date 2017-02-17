@@ -1,8 +1,8 @@
 <?php
 
-namespace xLink\Tests\Cards;
+namespace Cysha\Casino\Holdem\Tests\Cards;
 
-use xLink\Poker\Cards\Suit;
+use Cysha\Casino\Holdem\Cards\Suit;
 
 class SuitTest extends \PHPUnit_Framework_TestCase
 {
@@ -65,7 +65,7 @@ class SuitTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \xLink\Poker\Exceptions\CardException
+     * @expectedException \Cysha\Casino\Holdem\Exceptions\CardException
      * @test
      */
     public function cannot_create_suit_from_invalid_string()
@@ -74,7 +74,7 @@ class SuitTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \xLink\Poker\Exceptions\CardException
+     * @expectedException \Cysha\Casino\Holdem\Exceptions\CardException
      * @test
      */
     public function cannot_create_suit_from_invalid_string_()

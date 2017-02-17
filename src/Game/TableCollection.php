@@ -1,10 +1,9 @@
 <?php
 
-namespace xLink\Poker\Game;
+namespace Cysha\Casino\Holdem\Game;
 
 use Illuminate\Support\Collection;
 
 class TableCollection extends Collection
 {
-
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace xLink\Poker\Cards\Contracts;
+namespace Cysha\Casino\Holdem\Cards\Contracts;
 
 /**
  * A card provider. Provides the cards for the deck.

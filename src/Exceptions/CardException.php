@@ -1,6 +1,6 @@
 <?php
 
-namespace xLink\Poker\Exceptions;
+namespace Cysha\Casino\Holdem\Exceptions;
 
 use Exception;
 

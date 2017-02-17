@@ -1,17 +1,17 @@
 <?php
 
-namespace xLink\Tests\Game;
+namespace Cysha\Casino\Holdem\Tests\Game;
 
-use xLink\Poker\Cards\CardCollection;
-use xLink\Poker\Cards\Deck;
-use xLink\Poker\Cards\Evaluators\SevenCard;
-use xLink\Poker\Cards\Hand;
-use xLink\Poker\Cards\Results\SevenCardResult;
-use xLink\Poker\Client;
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\Dealer;
-use xLink\Poker\Game\HandCollection;
-use xLink\Poker\Game\Player;
+use Cysha\Casino\Holdem\Cards\CardCollection;
+use Cysha\Casino\Holdem\Cards\Deck;
+use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
+use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
+use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Game\Dealer;
+use Cysha\Casino\Holdem\Game\HandCollection;
+use Cysha\Casino\Holdem\Game\Player;
 
 class DealerTest extends BaseGameTestCase
 {

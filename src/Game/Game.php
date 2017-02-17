@@ -1,9 +1,9 @@
 <?php
 
-namespace xLink\Poker\Game;
+namespace Cysha\Casino\Holdem\Game;
 
 use Ramsey\Uuid\UuidInterface;
-use xLink\Poker\Client;
+use Cysha\Casino\Holdem\Client;
 
 interface Game
 {

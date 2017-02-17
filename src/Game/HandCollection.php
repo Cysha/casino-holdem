@@ -1,9 +1,9 @@
 <?php
 
-namespace xLink\Poker\Game;
+namespace Cysha\Casino\Holdem\Game;
 
 use Illuminate\Support\Collection;
-use xLink\Poker\Cards\Hand;
+use Cysha\Casino\Holdem\Cards\Hand;
 
 class HandCollection extends Collection
 {

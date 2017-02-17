@@ -1,9 +1,9 @@
 <?php
 
-namespace xLink\Tests\Exceptions;
+namespace Cysha\Casino\Holdem\Tests\Exceptions;
 
 use PHPUnit_Framework_TestCase;
-use xLink\Poker\Exceptions\RoundException;
+use Cysha\Casino\Holdem\Exceptions\RoundException;
 
 class RoundExceptionTest extends PHPUnit_Framework_TestCase
 {

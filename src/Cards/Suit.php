@@ -1,8 +1,8 @@
 <?php
 
-namespace xLink\Poker\Cards;
+namespace Cysha\Casino\Holdem\Cards;
 
-use xLink\Poker\Exceptions\CardException;
+use Cysha\Casino\Holdem\Exceptions\CardException;
 
 final class Suit
 {

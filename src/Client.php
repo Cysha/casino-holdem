@@ -1,8 +1,8 @@
 <?php
 
-namespace xLink\Poker;
+namespace Cysha\Casino\Holdem;
 
-use xLink\Poker\Game\Chips;
+use Cysha\Casino\Holdem\Game\Chips;
 
 class Client
 {

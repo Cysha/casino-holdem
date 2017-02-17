@@ -1,8 +1,8 @@
 <?php
 
-namespace xLink\Tests\Game;
+namespace Cysha\Casino\Holdem\Tests\Game;
 
-use xLink\Poker\Game\Chips;
+use Cysha\Casino\Holdem\Game\Chips;
 
 class ChipsTest extends BaseGameTestCase
 {

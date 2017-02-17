@@ -1,11 +1,11 @@
 <?php
 
-namespace xLink\Tests\Game;
+namespace Cysha\Casino\Holdem\Tests\Game;
 
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\LeftToAct;
-use xLink\Poker\Game\Round;
-use xLink\Poker\Table;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Game\LeftToAct;
+use Cysha\Casino\Holdem\Game\Round;
+use Cysha\Casino\Holdem\Table;
 
 class LeftToActTest extends BaseGameTestCase
 {

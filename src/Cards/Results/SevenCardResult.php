@@ -1,11 +1,11 @@
 <?php
 
-namespace xLink\Poker\Cards\Results;
+namespace Cysha\Casino\Holdem\Cards\Results;
 
-use xLink\Poker\Cards\Card;
-use xLink\Poker\Cards\CardCollection;
-use xLink\Poker\Cards\Contracts\CardResults;
-use xLink\Poker\Cards\Hand;
+use Cysha\Casino\Holdem\Cards\Card;
+use Cysha\Casino\Holdem\Cards\CardCollection;
+use Cysha\Casino\Holdem\Cards\Contracts\CardResults;
+use Cysha\Casino\Holdem\Cards\Hand;
 
 class SevenCardResult implements CardResults
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace xLink\Poker\Cards\Providers;
+namespace Cysha\Casino\Holdem\Cards\Providers;
 
-use xLink\Poker\Cards\Contracts\CardProvider;
+use Cysha\Casino\Holdem\Cards\Contracts\CardProvider;
 
 class EmptyDeck implements CardProvider
 {

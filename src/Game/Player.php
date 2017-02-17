@@ -1,9 +1,9 @@
 <?php
 
-namespace xLink\Poker\Game;
+namespace Cysha\Casino\Holdem\Game;
 
 use Assert\Assertion;
-use xLink\Poker\Client;
+use Cysha\Casino\Holdem\Client;
 
 class Player extends Client
 {

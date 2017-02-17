@@ -1,25 +1,25 @@
 <?php
 
-namespace xLink\Tests\Game;
+namespace Cysha\Casino\Holdem\Tests\Game;
 
 use Ramsey\Uuid\Uuid;
-use xLink\Poker\Cards\CardCollection;
-use xLink\Poker\Cards\Deck;
-use xLink\Poker\Cards\Evaluators\SevenCard;
-use xLink\Poker\Cards\Hand;
-use xLink\Poker\Cards\Results\SevenCardResult;
-use xLink\Poker\Cards\SevenCardResultCollection;
-use xLink\Poker\Client;
-use xLink\Poker\Game\Action;
-use xLink\Poker\Game\ActionCollection;
-use xLink\Poker\Game\CashGame;
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\Dealer;
-use xLink\Poker\Game\Game;
-use xLink\Poker\Game\Player;
-use xLink\Poker\Game\PlayerCollection;
-use xLink\Poker\Game\Round;
-use xLink\Poker\Table;
+use Cysha\Casino\Holdem\Cards\CardCollection;
+use Cysha\Casino\Holdem\Cards\Deck;
+use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
+use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
+use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
+use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Holdem\Game\Action;
+use Cysha\Casino\Holdem\Game\ActionCollection;
+use Cysha\Casino\Holdem\Game\CashGame;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Game\Dealer;
+use Cysha\Casino\Holdem\Game\Game;
+use Cysha\Casino\Holdem\Game\Player;
+use Cysha\Casino\Holdem\Game\PlayerCollection;
+use Cysha\Casino\Holdem\Game\Round;
+use Cysha\Casino\Holdem\Table;
 
 class RoundTest extends BaseGameTestCase
 {
@@ -226,7 +226,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function on_round_start_stood_up_players_dont_get_dealt_a_hand()
@@ -323,7 +323,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function fifth_player_tries_to_raise_the_hand_after_blinds_without_enough_chips()
@@ -349,7 +349,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function random_player_tries_to_fold_their_hand_after_blinds()
@@ -465,7 +465,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function cant_deal_flop_whilst_players_still_have_to_act()
@@ -516,7 +516,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function cant_deal_the_flop_more_than_once_a_round()
@@ -551,7 +551,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function cant_deal_turn_before_the_flop()
@@ -609,7 +609,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function cant_deal_the_turn_more_than_once_per_round()
@@ -653,7 +653,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function cant_deal_the_turn_when_players_have_still_to_act()
@@ -695,7 +695,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function cant_deal_river_before_flop_or_turn()
@@ -762,7 +762,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function cant_deal_the_river_more_than_once_per_round()
@@ -815,7 +815,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function cant_deal_the_river_when_players_have_still_to_act()
@@ -866,7 +866,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function cant_get_the_winning_players_without_ending_the_round()
@@ -1104,7 +1104,7 @@ class RoundTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException xLink\Poker\Exceptions\RoundException
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
     public function player_cant_call_out_of_turn()
@@ -1220,7 +1220,7 @@ class RoundTest extends BaseGameTestCase
         $round->end();
 
         /*
-        xLink: 800, Jesus: 300, Melk: 150, 
+        xLink: 800, Jesus: 300, Melk: 150,
 
         Pot1: (melk smallest...) melk -150, jesus -150, xlink -150 = 450
             xLink: 650, Jesus: 150, Melk: 0

@@ -1,12 +1,12 @@
 <?php
 
-namespace xLink\Poker\Game;
+namespace Cysha\Casino\Holdem\Game;
 
-use xLink\Poker\Cards\CardCollection;
-use xLink\Poker\Cards\Hand;
-use xLink\Poker\Cards\Results\SevenCardResult;
-use xLink\Poker\Exceptions\RoundException;
-use xLink\Poker\Table;
+use Cysha\Casino\Holdem\Cards\CardCollection;
+use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
+use Cysha\Casino\Holdem\Exceptions\RoundException;
+use Cysha\Casino\Holdem\Table;
 
 class Round
 {

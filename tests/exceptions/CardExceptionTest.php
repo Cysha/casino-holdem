@@ -1,9 +1,9 @@
 <?php
 
-namespace xLink\Tests\Exceptions;
+namespace Cysha\Casino\Holdem\Tests\Exceptions;
 
 use PHPUnit_Framework_TestCase;
-use xLink\Poker\Exceptions\CardException;
+use Cysha\Casino\Holdem\Exceptions\CardException;
 
 class CardExceptionTest extends PHPUnit_Framework_TestCase
 {

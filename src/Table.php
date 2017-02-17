@@ -1,14 +1,14 @@
 <?php
 
-namespace xLink\Poker;
+namespace Cysha\Casino\Holdem;
 
-use xLink\Poker\Cards\CardCollection;
-use xLink\Poker\Cards\Hand;
-use xLink\Poker\Exceptions\TableException;
-use xLink\Poker\Game\Dealer;
-use xLink\Poker\Game\HandCollection;
-use xLink\Poker\Game\Player;
-use xLink\Poker\Game\PlayerCollection;
+use Cysha\Casino\Holdem\Cards\CardCollection;
+use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Holdem\Exceptions\TableException;
+use Cysha\Casino\Holdem\Game\Dealer;
+use Cysha\Casino\Holdem\Game\HandCollection;
+use Cysha\Casino\Holdem\Game\Player;
+use Cysha\Casino\Holdem\Game\PlayerCollection;
 
 class Table
 {

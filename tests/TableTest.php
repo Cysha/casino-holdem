@@ -1,15 +1,15 @@
 <?php
 
-namespace xLink\Tests;
+namespace Cysha\Casino\Holdem\Tests;
 
-use xLink\Poker\Cards\Deck;
-use xLink\Poker\Cards\Evaluators\SevenCard;
-use xLink\Poker\Client;
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\Dealer;
-use xLink\Poker\Game\Player;
-use xLink\Poker\Game\PlayerCollection;
-use xLink\Poker\Table;
+use Cysha\Casino\Holdem\Cards\Deck;
+use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
+use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Game\Dealer;
+use Cysha\Casino\Holdem\Game\Player;
+use Cysha\Casino\Holdem\Game\PlayerCollection;
+use Cysha\Casino\Holdem\Table;
 
 class TableTest extends \PHPUnit_Framework_TestCase
 {

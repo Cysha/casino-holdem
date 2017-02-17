@@ -1,17 +1,17 @@
 <?php
 
-namespace xLink\Tests\Game;
+namespace Cysha\Casino\Holdem\Tests\Game;
 
 use Ramsey\Uuid\Uuid;
 use TypeError;
-use xLink\Poker\Client;
-use xLink\Poker\Game\CashGame;
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\Dealer;
-use xLink\Poker\Game\Player;
-use xLink\Poker\Game\PlayerCollection;
-use xLink\Poker\Game\TableCollection;
-use xLink\Poker\Table;
+use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Holdem\Game\CashGame;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Game\Dealer;
+use Cysha\Casino\Holdem\Game\Player;
+use Cysha\Casino\Holdem\Game\PlayerCollection;
+use Cysha\Casino\Holdem\Game\TableCollection;
+use Cysha\Casino\Holdem\Table;
 
 class CashGameTest extends BaseGameTestCase
 {
@@ -113,7 +113,7 @@ class CashGameTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException \xLink\Poker\Exceptions\GameException
+     * @expectedException \Cysha\Casino\Holdem\Exceptions\GameException
      * @test
      */
     public function client_cannot_register_to_same_game_twice()
@@ -151,7 +151,7 @@ class CashGameTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException \xLink\Poker\Exceptions\GameException
+     * @expectedException \Cysha\Casino\Holdem\Exceptions\GameException
      * @test
      */
     public function test_an_exception_is_thrown_if_a_player_has_insufficient_funds_to_buy_in()

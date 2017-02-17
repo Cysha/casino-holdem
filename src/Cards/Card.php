@@ -1,9 +1,9 @@
 <?php
 
-namespace xLink\Poker\Cards;
+namespace Cysha\Casino\Holdem\Cards;
 
 use InvalidArgumentException;
-use xLink\Poker\Exceptions\CardException;
+use Cysha\Casino\Holdem\Exceptions\CardException;
 
 class Card
 {

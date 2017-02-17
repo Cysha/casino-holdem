@@ -1,10 +1,10 @@
 <?php
 
-namespace xLink\Tests\Cards;
+namespace Cysha\Casino\Holdem\Tests\Cards;
 
-use xLink\Poker\Cards\Providers\EmptyDeck;
-use xLink\Poker\Cards\Card;
-use xLink\Poker\Cards\Deck;
+use Cysha\Casino\Holdem\Cards\Providers\EmptyDeck;
+use Cysha\Casino\Holdem\Cards\Card;
+use Cysha\Casino\Holdem\Cards\Deck;
 
 class DeckTest extends \PHPUnit_Framework_TestCase
 {

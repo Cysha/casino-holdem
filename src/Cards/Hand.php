@@ -1,8 +1,8 @@
 <?php
 
-namespace xLink\Poker\Cards;
+namespace Cysha\Casino\Holdem\Cards;
 
-use xLink\Poker\Game\Player;
+use Cysha\Casino\Holdem\Game\Player;
 
 class Hand implements \Countable
 {

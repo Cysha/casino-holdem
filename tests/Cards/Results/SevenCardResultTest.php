@@ -1,14 +1,14 @@
 <?php
 
-namespace xLink\Tests\Cards\Results;
+namespace Cysha\Casino\Holdem\Tests\Cards\Results;
 
-use xLink\Poker\Cards\Card;
-use xLink\Poker\Cards\CardCollection;
-use xLink\Poker\Cards\Hand;
-use xLink\Poker\Cards\Results\SevenCardResult;
-use xLink\Poker\Client;
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\Player;
+use Cysha\Casino\Holdem\Cards\Card;
+use Cysha\Casino\Holdem\Cards\CardCollection;
+use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
+use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Game\Player;
 
 class SevenCardResultTest extends \PHPUnit_Framework_TestCase
 {

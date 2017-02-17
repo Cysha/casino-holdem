@@ -1,5 +1,5 @@
 {
-    "name": "xLink/lib-poker",
+    "name": "cysha/casino",
     "require": {
         "php": "^7.0",
         "beberlei/assert": "^2.7",
@@ -16,12 +16,12 @@
     },
     "autoload": {
         "psr-4": {
-            "xLink\\Poker\\": "src/"
+            "Cysha\\Casino\\Holdem\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "xLink\\Tests\\": "tests/"
+            "Cysha\\Casino\\Holdem\\Tests\\": "tests/"
         }
     },
     "authors": [

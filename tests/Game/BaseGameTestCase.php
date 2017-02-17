@@ -1,12 +1,12 @@
 <?php
 
-namespace xLink\Tests\Game;
+namespace Cysha\Casino\Holdem\Tests\Game;
 
 use Ramsey\Uuid\Uuid;
-use xLink\Poker\Client;
-use xLink\Poker\Game\CashGame;
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\Game;
+use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Holdem\Game\CashGame;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Game\Game;
 use PHPUnit_Framework_TestCase as PHPUnit;
 
 class BaseGameTestCase extends PHPUnit

@@ -1,15 +1,15 @@
 <?php
 
-namespace xLink\Poker\Cards\Evaluators;
+namespace Cysha\Casino\Holdem\Cards\Evaluators;
 
 use Illuminate\Support\Collection;
-use xLink\Poker\Cards\Card;
-use xLink\Poker\Cards\CardCollection;
-use xLink\Poker\Cards\Contracts\CardEvaluator;
-use xLink\Poker\Cards\Hand;
-use xLink\Poker\Cards\Results\SevenCardResult;
-use xLink\Poker\Cards\SevenCardResultCollection;
-use xLink\Poker\Game\HandCollection;
+use Cysha\Casino\Holdem\Cards\Card;
+use Cysha\Casino\Holdem\Cards\CardCollection;
+use Cysha\Casino\Holdem\Cards\Contracts\CardEvaluator;
+use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
+use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
+use Cysha\Casino\Holdem\Game\HandCollection;
 
 class SevenCard implements CardEvaluator
 {

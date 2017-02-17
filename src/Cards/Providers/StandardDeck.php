@@ -1,10 +1,10 @@
 <?php
 
-namespace xLink\Poker\Cards\Providers;
+namespace Cysha\Casino\Holdem\Cards\Providers;
 
-use xLink\Poker\Cards\Contracts\CardProvider;
-use xLink\Poker\Cards\Card;
-use xLink\Poker\Cards\Suit;
+use Cysha\Casino\Holdem\Cards\Contracts\CardProvider;
+use Cysha\Casino\Holdem\Cards\Card;
+use Cysha\Casino\Holdem\Cards\Suit;
 
 /**
  * The standard cards in a 52 card deck.

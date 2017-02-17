@@ -1,11 +1,11 @@
 <?php
 
-namespace xLink\Tests\Game;
+namespace Cysha\Casino\Holdem\Tests\Game;
 
-use xLink\Poker\Client;
-use xLink\Poker\Game\Action;
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\Player;
+use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Holdem\Game\Action;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Game\Player;
 
 class ActionTest extends BaseGameTestCase
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace xLink\Poker\Exceptions;
+namespace Cysha\Casino\Holdem\Exceptions;
 
 use Exception;
-use xLink\Poker\Game\Game;
-use xLink\Poker\Client;
+use Cysha\Casino\Holdem\Game\Game;
+use Cysha\Casino\Holdem\Client;
 
 class GameException extends Exception
 {

@@ -1,15 +1,15 @@
 <?php
 
-namespace xLink\Tests\Exceptions;
+namespace Cysha\Casino\Holdem\Tests\Exceptions;
 
 use PHPUnit_Framework_TestCase;
 use Ramsey\Uuid\Uuid;
-use xLink\Poker\Client;
-use xLink\Poker\Exceptions\GameException;
-use xLink\Poker\Game\CashGame;
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\Game;
-use xLink\Poker\Game\Player;
+use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Holdem\Exceptions\GameException;
+use Cysha\Casino\Holdem\Game\CashGame;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Game\Game;
+use Cysha\Casino\Holdem\Game\Player;
 
 class GameExceptionTest extends PHPUnit_Framework_TestCase
 {

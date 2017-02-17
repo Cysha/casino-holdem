@@ -1,10 +1,9 @@
 <?php
 
-namespace xLink\Poker\Cards\Contracts;
+namespace Cysha\Casino\Holdem\Cards\Contracts;
 
-use xLink\Poker\Cards\CardCollection;
-use xLink\Poker\Cards\Hand;
-use xLink\Poker\Game\HandCollection;
+use Cysha\Casino\Holdem\Cards\CardCollection;
+use Cysha\Casino\Holdem\Game\HandCollection;
 
 interface CardEvaluator
 {

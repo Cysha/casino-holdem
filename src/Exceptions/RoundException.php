@@ -1,11 +1,11 @@
 <?php
 
-namespace xLink\Poker\Exceptions;
+namespace Cysha\Casino\Holdem\Exceptions;
 
 use DomainException;
-use xLink\Poker\Client;
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Game\Player;
+use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Game\Player;
 
 class RoundException extends DomainException
 {

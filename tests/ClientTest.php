@@ -1,9 +1,9 @@
 <?php
 
-namespace xLink\Tests;
+namespace Cysha\Casino\Holdem\Tests;
 
-use xLink\Poker\Game\Chips;
-use xLink\Poker\Client;
+use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Holdem\Client;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
