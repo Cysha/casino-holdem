@@ -2,15 +2,15 @@
 
 namespace Cysha\Casino\Holdem\Tests\Game;
 
-use Cysha\Casino\Holdem\Cards\CardCollection;
-use Cysha\Casino\Holdem\Cards\Deck;
+use Cysha\Casino\Cards\CardCollection;
+use Cysha\Casino\Cards\Deck;
+use Cysha\Casino\Cards\HandCollection;
+use Cysha\Casino\Cards\Hand;
+use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Client;
 use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
-use Cysha\Casino\Holdem\Cards\Hand;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
-use Cysha\Casino\Holdem\Client;
-use Cysha\Casino\Holdem\Game\Chips;
 use Cysha\Casino\Holdem\Game\Dealer;
-use Cysha\Casino\Holdem\Game\HandCollection;
 use Cysha\Casino\Holdem\Game\Player;
 
 class DealerTest extends BaseGameTestCase

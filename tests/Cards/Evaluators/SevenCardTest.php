@@ -1,15 +1,15 @@
 <?php
 
-namespace Cysha\Casino\Holdem\Tests\Cards\Evaluators;
+namespace Cysha\Casino\Tests\Cards\Evaluators;
 
+use Cysha\Casino\Cards\Card;
+use Cysha\Casino\Cards\CardCollection;
+use Cysha\Casino\Cards\Hand;
+use Cysha\Casino\Cards\Suit;
+use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Client;
 use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
-use Cysha\Casino\Holdem\Cards\CardCollection;
-use Cysha\Casino\Holdem\Cards\Card;
-use Cysha\Casino\Holdem\Cards\Hand;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
-use Cysha\Casino\Holdem\Cards\Suit;
-use Cysha\Casino\Holdem\Client;
-use Cysha\Casino\Holdem\Game\Chips;
 use Cysha\Casino\Holdem\Game\Player;
 
 class SevenCardTest extends \PHPUnit_Framework_TestCase

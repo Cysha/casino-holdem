@@ -2,11 +2,15 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
-use Cysha\Casino\Holdem\Cards\CardCollection;
-use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Cards\CardCollection;
+use Cysha\Casino\Cards\Hand;
+use Cysha\Casino\Cards\HandCollection;
+use Cysha\Casino\Game\ChipStackCollection;
+use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Contracts\Player;
+use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
-use Cysha\Casino\Holdem\Table;
 
 class Round
 {

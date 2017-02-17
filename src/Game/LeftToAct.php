@@ -2,6 +2,8 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
+use Cysha\Casino\Game\Contracts\Player;
+use Cysha\Casino\Game\PlayerCollection;
 use Illuminate\Support\Collection;
 
 class LeftToAct extends Collection

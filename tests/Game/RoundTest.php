@@ -3,23 +3,23 @@
 namespace Cysha\Casino\Holdem\Tests\Game;
 
 use Ramsey\Uuid\Uuid;
-use Cysha\Casino\Holdem\Cards\CardCollection;
-use Cysha\Casino\Holdem\Cards\Deck;
+use Cysha\Casino\Cards\CardCollection;
+use Cysha\Casino\Cards\Deck;
 use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
-use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Cards\Hand;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
-use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Game\Client;
 use Cysha\Casino\Holdem\Game\Action;
 use Cysha\Casino\Holdem\Game\ActionCollection;
 use Cysha\Casino\Holdem\Game\CashGame;
-use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Holdem\Game\Dealer;
-use Cysha\Casino\Holdem\Game\Game;
+use Cysha\Casino\Game\Game;
 use Cysha\Casino\Holdem\Game\Player;
-use Cysha\Casino\Holdem\Game\PlayerCollection;
+use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Game\Round;
-use Cysha\Casino\Holdem\Table;
+use Cysha\Casino\Holdem\Game\Table;
 
 class RoundTest extends BaseGameTestCase
 {

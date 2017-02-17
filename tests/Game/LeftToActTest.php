@@ -2,7 +2,7 @@
 
 namespace Cysha\Casino\Holdem\Tests\Game;
 
-use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Holdem\Game\LeftToAct;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Table;

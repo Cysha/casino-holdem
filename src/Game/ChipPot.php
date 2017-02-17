@@ -2,6 +2,11 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
+use Cysha\Casino\Game\ChipStackCollection;
+use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Contracts\Player;
+use Cysha\Casino\Game\PlayerCollection;
+
 class ChipPot
 {
     /**

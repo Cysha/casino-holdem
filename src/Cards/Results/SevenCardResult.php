@@ -2,10 +2,10 @@
 
 namespace Cysha\Casino\Holdem\Cards\Results;
 
-use Cysha\Casino\Holdem\Cards\Card;
-use Cysha\Casino\Holdem\Cards\CardCollection;
-use Cysha\Casino\Holdem\Cards\Contracts\CardResults;
-use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Cards\Card;
+use Cysha\Casino\Cards\CardCollection;
+use Cysha\Casino\Cards\Contracts\CardResults;
+use Cysha\Casino\Cards\Hand;
 
 class SevenCardResult implements CardResults
 {

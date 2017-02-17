@@ -2,8 +2,8 @@
 
 namespace Cysha\Casino\Holdem\Tests;
 
-use Cysha\Casino\Holdem\Game\Chips;
-use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Client;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {

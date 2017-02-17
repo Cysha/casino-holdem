@@ -2,13 +2,15 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
-use Cysha\Casino\Holdem\Cards\Card;
-use Cysha\Casino\Holdem\Cards\CardCollection;
-use Cysha\Casino\Holdem\Cards\Contracts\CardEvaluator;
-use Cysha\Casino\Holdem\Cards\Deck;
+use Cysha\Casino\Cards\Card;
+use Cysha\Casino\Cards\CardCollection;
+use Cysha\Casino\Cards\Contracts\CardEvaluator;
+use Cysha\Casino\Cards\Deck;
+use Cysha\Casino\Cards\HandCollection;
 use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
+use Cysha\Casino\Game\Contracts\Dealer as DealerContract;
 
-class Dealer
+class Dealer implements DealerContract
 {
     /**
      * @var Deck
@@ -38,7 +40,7 @@ class Dealer
      *
      * @return Dealer
      */
-    public static function startWork(Deck $deck, CardEvaluator $cardEvaluationRules): Dealer
+    public static function startWork(Deck $deck, CardEvaluator $cardEvaluationRules)
     {
         return new self($deck, $cardEvaluationRules);
     }

@@ -1,13 +1,14 @@
 {
     "name": "cysha/casino-holdem",
     "description": "Texas Holdem Package for Cysha/Casino",
+    "license": "MIT",
     "authors": [
         { "name": "xLink (Dan Aldridge)", "email": "xLink@cybershade.org" },
         { "name": "Jesus (Daniel Noel-Davies)", "email": "Daniel@noeldavi.es" }
     ],
     "require": {
         "php": "^7.0",
-        "cysha/casino-holdem": "dev-master",
+        "cysha/casino": "dev-master",
         "beberlei/assert": "^2.7",
         "tightenco/collect": "^5.4",
         "ramsey/uuid": "^3.5"
@@ -29,5 +30,11 @@
     },
     "config": {
         "bin-dir": "bin"
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../casino"
+        }
+    ]
 }

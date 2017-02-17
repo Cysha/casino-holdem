@@ -2,14 +2,14 @@
 
 namespace Cysha\Casino\Holdem\Cards\Evaluators;
 
-use Illuminate\Support\Collection;
-use Cysha\Casino\Holdem\Cards\Card;
-use Cysha\Casino\Holdem\Cards\CardCollection;
-use Cysha\Casino\Holdem\Cards\Contracts\CardEvaluator;
-use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Cards\Card;
+use Cysha\Casino\Cards\CardCollection;
+use Cysha\Casino\Cards\Contracts\CardEvaluator;
+use Cysha\Casino\Cards\Hand;
+use Cysha\Casino\Cards\HandCollection;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
-use Cysha\Casino\Holdem\Game\HandCollection;
+use Illuminate\Support\Collection;
 
 class SevenCard implements CardEvaluator
 {
@@ -125,11 +125,11 @@ class SevenCard implements CardEvaluator
         }
 
         // make sure that TJQKA exist in hand
-        $royalFlushHand = $cards->switchAceValue()->filter(
-            function (Card $card) {
+        $royalFlushHand = $cards
+            ->switchAceValue()
+            ->filter(function (Card $card) {
                 return $card->isFaceCard() || $card->value() === 10;
-            }
-        );
+            });
 
         if ($royalFlushHand->count() < 5) {
             return false;

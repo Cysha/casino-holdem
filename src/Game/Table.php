@@ -1,16 +1,17 @@
 <?php
 
-namespace Cysha\Casino\Holdem;
+namespace Cysha\Casino\Holdem\Game;
 
-use Cysha\Casino\Holdem\Cards\CardCollection;
-use Cysha\Casino\Holdem\Cards\Hand;
+use Cysha\Casino\Cards\CardCollection;
+use Cysha\Casino\Cards\Hand;
+use Cysha\Casino\Cards\HandCollection;
+use Cysha\Casino\Game\Contracts\Dealer;
+use Cysha\Casino\Game\Contracts\Player;
+use Cysha\Casino\Game\PlayerCollection;
+use Cysha\Casino\Game\Table as BaseTable;
 use Cysha\Casino\Holdem\Exceptions\TableException;
-use Cysha\Casino\Holdem\Game\Dealer;
-use Cysha\Casino\Holdem\Game\HandCollection;
-use Cysha\Casino\Holdem\Game\Player;
-use Cysha\Casino\Holdem\Game\PlayerCollection;
 
-class Table
+class Table extends BaseTable
 {
     /**
      * @var Dealer
@@ -20,7 +21,7 @@ class Table
     /**
      * @var PlayerCollection
      */
-    private $playersSatDown;
+    private $players;
 
     /**
      * @var PlayerCollection
@@ -40,20 +41,25 @@ class Table
      */
     private function __construct(Dealer $dealer, PlayerCollection $players)
     {
-        $this->dealer = $dealer;
-        $this->playersSatDown = $players;
+        $this->players = $players;
         $this->playersSatOut = PlayerCollection::make();
+        $this->dealer = $dealer;
     }
 
     /**
-     * @param Dealer           $dealer
-     * @param PlayerCollection $players
-     *
      * @return Table
      */
-    public static function setUp(Dealer $dealer, PlayerCollection $players): self
+    public static function setUp(Dealer $dealer, PlayerCollection $players)
     {
         return new self($dealer, $players);
+    }
+
+    /**
+     * @return PlayerCollection
+     */
+    public function players(): PlayerCollection
+    {
+        return $this->players;
     }
 
     /**
@@ -73,16 +79,6 @@ class Table
     }
 
     /**
-     * @return PlayerCollection
-     */
-    public function players(): PlayerCollection
-    {
-        return $this->playersSatDown;
-    }
-
-    /**
-     * TODO: Track button on moving it through rounds.
-     *
      * @return Player
      */
     public function locatePlayerWithButton(): Player
@@ -139,32 +135,6 @@ class Table
     }
 
     /**
-     * @param Player $player
-     *
-     * @return int
-     */
-    public function findSeat(Player $findPlayer): int
-    {
-        return $this->players()->filter(function (Player $player) use ($findPlayer) {
-            return $player->equals($findPlayer);
-        })->keys()->first();
-    }
-
-    /**
-     * @param string $playerName
-     *
-     * @return Player
-     */
-    public function findPlayerByName($playerName): Player
-    {
-        return $this->players()
-            ->filter(function (Player $player) use ($playerName) {
-                return $player->name() === $playerName;
-            })
-            ->first();
-    }
-
-    /**
      * @return HandCollection
      */
     public function dealCardsToPlayers(): HandCollection
@@ -189,5 +159,34 @@ class Table
         });
 
         return $this->hands;
+    }
+
+    /**
+     * @param Player $player
+     *
+     * @return int
+     */
+    public function findSeat(Player $findPlayer): int
+    {
+        return $this->players()
+            ->filter(function (Player $player) use ($findPlayer) {
+                return $player->equals($findPlayer);
+            })
+            ->keys()
+            ->first();
+    }
+
+    /**
+     * @param string $playerName
+     *
+     * @return Player
+     */
+    public function findPlayerByName($playerName): Player
+    {
+        return $this->players()
+            ->filter(function (Player $player) use ($playerName) {
+                return $player->name() === $playerName;
+            })
+            ->first();
     }
 }

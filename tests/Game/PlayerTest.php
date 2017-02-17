@@ -2,8 +2,8 @@
 
 namespace Cysha\Casino\Holdem\Tests\Game;
 
-use Cysha\Casino\Holdem\Client;
-use Cysha\Casino\Holdem\Game\Chips;
+use Cysha\Casino\Game\Client;
+use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Holdem\Game\Player;
 
 class PlayerTest extends BaseGameTestCase

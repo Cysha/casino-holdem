@@ -3,10 +3,10 @@
 namespace Cysha\Casino\Holdem\Tests\Game;
 
 use Ramsey\Uuid\Uuid;
-use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Game\Client;
 use Cysha\Casino\Holdem\Game\CashGame;
-use Cysha\Casino\Holdem\Game\Chips;
-use Cysha\Casino\Holdem\Game\Game;
+use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Contracts\Game;
 use PHPUnit_Framework_TestCase as PHPUnit;
 
 class BaseGameTestCase extends PHPUnit

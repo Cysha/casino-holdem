@@ -2,16 +2,16 @@
 
 namespace Cysha\Casino\Holdem\Tests\Game;
 
-use Ramsey\Uuid\Uuid;
-use TypeError;
-use Cysha\Casino\Holdem\Client;
+use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Client;
+use Cysha\Casino\Game\PlayerCollection;
+use Cysha\Casino\Game\TableCollection;
 use Cysha\Casino\Holdem\Game\CashGame;
-use Cysha\Casino\Holdem\Game\Chips;
 use Cysha\Casino\Holdem\Game\Dealer;
 use Cysha\Casino\Holdem\Game\Player;
-use Cysha\Casino\Holdem\Game\PlayerCollection;
-use Cysha\Casino\Holdem\Game\TableCollection;
-use Cysha\Casino\Holdem\Table;
+use Cysha\Casino\Holdem\Game\Table;
+use Ramsey\Uuid\Uuid;
+use TypeError;
 
 class CashGameTest extends BaseGameTestCase
 {
@@ -113,7 +113,7 @@ class CashGameTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException \Cysha\Casino\Holdem\Exceptions\GameException
+     * @expectedException \Cysha\Casino\Exceptions\GameException
      * @test
      */
     public function client_cannot_register_to_same_game_twice()
@@ -151,7 +151,7 @@ class CashGameTest extends BaseGameTestCase
     }
 
     /**
-     * @expectedException \Cysha\Casino\Holdem\Exceptions\GameException
+     * @expectedException \Cysha\Casino\Exceptions\GameException
      * @test
      */
     public function test_an_exception_is_thrown_if_a_player_has_insufficient_funds_to_buy_in()

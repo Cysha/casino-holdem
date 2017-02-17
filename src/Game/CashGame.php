@@ -2,12 +2,15 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
-use Ramsey\Uuid\UuidInterface;
-use Cysha\Casino\Holdem\Cards\Deck;
+use Cysha\Casino\Cards\Deck;
+use Cysha\Casino\Exceptions\GameException;
+use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Client;
+use Cysha\Casino\Game\Contracts\Game;
+use Cysha\Casino\Game\PlayerCollection;
+use Cysha\Casino\Game\TableCollection;
 use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
-use Cysha\Casino\Holdem\Client;
-use Cysha\Casino\Holdem\Exceptions\GameException;
-use Cysha\Casino\Holdem\Table;
+use Ramsey\Uuid\UuidInterface;
 
 final class CashGame implements Game
 {

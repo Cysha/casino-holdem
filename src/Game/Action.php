@@ -2,6 +2,8 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
+use Cysha\Casino\Game\Chips;
+
 class Action
 {
     const BIG_BLIND = 6;
