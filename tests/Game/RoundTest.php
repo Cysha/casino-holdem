@@ -991,7 +991,7 @@ class RoundTest extends BaseGameTestCase
 
         // collect the chips, burn a card, deal the flop
         $round->dealFlop();
-        $this->assertEquals(150, $round->currentPot()->amount());
+        $this->assertEquals(150, $round->currentPot()->totalAmount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerChecks($player2); // 0
@@ -1007,7 +1007,8 @@ class RoundTest extends BaseGameTestCase
 
         // collect chips, burn 1, deal 1
         $round->dealTurn();
-        $this->assertEquals(650, $round->currentPot()->amount());
+
+        $this->assertEquals(650, $round->currentPot()->totalAmount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerRaises($player3, Chips::fromAmount(450)); // 450
@@ -1020,15 +1021,15 @@ class RoundTest extends BaseGameTestCase
 
         // collect chips, burn 1, deal 1
         $round->dealRiver();
-        $this->assertEquals(1550, $round->currentPot()->amount());
+        $this->assertEquals(1550, $round->currentPot()->totalAmount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerPushesAllIn($player3); // 250
         $round->playerCalls($player4); // 250
 
-        $round->collectChipTotal();
-        $this->assertEquals(2050, $round->currentPot()->amount());
         $round->end();
+        $this->assertEquals(2050, $round->chipPots()->get(0)->total()->amount());
+        $this->assertEquals(2050, $round->chipPots()->total()->amount());
         $this->assertEquals(0, $round->betStacksTotal());
     }
 
@@ -1062,7 +1063,7 @@ class RoundTest extends BaseGameTestCase
 
         // collect the chips, burn a card, deal the flop
         $round->dealFlop();
-        $this->assertEquals(100, $round->currentPot()->amount());
+        $this->assertEquals(100, $round->currentPot()->totalAmount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerChecks($player1); // 0
@@ -1076,7 +1077,7 @@ class RoundTest extends BaseGameTestCase
 
         // collect chips, burn 1, deal 1
         $round->dealTurn();
-        $this->assertEquals(600, $round->currentPot()->amount());
+        $this->assertEquals(600, $round->currentPot()->totalAmount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerRaises($player1, Chips::fromAmount(450)); // 450
@@ -1089,7 +1090,7 @@ class RoundTest extends BaseGameTestCase
 
         // collect chips, burn 1, deal 1
         $round->dealRiver();
-        $this->assertEquals(1500, $round->currentPot()->amount());
+        $this->assertEquals(1500, $round->currentPot()->totalAmount());
         $this->assertEquals(0, $round->betStacksTotal());
 
         $round->playerChecks($player1); // 0
@@ -1097,7 +1098,7 @@ class RoundTest extends BaseGameTestCase
         $round->playerCalls($player1); // 250
 
         $round->collectChipTotal();
-        $this->assertEquals(2000, $round->currentPot()->amount());
+        $this->assertEquals(2000, $round->currentPot()->totalAmount());
         $round->end();
         $this->assertEquals(0, $round->betStacksTotal());
     }
@@ -1147,10 +1148,11 @@ class RoundTest extends BaseGameTestCase
         /** @var SevenCard $evaluator */
         $evaluator = $this->createMock(SevenCard::class);
         $evaluator->method('evaluateHands')
-            ->with($this->anything(), $this->anything())
-            ->will($this->returnValue(SevenCardResultCollection::make([
-                SevenCardResult::createTwoPair($board->merge($winningHand->cards()), $winningHand),
-            ])));
+                  ->with($this->anything(), $this->anything())
+                  ->will($this->returnValue(SevenCardResultCollection::make([
+                      SevenCardResult::createTwoPair($board->merge($winningHand->cards()), $winningHand),
+                  ])))
+        ;
 
         // Do game
         $dealer = Dealer::startWork(new Deck(), $evaluator);
@@ -1164,16 +1166,77 @@ class RoundTest extends BaseGameTestCase
 
         $this->dealHandsAndPlayGame($round, $seat2, $seat3, $seat1);
 
-        $this->assertEquals(150, $round->currentPot()->amount());
+        $this->assertEquals(150, $round->currentPot()->totalAmount());
         $round->end();
 
         $this->assertEquals($winningHand->player(), $round->winningPlayer());
-        $this->assertEquals(0, $round->chipPots()->get(0)->amount());
-        $this->assertEquals(0, $round->currentPot()->amount());
+        $this->assertEquals(150, $round->chipPots()->get(0)->totalAmount());
+        $this->assertEquals(0, $round->currentPot()->totalAmount());
         $this->assertEquals(5600, $round->players()->get(0)->chipStack()->amount());
     }
 
     /** @test */
+    public function split_pot_with_3_players_new()
+    {
+        /*
+        # Bet Stacks
+        Player1: 150
+        Player2: 300
+        Player3: 800
+
+        # Pot
+        1: Player1: 150, Player2: 150, Player3: 150 == 450
+        2: Player1: 0, Player2: 150, Player3: 150 == 300
+        3: Player3: 500 //remainder
+
+        */
+        $players = PlayerCollection::make([
+            Player::fromClient(Client::register('xLink', Chips::fromAmount(800)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register('jesus', Chips::fromAmount(300)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register('melk', Chips::fromAmount(150)), Chips::fromAmount(150)),
+        ]);
+        $xLink = $players->first();
+        $jesus = $players->get(1);
+        $melk = $players->get(2);
+
+        $board = CardCollection::fromString('3s 3h 8h 2s 4c');
+        $winningHand = Hand::createUsingString('As Ad', $xLink);
+
+        /** @var SevenCard $evaluator */
+        $evaluator = $this->createMock(SevenCard::class);
+        $evaluator->method('evaluateHands')
+            ->with($this->anything(), $this->anything())
+            ->will($this->returnValue(SevenCardResultCollection::make([
+                SevenCardResult::createTwoPair($board->merge($winningHand->cards()), $winningHand),
+            ])))
+        ;
+
+        // Do game
+        $dealer = Dealer::startWork(new Deck(), $evaluator);
+        $table = Table::setUp($dealer, $players);
+
+        $round = Round::start($table);
+
+        $round->postSmallBlind($jesus); // 25
+        $round->postBigBlind($melk); // 50
+
+        $round->playerPushesAllIn($xLink); // 150
+        $round->playerPushesAllIn($jesus); // SB + 275  (300)
+
+        $round->playerPushesAllIn($melk); // 800 (300)
+
+        $this->assertEquals(800, $round->betStacks()->findByPlayer($xLink)->amount());
+        $this->assertEquals(300, $round->betStacks()->findByPlayer($jesus)->amount());
+        $this->assertEquals(150, $round->betStacks()->findByPlayer($melk)->amount());
+
+        $round->end();
+
+        $this->assertEquals(450, $round->chipPots()->get(0)->total()->amount());
+        $this->assertEquals(300, $round->chipPots()->get(1)->total()->amount());
+        $this->assertEquals(500, $round->chipPots()->get(2)->total()->amount());
+    }
+
+    /** @te3st */
     public function split_pot_with_3_players()
     {
         $xLink = Client::register('xLink', Chips::fromAmount(650));
@@ -1243,7 +1306,7 @@ class RoundTest extends BaseGameTestCase
         $jesus = Client::register('jesus', Chips::fromAmount(800));
         $melk = Client::register('melk', Chips::fromAmount(1200));
         $bob = Client::register('bob', Chips::fromAmount(1200));
-        $tom = Client::register('tom', Chips::fromAmount(1200));
+        $blackburn = Client::register('blackburn', Chips::fromAmount(1200));
 
         // we got a game
         $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', Chips::fromAmount(500));
@@ -1253,7 +1316,7 @@ class RoundTest extends BaseGameTestCase
         $game->registerPlayer($jesus, Chips::fromAmount(300));
         $game->registerPlayer($melk, Chips::fromAmount(800));
         $game->registerPlayer($bob, Chips::fromAmount(2000));
-        $game->registerPlayer($tom, Chips::fromAmount(5000));
+        $game->registerPlayer($blackburn, Chips::fromAmount(5000));
 
         $game->assignPlayersToTables(); // table has max of 9 or 5 players in holdem
 

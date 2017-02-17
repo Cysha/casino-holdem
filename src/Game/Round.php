@@ -211,8 +211,8 @@ class Round
      */
     private function distributeWinnings()
     {
-        $this->winningPlayer->chipStack()->add($this->currentPot);
-        $this->currentPot = Chips::zero();
+        $this->winningPlayer->chipStack()->add($this->currentPot->total());
+        $this->currentPot = ChipPot::create();
     }
 
     /**
@@ -316,6 +316,14 @@ class Round
     }
 
     /**
+     * @return ChipPotCollection
+     */
+    public function chipPots(): ChipPotCollection
+    {
+        return $this->chipPots;
+    }
+
+    /**
      * @param Player $player
      *
      * @return Chips
@@ -366,62 +374,58 @@ class Round
     }
 
     /**
-     * @return ChipPot
+     * @return ChipPotCollection
      */
-    public function collectChipTotal(): ChipPot
+    public function collectChipTotal(): ChipPotCollection
     {
-        if (!$this->playerActions->hasAction(Action::ALLIN)) {
-            $this->betStacks()->each(function (Chips $chips, $playerName) {
-                $player = $this->playersStillIn()->findByName($playername);
+        $allInActionsThisRound = $this->leftToAct()->filter(function (array $value) {
+            return $value['action'] === LeftToAct::ALL_IN;
+        });
 
-                $this->currentPot->addChips(Chips::fromAmount($amount), $player);
+        if ($allInActionsThisRound->count() > 1) {
+            $orderedBetStacks = $this->betStacks()->sortByChipAmount();
+
+            $orderedBetStacks->each(function (Chips $playerChips, $playerName) use ($orderedBetStacks) {
+                $remainingStacks = $orderedBetStacks->filter(function (Chips $chips, $playerName) {
+                    return $chips->amount() !== 0;
+                });
+
+                $this->currentPot = ChipPot::create();
+                $this->chipPots()->push($this->currentPot);
+
+                $allInAmount = Chips::fromAmount($playerChips->amount());
+
+                $remainingStacks->each(function (Chips $chips, $playerName) use ($allInAmount, $orderedBetStacks) {
+                    $player = $this->players()->findByName($playerName);
+
+                    $stackChips = Chips::fromAmount($allInAmount->amount());
+
+                    if (($chips->amount() - $stackChips->amount()) <= 0) {
+                        $stackChips = Chips::fromAmount($chips->amount());
+                    }
+
+                    $chips->subtract($stackChips);
+                    $this->currentPot->addChips($stackChips, $player);
+                    $orderedBetStacks = $orderedBetStacks->put($playerName, Chips::fromAmount($chips->amount()));
+                });
             });
-            $this->resetBetStacks();
-        } else {
-            $betStacks = $this->betStacks()
 
-                // sort the stacks so lowest stack is first
-                ->sortBy(function (Chips $chips) {
-                    return $chips->amount();
-                }, SORT_NUMERIC)
-
-            // loop over all the stacks
-                ->each(function (Chips $chips) {
-                    dump('----');
-                    $chipAmount = $chips;
-
-                    dump($chips->amount());
-                    dump($this->betStacks);
-                    $this->betStacks = $this->betStacks()
-                        ->each(function (Chips $chips) use ($chipAmount) {
-                            if ($chips->amount() === 0) {
-                                return;
-                            }
-                            $chips = $chips->subtract($chipAmount);
-                        })
-                        ->tap(function (ChipStackCollection $chips) {
-                           return dump($chips);
-                        })
-                    ;
-
+            $this->chipPots = $this->chipPots
+                ->filter(function (ChipPot $chipPot) {
+                    return $chipPot->total()->amount() !== 0;
                 })
+                ->values();
 
-                ->tap(function (ChipStackCollection $chips) {
-                   return dump($chips);
-                })
-
-                // get the first one, and add it to a pot
-
-                // grab that much from each of the stacks avail
-
-                // rinse and repeat
-
-            ;
-
-            // any left over chips goes into a seperate pot and returned to player
+            return $this->chipPots();
         }
 
-        return $this->currentPot;
+        $this->betStacks()->each(function (Chips $chips, $playerName) {
+            $this->currentPot()->addChips($chips, $this->players()->findByName($playerName));
+        });
+
+        $this->resetBetStacks();
+
+        return $this->chipPots();
     }
 
     /**

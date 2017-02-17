@@ -14,6 +14,14 @@ class ChipStackCollection extends Collection
     }
 
     /**
+     * @return static
+     */
+    public function sortByChipAmount()
+    {
+        return self::make($this->sortBy->amount());
+    }
+
+    /**
      * @return Chips
      */
     public function findByPlayer(Player $player): Chips

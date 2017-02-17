@@ -2,6 +2,14 @@
 
 namespace xLink\Poker\Game;
 
-class ChipPotCollection extends ChipStackCollection
+use Illuminate\Support\Collection;
+
+class ChipPotCollection extends Collection
 {
+    public function total(): Chips
+    {
+        return Chips::fromAmount($this->sum(function (ChipPot $chipPot) {
+            return $chipPot->total()->amount();
+        }));
+    }
 }

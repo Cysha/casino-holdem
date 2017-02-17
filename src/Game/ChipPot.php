@@ -23,18 +23,26 @@ class ChipPot
     /**
      * @return ChipPot
      */
-    public function create(): ChipPot
+    public static function create(): ChipPot
     {
         return new self();
     }
 
     /**
+     * @param Chips  $chips
+     * @param Player $player
+     *
      * @return ChipPot
      */
     public function addChips(Chips $chips, Player $player): ChipPot
     {
-        $this->chips->put($player->name(), $chips);
-        $this->players->push($player);
+        $existingChips = $this->chips()->get($player->name()) ?? Chips::zero();
+
+        $this->chips->put($player->name(), Chips::fromAmount($existingChips->amount() + $chips->amount()));
+
+        if ($this->players()->findByName($player->name()) === null) {
+            $this->players->push($player);
+        }
 
         return $this;
     }
@@ -61,5 +69,27 @@ class ChipPot
     public function total(): Chips
     {
         return $this->chips->total();
+    }
+
+    /**
+     * @return int
+     */
+    public function totalAmount(): int
+    {
+        return $this->chips->total()->amount();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $players = $this->players()
+            ->map(function (Player $player) {
+                return $player->name();
+            })
+            ->implode(', ');
+
+        return sprintf('[%d] [%s]', $this->total()->amount(), $players);
     }
 }
