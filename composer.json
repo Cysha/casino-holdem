@@ -1,7 +1,13 @@
 {
-    "name": "cysha/casino",
+    "name": "cysha/casino-holdem",
+    "description": "Texas Holdem Package for Cysha/Casino",
+    "authors": [
+        { "name": "xLink (Dan Aldridge)", "email": "xLink@cybershade.org" },
+        { "name": "Jesus (Daniel Noel-Davies)", "email": "Daniel@noeldavi.es" }
+    ],
     "require": {
         "php": "^7.0",
+        "cysha/casino-holdem": "dev-master",
         "beberlei/assert": "^2.7",
         "tightenco/collect": "^5.4",
         "ramsey/uuid": "^3.5"
@@ -10,9 +16,6 @@
         "phpunit/phpunit": "~5.6",
         "phpspec/phpspec": "^3.2",
         "symfony/var-dumper": "~3.2"
-    },
-    "config": {
-        "bin-dir": "bin"
     },
     "autoload": {
         "psr-4": {
@@ -24,14 +27,7 @@
             "Cysha\\Casino\\Holdem\\Tests\\": "tests/"
         }
     },
-    "authors": [
-        {
-            "name": "xLink (Dan Aldridge)",
-            "email": "xLink@cybershade.org"
-        },
-        {
-            "name": "Jesus (Daniel Noel-Davies)",
-            "email": "Daniel@noeldavi.es"
-        }
-    ]
+    "config": {
+        "bin-dir": "bin"
+    }
 }
