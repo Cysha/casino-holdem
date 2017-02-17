@@ -1237,128 +1237,76 @@ class RoundTest extends BaseGameTestCase
     }
 
     /** @te3st */
-    public function split_pot_with_3_players()
+    public function test_the_oshit_scenario()
     {
-        $xLink = Client::register('xLink', Chips::fromAmount(650));
-        $jesus = Client::register('jesus', Chips::fromAmount(800));
-        $melk = Client::register('melk', Chips::fromAmount(1200));
+        $players = PlayerCollection::make([
+            Player::fromClient(Client::register('xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
+            Player::fromClient(Client::register('jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register('melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register('bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
+            Player::fromClient(Client::register('blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
+        ]);
+        $xLink = $players->get(0);
+        $jesus = $players->get(1);
+        $melk = $players->get(2);
+        $bob = $players->get(3);
+        $blackburn = $players->get(4);
 
-        // we got a game
-        $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', Chips::fromAmount(500));
+        $board = CardCollection::fromString('3s 3h 8h 2s 4c');
+        $winningHand = Hand::createUsingString('As Ad', $xLink);
 
-        // register clients to game
-        $game->registerPlayer($xLink, Chips::fromAmount(150));
-        $game->registerPlayer($jesus, Chips::fromAmount(300));
-        $game->registerPlayer($melk, Chips::fromAmount(800));
+        /** @var SevenCard $evaluator */
+        $evaluator = $this->createMock(SevenCard::class);
+        $evaluator->method('evaluateHands')
+            ->with($this->anything(), $this->anything())
+            ->will($this->returnValue(SevenCardResultCollection::make([
+                SevenCardResult::createTwoPair($board->merge($winningHand->cards()), $winningHand),
+            ])))
+        ;
 
-        $game->assignPlayersToTables(); // table has max of 9 or 5 players in holdem
-
-        /** @var Table $table */
-        $table = $game->tables()->first();
-
-        $xLink = $table->playersSatDown()->get(0);
-        $jesus = $table->playersSatDown()->get(1);
-        $melk = $table->playersSatDown()->get(2);
+        // Do game
+        $dealer = Dealer::startWork(new Deck(), $evaluator);
+        $table = Table::setUp($dealer, $players);
 
         $round = Round::start($table);
 
         $round->postSmallBlind($jesus); // 25
         $round->postBigBlind($melk); // 50
 
-        $round->playerPushesAllIn($xLink); // 150
-        $round->playerPushesAllIn($jesus); // SB + 275  (300)
+        $round->playerPushesAllIn($bob); // 150
+        $round->playerFoldsHand($blackburn); // 0
+        $round->playerPushesAllIn($xLink); // 2000 (300)
+        $round->playerPushesAllIn($jesus); // SB + 275
+        $round->playerFoldsHand($melk); // 0
 
-        $round->playerPushesAllIn($melk); // 800 (300)
-
-        $this->assertEquals(0, $xLink->chipStack()->amount());
-        $this->assertEquals(0, $jesus->chipStack()->amount());
-        $this->assertEquals(0, $melk->chipStack()->amount());
-
-        $this->assertEquals(150, $round->betStacks()->findByPlayer($xLink)->amount());
+        $this->assertEquals(2000, $round->betStacks()->findByPlayer($xLink)->amount());
         $this->assertEquals(300, $round->betStacks()->findByPlayer($jesus)->amount());
-        $this->assertEquals(800, $round->betStacks()->findByPlayer($melk)->amount());
-
-        /*
-        # Bet Stacks
-        Player1: 150
-        Player2: 300
-        Player3: 800
-
-        # Pot
-        1: Blinds: 150, Player1: 100, Player2: 100, Player3: 100 == 450
-        2: Player1: 0, Player2: 150, Player3: 150 == 300
-        3: Player3: 500 //remainder
-
-        */
+        $this->assertEquals(50, $round->betStacks()->findByPlayer($melk)->amount());
+        $this->assertEquals(150, $round->betStacks()->findByPlayer($bob)->amount());
+        $this->assertEquals(0, $round->betStacks()->findByPlayer($blackburn)->amount());
 
         $round->end();
 
-        // chipPots
-        $this->assertEquals(450, $round->chipPots()->get(0)->amount());
-        $this->assertEquals(300, $round->chipPots()->get(1)->amount());
-        $this->assertEquals(500, $round->chipPots()->get(3)->amount());
-    }
-
-    /** @te3st */
-    public function the_oshit_scenario()
-    {
-        $xLink = Client::register('xLink', Chips::fromAmount(650));
-        $jesus = Client::register('jesus', Chips::fromAmount(800));
-        $melk = Client::register('melk', Chips::fromAmount(1200));
-        $bob = Client::register('bob', Chips::fromAmount(1200));
-        $blackburn = Client::register('blackburn', Chips::fromAmount(1200));
-
-        // we got a game
-        $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', Chips::fromAmount(500));
-
-        // register clients to game
-        $game->registerPlayer($xLink, Chips::fromAmount(150));
-        $game->registerPlayer($jesus, Chips::fromAmount(300));
-        $game->registerPlayer($melk, Chips::fromAmount(800));
-        $game->registerPlayer($bob, Chips::fromAmount(2000));
-        $game->registerPlayer($blackburn, Chips::fromAmount(5000));
-
-        $game->assignPlayersToTables(); // table has max of 9 or 5 players in holdem
-
-        /** @var Table $table */
-        $table = $game->tables()->first();
-
-        /** @var Player $player1 */
-        $player1 = $table->playersSatDown()->first();
-        $player2 = $table->playersSatDown()->get(1);
-        $player3 = $table->playersSatDown()->get(2);
-        $player4 = $table->playersSatDown()->get(3);
-        $player5 = $table->playersSatDown()->get(4);
-
-        $round = Round::start($table);
-
-        $round->postSmallBlind($player2);
-        $round->postBigBlind($player3);
-
-        $round->playerPushesAllIn($player1); // 150
-        $round->playerPushesAllIn($player2); // SB + 275
-
-        $round->playerCalls($player3); // 300
-        $round->playerPushesAllIn($player4); // 2000 (300)
-        $round->playerFolds($player5); // 0
-
-        $round->playerFolds($player3); // 0
-
         /*
-        # Pot
-        1: Blinds: 200, Player1: 100, Player2: 100, Player3: 100, Player4: 100 == 600
-        2: Player1: 0, Player2: 150, Player3: 150, Player4: 150 == 450
-        3: Player3: 25, Player4: 0 // player 4 auto wins 25
+            xLink: 2000, Jesus: 300, Melk: 50, BOB: 150
 
-        # Stacks
-        Player1: 0,
-        Player2: 0,
-        Player3: -300 (Blind: 50, Pot1: 100, Pot2: 150)
-        PLayer4: -300 (Blind: 50, Pot1: 100, Pot2: 150)
+        Pot1: (melk smallest...) Melk -50, bob -50, jesus -50, xlink -50 = 200
+            xLink: 1950, Jesus: 250, Melk: 0, BOB: 100
+
+        Pot2: (bob smallest...) bob -100, jesus -100, xlink -100 = 300
+            xLink: 1850, Jesus: 150, BOB: 0
+
+        Pot3: (jesus smallest...) jesus -150, xlink -150 = 300
+            xLink: 1700, Jesus: 0
+
+        Pot4: xLink w/ 1700
+
         */
 
-        //total table amount
-        $this->assertEquals(800, $round->betStacks()->total()->amount());
+        $this->assertEquals(200, $round->chipPots()->get(0)->total()->amount());
+        $this->assertEquals(300, $round->chipPots()->get(1)->total()->amount());
+        $this->assertEquals(300, $round->chipPots()->get(2)->total()->amount());
+        $this->assertEquals(1700, $round->chipPots()->get(3)->total()->amount());
     }
 
     /**

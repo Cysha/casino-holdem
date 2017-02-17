@@ -393,7 +393,8 @@ class Round
                 $this->currentPot = ChipPot::create();
                 $this->chipPots()->push($this->currentPot);
 
-                $allInAmount = Chips::fromAmount($playerChips->amount());
+                $player = $this->players()->findByName($playerName);
+                $allInAmount = Chips::fromAmount($orderedBetStacks->findByPlayer($player)->amount());
 
                 $remainingStacks->each(function (Chips $chips, $playerName) use ($allInAmount, $orderedBetStacks) {
                     $player = $this->players()->findByName($playerName);
