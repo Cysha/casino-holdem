@@ -7,7 +7,7 @@ use Cysha\Casino\Cards\CardCollection;
 use Cysha\Casino\Cards\Contracts\CardEvaluator;
 use Cysha\Casino\Cards\Deck;
 use Cysha\Casino\Cards\HandCollection;
-use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
+use Cysha\Casino\Cards\ResultCollection;
 use Cysha\Casino\Game\Contracts\Dealer as DealerContract;
 
 class Dealer implements DealerContract
@@ -73,9 +73,9 @@ class Dealer implements DealerContract
      * @param CardCollection $board
      * @param HandCollection $playerHands
      *
-     * @return SevenCardResultCollection
+     * @return ResultCollection
      */
-    public function evaluateHands(CardCollection $board, HandCollection $playerHands): SevenCardResultCollection
+    public function evaluateHands(CardCollection $board, HandCollection $playerHands): ResultCollection
     {
         return $this->cardEvaluationRules->evaluateHands($board, $playerHands);
     }

@@ -20,7 +20,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function royal_flush_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('10c Jc Qc Kc Ac');
 
@@ -36,7 +36,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function straight_flush_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('9c Tc Jc Qc Kc');
 
@@ -52,7 +52,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function four_of_a_kind_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('Tc Qc Qd Qh Qs');
 
@@ -68,7 +68,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function full_house_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('Qd Qc Qc 8d 8h');
 
@@ -84,7 +84,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function flush_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('7c Tc Jc Qc Kc');
 
@@ -100,7 +100,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function straight_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('5c 6h 7d 8c 9d');
 
@@ -116,7 +116,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function straight_ace_high_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('10c Jc Qc Kc 14d');
 
@@ -132,7 +132,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function straight_ace_low_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('Ad 2c 3c 4c 5d');
 
@@ -148,7 +148,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function three_of_a_kind_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('Qd Qs Qh 8d 10c');
 
@@ -164,7 +164,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function two_pair_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('Qd Qc 10c 8d 8h');
 
@@ -180,7 +180,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function one_pair_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('Qd Qc 10c 8d 7s');
 
@@ -196,7 +196,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function high_card_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('Qd Jc 10c 8d 7s');
 
@@ -212,7 +212,7 @@ class SevenCardResultTest extends \PHPUnit_Framework_TestCase
     public function high_card_ace_result_test()
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $expected = CardCollection::fromString('8d 10c Jc Qd 14s');
 

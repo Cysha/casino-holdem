@@ -23,7 +23,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d 10c Ac 8h Qc');
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -37,7 +37,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('Ts 9h Qs Ks Js');
-        $hand = Hand::createUsingString('As 3d', $player);
+        $hand = Hand::fromString('As 3d', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -51,7 +51,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('6d Tc 9c 6h Qc');
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -65,7 +65,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Qc Tc 2h Qd');
-        $hand = Hand::createUsingString('Qs Qh', $player);
+        $hand = Hand::fromString('Qs Qh', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -79,7 +79,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Qc Tc 8h Qd');
-        $hand = Hand::createUsingString('7s Qh', $player);
+        $hand = Hand::fromString('7s Qh', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -93,7 +93,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Tc 7c 8h Qc');
-        $hand = Hand::createUsingString('Jc Kc', $player);
+        $hand = Hand::fromString('Jc Kc', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -107,7 +107,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('9d Ac 2c 6h 8d');
-        $hand = Hand::createUsingString('5c 7d', $player);
+        $hand = Hand::fromString('5c 7d', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -121,7 +121,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('3d 4c 5c 6h 7d');
-        $hand = Hand::createUsingString('Kc Ad', $player);
+        $hand = Hand::fromString('Kc Ad', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -135,7 +135,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d 3c 10c 2h Qd');
-        $hand = Hand::createUsingString('Qs Qh', $player);
+        $hand = Hand::fromString('Qs Qh', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -149,7 +149,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Qc 10c 8h Qd');
-        $hand = Hand::createUsingString('7s 6h', $player);
+        $hand = Hand::fromString('7s 6h', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -163,7 +163,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Qc 10c 2h Qd');
-        $hand = Hand::createUsingString('7s 6h', $player);
+        $hand = Hand::fromString('7s 6h', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -177,7 +177,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Jc 10c 2h Qd');
-        $hand = Hand::createUsingString('7s 6h', $player);
+        $hand = Hand::fromString('7s 6h', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 
@@ -191,7 +191,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     {
         $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Jc 10c 2h Qd');
-        $hand = Hand::createUsingString('As 6h', $player);
+        $hand = Hand::fromString('As 6h', $player);
 
         $result = SevenCard::evaluate($board, $hand);
 

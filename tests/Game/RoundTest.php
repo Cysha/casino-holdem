@@ -1178,7 +1178,7 @@ class RoundTest extends BaseGameTestCase
         ]);
 
         $board = CardCollection::fromString('3s 3h 8h 2s 4c');
-        $winningHand = Hand::createUsingString('As Ad', $player1);
+        $winningHand = Hand::fromString('As Ad', $player1);
 
         /** @var SevenCard $evaluator */
         $evaluator = $this->createMock(SevenCard::class);
@@ -1223,7 +1223,7 @@ class RoundTest extends BaseGameTestCase
         $melk = $players->get(2);
 
         $board = CardCollection::fromString('3s 3h 8h 2s 4c');
-        $winningHand = Hand::createUsingString('As Ad', $xLink);
+        $winningHand = Hand::fromString('As Ad', $xLink);
 
         /** @var SevenCard $evaluator */
         $evaluator = $this->createMock(SevenCard::class);
@@ -1287,7 +1287,7 @@ class RoundTest extends BaseGameTestCase
         $blackburn = $players->get(4);
 
         $board = CardCollection::fromString('3s 3h 8h 2s 4c');
-        $winningHand = Hand::createUsingString('As Ad', $xLink);
+        $winningHand = Hand::fromString('As Ad', $xLink);
 
         /** @var SevenCard $evaluator */
         $evaluator = $this->createMock(SevenCard::class);

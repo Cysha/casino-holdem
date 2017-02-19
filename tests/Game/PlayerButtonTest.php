@@ -146,7 +146,7 @@ class PlayerButtonTest extends BaseGameTestCase
             ->willReturn($hands);
 
         $hands->method('first')
-            ->willReturn(Hand::createUsingString('4c 2s', $player));
+            ->willReturn(Hand::fromString('4c 2s', $player));
 
         $dealer = Dealer::startWork(new Deck(), $evaluator);
         $players = $game->players();

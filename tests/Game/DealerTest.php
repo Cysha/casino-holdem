@@ -39,8 +39,8 @@ class DealerTest extends BaseGameTestCase
         $player2 = Player::fromClient($client2);
 
         $board = CardCollection::fromString('Tc 6d Qh Jd 3s');
-        $hand1 = Hand::createUsingString('Ks Kd', $player1);
-        $hand2 = Hand::createUsingString('Jh 3d', $player2);
+        $hand1 = Hand::fromString('Ks Kd', $player1);
+        $hand2 = Hand::fromString('Jh 3d', $player2);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
@@ -64,10 +64,10 @@ class DealerTest extends BaseGameTestCase
         $player4 = Player::fromClient(Client::register('player4', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('Ts 9h Qs Ks Js');
-        $hand1 = Hand::createUsingString('As 3d', $player1);
-        $hand2 = Hand::createUsingString('9s 9d', $player2);
-        $hand3 = Hand::createUsingString('Ah 9c', $player3);
-        $hand4 = Hand::createUsingString('Qh Qd', $player4);
+        $hand1 = Hand::fromString('As 3d', $player1);
+        $hand2 = Hand::fromString('9s 9d', $player2);
+        $hand3 = Hand::fromString('Ah 9c', $player3);
+        $hand4 = Hand::fromString('Qh Qd', $player4);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
@@ -96,15 +96,15 @@ class DealerTest extends BaseGameTestCase
         $player9 = Player::fromClient(Client::register('player9', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('As Ah Ac Ad Kd');
-        $hand1 = Hand::createUsingString('2h 5s', $player1);
-        $hand2 = Hand::createUsingString('9c 7s', $player2);
-        $hand3 = Hand::createUsingString('5h 5d', $player3);
-        $hand4 = Hand::createUsingString('8d Qh', $player4);
-        $hand5 = Hand::createUsingString('Qs Qd', $player5);
-        $hand6 = Hand::createUsingString('3d 6s', $player6);
-        $hand7 = Hand::createUsingString('2c 5c', $player7);
-        $hand8 = Hand::createUsingString('Th Jd', $player8);
-        $hand9 = Hand::createUsingString('Ts 4c', $player9);
+        $hand1 = Hand::fromString('2h 5s', $player1);
+        $hand2 = Hand::fromString('9c 7s', $player2);
+        $hand3 = Hand::fromString('5h 5d', $player3);
+        $hand4 = Hand::fromString('8d Qh', $player4);
+        $hand5 = Hand::fromString('Qs Qd', $player5);
+        $hand6 = Hand::fromString('3d 6s', $player6);
+        $hand7 = Hand::fromString('2c 5c', $player7);
+        $hand8 = Hand::fromString('Th Jd', $player8);
+        $hand9 = Hand::fromString('Ts 4c', $player9);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
@@ -129,15 +129,15 @@ class DealerTest extends BaseGameTestCase
         $player9 = Player::fromClient(Client::register('player9', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('As Ah Ac Ad 2d');
-        $hand1 = Hand::createUsingString('2h Ks', $player1);
-        $hand2 = Hand::createUsingString('9c Kh', $player2);
-        $hand3 = Hand::createUsingString('5h Kd', $player3);
-        $hand4 = Hand::createUsingString('8d Qh', $player4);
-        $hand5 = Hand::createUsingString('Qs Qd', $player5);
-        $hand6 = Hand::createUsingString('3d 6s', $player6);
-        $hand7 = Hand::createUsingString('2c 5c', $player7);
-        $hand8 = Hand::createUsingString('Th Jd', $player8);
-        $hand9 = Hand::createUsingString('Ts 4c', $player9);
+        $hand1 = Hand::fromString('2h Ks', $player1);
+        $hand2 = Hand::fromString('9c Kh', $player2);
+        $hand3 = Hand::fromString('5h Kd', $player3);
+        $hand4 = Hand::fromString('8d Qh', $player4);
+        $hand5 = Hand::fromString('Qs Qd', $player5);
+        $hand6 = Hand::fromString('3d 6s', $player6);
+        $hand7 = Hand::fromString('2c 5c', $player7);
+        $hand8 = Hand::fromString('Th Jd', $player8);
+        $hand9 = Hand::fromString('Ts 4c', $player9);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
@@ -156,9 +156,9 @@ class DealerTest extends BaseGameTestCase
         $player3 = Player::fromClient(Client::register('player3', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('As 3d 9s 2c Th');
-        $hand1 = Hand::createUsingString('Qh Qd', $player1);
-        $hand2 = Hand::createUsingString('Qs Qc', $player2);
-        $hand3 = Hand::createUsingString('6s 4c', $player3);
+        $hand1 = Hand::fromString('Qh Qd', $player1);
+        $hand2 = Hand::fromString('Qs Qc', $player2);
+        $hand3 = Hand::fromString('6s 4c', $player3);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
@@ -185,8 +185,8 @@ class DealerTest extends BaseGameTestCase
         $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('5h 3s 7s 4c 6h');
-        $hand1 = Hand::createUsingString('Kh Ah', $player1);
-        $hand2 = Hand::createUsingString('Kc Qc', $player2);
+        $hand1 = Hand::fromString('Kh Ah', $player1);
+        $hand2 = Hand::fromString('Kc Qc', $player2);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
@@ -213,8 +213,8 @@ class DealerTest extends BaseGameTestCase
         $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('As Qd 2s 2c Qh');
-        $hand1 = Hand::createUsingString('2h 2d', $player1);
-        $hand2 = Hand::createUsingString('Qs Qc', $player2);
+        $hand1 = Hand::fromString('2h 2d', $player1);
+        $hand2 = Hand::fromString('Qs Qc', $player2);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
@@ -236,8 +236,8 @@ class DealerTest extends BaseGameTestCase
         $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('9s 2c Js Jh 2h');
-        $hand1 = Hand::createUsingString('9c 9d', $player1);
-        $hand2 = Hand::createUsingString('Ac Jc', $player2);
+        $hand1 = Hand::fromString('9c 9d', $player1);
+        $hand2 = Hand::fromString('Ac Jc', $player2);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
@@ -259,8 +259,8 @@ class DealerTest extends BaseGameTestCase
         $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('5h 7h Jh 9h 5s');
-        $hand1 = Hand::createUsingString('Kh Qs', $player1);
-        $hand2 = Hand::createUsingString('Ah Tc', $player2);
+        $hand1 = Hand::fromString('Kh Qs', $player1);
+        $hand2 = Hand::fromString('Ah Tc', $player2);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
@@ -282,8 +282,8 @@ class DealerTest extends BaseGameTestCase
         $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('2d 3h 4c 5s 6h');
-        $hand1 = Hand::createUsingString('7h 9s', $player1);
-        $hand2 = Hand::createUsingString('Ah 5c', $player2);
+        $hand1 = Hand::fromString('7h 9s', $player1);
+        $hand2 = Hand::fromString('Ah 5c', $player2);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
@@ -305,8 +305,8 @@ class DealerTest extends BaseGameTestCase
         $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('4h 4s 9c 9s Tc');
-        $hand1 = Hand::createUsingString('2h 2s', $player1);
-        $hand2 = Hand::createUsingString('Qh 7c', $player2);
+        $hand1 = Hand::fromString('2h 2s', $player1);
+        $hand2 = Hand::fromString('Qh 7c', $player2);
 
         $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
