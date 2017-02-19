@@ -4,10 +4,10 @@ namespace Cysha\Casino\Holdem\Cards\Results;
 
 use Cysha\Casino\Cards\Card;
 use Cysha\Casino\Cards\CardCollection;
-use Cysha\Casino\Cards\Contracts\CardResults;
 use Cysha\Casino\Cards\Hand;
+use Cysha\Casino\Cards\Results\StandardCardResult;
 
-class SevenCardResult implements CardResults
+class SevenCardResult extends StandardCardResult
 {
     const ROYAL_FLUSH = 9;
     const STRAIGHT_FLUSH = 8;
@@ -19,70 +19,6 @@ class SevenCardResult implements CardResults
     const TWO_PAIR = 2;
     const ONE_PAIR = 1;
     const HIGH_CARD = 0;
-
-    /** @var int */
-    private $rank = 0;
-
-    /** @var array */
-    private $value = [];
-
-    /** @var CardCollection */
-    private $cards;
-
-    /** @var string */
-    private $definition = null;
-
-    /** @var HandCollection */
-    private $hand = null;
-
-    private function __construct(int $rank, array $value, CardCollection $cards, string $definition, Hand $hand)
-    {
-        $this->rank = $rank;
-        $this->value = $value;
-        $this->cards = $cards;
-        $this->definition = $definition;
-        $this->hand = $hand;
-    }
-
-    /**
-     * @return int
-     */
-    public function rank(): int
-    {
-        return $this->rank;
-    }
-
-    /**
-     * @return array
-     */
-    public function value(): array
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return CardCollection
-     */
-    public function cards(): CardCollection
-    {
-        return $this->cards;
-    }
-
-    /**
-     * @return string
-     */
-    public function definition(): string
-    {
-        return $this->definition;
-    }
-
-    /**
-     * @return Hand
-     */
-    public function hand(): Hand
-    {
-        return $this->hand;
-    }
 
     /**
      * @param CardCollection $cards
@@ -300,31 +236,4 @@ class SevenCardResult implements CardResults
             $hand
         );
     }
-//
-//    /**
-//     * @param SevenCardResult $object
-//     *
-//     * @return bool
-//     */
-//    public function equals($object)
-//    {
-//        return $this->rank() === $object->rank()
-//            && $this->value() === $object->value()
-//            && $this->definition() === $object->definition()
-//            && $this->cards()->__toString() === $object->cards()->__toString()
-//        ;
-//    }
-//
-//    /**
-//     * @return array
-//     */
-//    public function toArray(): array
-//    {
-//        return [
-//            'rank' => $this->rank(),
-//            'value' => $this->value(),
-//            'definition' => $this->definition(),
-//            'cards' => $this->cards()->__toString(),
-//        ];
-//    }
 }

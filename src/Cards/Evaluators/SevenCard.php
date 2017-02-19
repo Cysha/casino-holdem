@@ -5,8 +5,10 @@ namespace Cysha\Casino\Holdem\Cards\Evaluators;
 use Cysha\Casino\Cards\Card;
 use Cysha\Casino\Cards\CardCollection;
 use Cysha\Casino\Cards\Contracts\CardEvaluator;
+use Cysha\Casino\Cards\Contracts\CardResults;
 use Cysha\Casino\Cards\Hand;
 use Cysha\Casino\Cards\HandCollection;
+use Cysha\Casino\Cards\ResultCollection;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
 use Illuminate\Support\Collection;
@@ -17,9 +19,9 @@ class SevenCard implements CardEvaluator
      * @param CardCollection $board
      * @param Hand           $hand
      *
-     * @return SevenCardResult
+     * @return CardResults
      */
-    public static function evaluate(CardCollection $board, Hand $hand)
+    public static function evaluate(CardCollection $board, Hand $hand): CardResults
     {
         $cards = $board->merge($hand->cards());
 
@@ -66,9 +68,9 @@ class SevenCard implements CardEvaluator
      * @param CardCollection $board
      * @param HandCollection $playerHands
      *
-     * @return SevenCardResultCollection
+     * @return ResultCollection
      */
-    public function evaluateHands(CardCollection $board, HandCollection $playerHands): SevenCardResultCollection
+    public function evaluateHands(CardCollection $board, HandCollection $playerHands): ResultCollection
     {
         $playerHands = $playerHands
             // evaluate hands
@@ -92,12 +94,6 @@ class SevenCard implements CardEvaluator
                 return $collection->count();
             })
         ;
-
-//        // if there is only 1 hand in the collection
-//        if ($playerHands->first()->count() === 1) {
-//            // return it
-//            return $playerHands->first();
-//        }
 
         // if all hands in the first collection are equal
         $handsAreEqual = $playerHands

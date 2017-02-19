@@ -2,8 +2,8 @@
 
 namespace Cysha\Casino\Holdem\Cards;
 
-use Illuminate\Support\Collection;
+use Cysha\Casino\Cards\ResultCollection;
 
-class SevenCardResultCollection extends Collection
+class SevenCardResultCollection extends ResultCollection
 {
 }
