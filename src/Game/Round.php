@@ -240,8 +240,6 @@ class Round
     }
 
     /**
-     * TODO: Fix to make use of locatePlayerWithButton().
-     *
      * @return Player
      */
     public function playerWithSmallBlind(): Player
@@ -254,8 +252,6 @@ class Round
     }
 
     /**
-     * TODO: Fix to make use of locatePlayerWithButton().
-     *
      * @return Player
      */
     public function playerWithBigBlind(): Player
