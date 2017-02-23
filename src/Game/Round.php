@@ -115,10 +115,58 @@ class Round
      */
     public function end()
     {
+        // TODO: make sure Flop/Turn/River have been dealt before we try and end the round...
+
         $this->collectChipTotal();
 
-        $this->determineWinningHands();
-        $this->distributeWinnings();
+        $this->chipPots()
+            ->reverse()
+            // ->tap(function (ChipPotCollection $chipPots) {
+            //     return dump($chipPots);
+            // })
+            ->each(function (ChipPot $chipPot) {
+                // if only 1 player participated to pot, he wins it no arguments
+                if ($chipPot->players()->count() === 1) {
+                    $potTotal = $chipPot->chips()->total();
+
+                    $chipPot->players()->first()->chipStack()->add($potTotal);
+
+                    $this->chipPots()->remove($chipPot);
+
+                    return;
+                }
+
+                $activePlayers = $chipPot->players()->diff($this->foldedPlayers());
+
+                $playerHands = $this->hands()->findByPlayers($activePlayers);
+                $evaluate = $this->table()->dealer()->evaluateHands($this->communityCards, $playerHands);
+
+                /*dump([
+                    'chipPot' => $chipPot->__toString(),
+                    'activePlayers' => $activePlayers->map->name(),
+                    //$playerHands->map->__toString(),
+                    'winningPlayer(s)' => $evaluate->map->hand()->map->player()->map->name(),
+                ]);*/
+
+                // if just 1, the player with that hand wins
+                if ($evaluate->count() === 1) {
+                    $player = $evaluate->first()->hand()->player();
+                    $potTotal = $chipPot->chips()->total();
+
+                    $player->chipStack()->add($potTotal);
+
+                    $this->chipPots()->remove($chipPot);
+
+                // if > 1 hand is evaluated as highest, split the pot evenly between the players
+                } else {
+                    // dump($evaluate->__toString());
+                }
+            })
+        ;
+
+        //$this->determineWinningHands();
+        // $this->distributeWinnings();
+
         $this->table()->moveButton();
     }
 
@@ -184,6 +232,14 @@ class Round
     public function table(): Table
     {
         return $this->table;
+    }
+
+    /**
+     * @return HandCollection
+     */
+    public function hands(): HandCollection
+    {
+        return $this->hands;
     }
 
     /**
@@ -352,7 +408,7 @@ class Round
      */
     public function playerHand(Player $player): Hand
     {
-        $hand = $this->hands->findByPlayer($player);
+        $hand = $this->hands()->findByPlayer($player);
 
         if ($hand === null) {
             throw RoundException::playerHasNoHand($player);
@@ -383,7 +439,16 @@ class Round
         });
 
         if ($allInActionsThisRound->count() > 1) {
-            $orderedBetStacks = $this->betStacks()->sortByChipAmount();
+            $orderedBetStacks = $this->betStacks()
+                ->reject(function (Chips $chips, $playerName) {
+                    $foldedPlayer = $this->foldedPlayers()->findByName($playerName);
+                    if ($foldedPlayer) {
+                        return true;
+                    }
+
+                    return false;
+                })
+                ->sortByChipAmount();
 
             $orderedBetStacks->each(function (Chips $playerChips, $playerName) use ($orderedBetStacks) {
                 $remainingStacks = $orderedBetStacks->filter(function (Chips $chips, $playerName) {
@@ -411,11 +476,33 @@ class Round
                 });
             });
 
+            // sort the pots so we get rid of any empty ones
             $this->chipPots = $this->chipPots
                 ->filter(function (ChipPot $chipPot) {
                     return $chipPot->total()->amount() !== 0;
                 })
                 ->values();
+
+            // grab anyone that folded
+            $this->betStacks()
+                ->filter(function (Chips $chips, $playerName) {
+                    $foldedPlayer = $this->foldedPlayers()->findByName($playerName);
+                    if ($foldedPlayer && $chips->amount() > 0) {
+                        return true;
+                    }
+
+                    return false;
+                })
+                // and add their chips into the first created pot
+                ->each(function (Chips $chips, $playerName) use ($orderedBetStacks) {
+                    $player = $this->players()->findByName($playerName);
+
+                    $stackChips = Chips::fromAmount($chips->amount());
+
+                    $chips->subtract($stackChips);
+                    $this->chipPots->get(0)->addChips($stackChips, $player);
+                    $orderedBetStacks = $orderedBetStacks->put($playerName, Chips::fromAmount($chips->amount()));
+                });
 
             return $this->chipPots();
         }
@@ -672,7 +759,7 @@ class Round
      */
     private function determineWinningHands(): Player
     {
-        $winningResults = $this->table()->dealer()->evaluateHands($this->communityCards, $this->hands);
+        $winningResults = $this->table()->dealer()->evaluateHands($this->communityCards, $this->hands());
         $winningHands = $winningResults->map(function (SevenCardResult $result) {
             return $result->hand();
         });

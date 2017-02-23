@@ -103,7 +103,8 @@ class PotBuildingTest extends BaseGameTestCase
 
         /** @var SevenCard $evaluator */
         $evaluator = $this->createMock(SevenCard::class);
-        $evaluator->method('evaluateHands')
+        $evaluator
+            ->method('evaluateHands')
             ->with($this->anything(), $this->anything())
             ->will($this->returnValue(SevenCardResultCollection::make([
                 SevenCardResult::createTwoPair($board->merge($winningHand->cards()), $winningHand),
@@ -134,24 +135,20 @@ class PotBuildingTest extends BaseGameTestCase
         $round->end();
 
         /*
-        xLink: 2000, Jesus: 300, Melk: 50, BOB: 150
+            xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
 
-        Pot1: (melk smallest...) melk -50, bob -50, jesus -50, xlink -50 = 200
-            xLink: 1950, Jesus: 250, Melk: 0, BOB: 100
+            Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
+                xLink: 1850, Jesus: 150, BOB: 0
 
-        Pot2: (bob smallest...) bob -100, jesus -100, xlink -100 = 300
-            xLink: 1850, Jesus: 150, BOB: 0
+            Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
+                xLink: 1700, Jesus: 0
 
-        Pot3: (jesus smallest...) jesus -150, xlink -150 = 300
-            xLink: 1700, Jesus: 0
-
-        Pot4: xLink w/ 1700
+            Pot3: xLink w/ 1700
 
         */
 
-        $this->assertEquals(200, $round->chipPots()->get(0)->total()->amount());
+        $this->assertEquals(500, $round->chipPots()->get(0)->total()->amount());
         $this->assertEquals(300, $round->chipPots()->get(1)->total()->amount());
-        $this->assertEquals(300, $round->chipPots()->get(2)->total()->amount());
-        $this->assertEquals(1700, $round->chipPots()->get(3)->total()->amount());
+        $this->assertEquals(1700, $round->chipPots()->get(2)->total()->amount());
     }
 }

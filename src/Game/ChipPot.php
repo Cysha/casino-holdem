@@ -85,6 +85,19 @@ class ChipPot
     }
 
     /**
+     * @param ChipPot $object
+     *
+     * @return bool
+     */
+    public function equals(ChipPot $object): bool
+    {
+        return static::class === get_class($object)
+            && $this->chips() === $object->chips()
+            && $this->players() === $object->players()
+            && $this->total() === $object->total();
+    }
+
+    /**
      * @return string
      */
     public function __toString()
