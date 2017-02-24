@@ -1,4 +1,5 @@
 # Texas Holdem Library
+[![Build Status](https://travis-ci.org/Cysha/casino-holdem.svg?branch=master)](https://travis-ci.org/Cysha/casino-holdem)
 PHP 7+ library to extend Cysha/Casino with Texas Holdem!
 
 
