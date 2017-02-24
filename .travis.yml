@@ -7,3 +7,7 @@ php:
 script:
   - composer install --no-interaction --no-suggest --no-scripts --prefer-source
   - bin/phpunit
+
+addons:
+    code_climate:
+        repo_token: 78d10e373be5fc97dcaba8ef779eb203ee84df6fcb655d0cd7da24c757e2ace9

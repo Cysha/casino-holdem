@@ -10,7 +10,6 @@ use Cysha\Casino\Game\ChipStackCollection;
 use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 use Cysha\Casino\Game\PlayerCollection;
-use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
 
 class Round
@@ -245,22 +244,6 @@ class Round
                 $playerHands = $this->hands()->findByPlayers($activePlayers);
                 $evaluate = $this->table()->dealer()->evaluateHands($this->communityCards, $playerHands);
 
-               // dump([
-               //     'chipPot' => $chipPot->__toString(),
-               //     'activePlayers' => $activePlayers->map->name(),
-               //     'playerHands' => $this->hands()->keyBy(function ($hand) {
-               //         return $hand->player()->name();
-               //     })->map->__toString(),
-               //     'winningPlayer(s)' => $evaluate->map(function (SevenCardResult $result) {
-               //         return [
-               //             'player' => $result->hand()->player()->name(),
-               //             'cards' => $result->cards()->__toString(),
-               //             'definition' => $result->definition(),
-
-               //         ];
-               //     }),
-               // ]);
-
                 // if just 1, the player with that hand wins
                 if ($evaluate->count() === 1) {
                     $player = $evaluate->first()->hand()->player();
@@ -463,7 +446,7 @@ class Round
                 ->sortByChipAmount();
 
             $orderedBetStacks->each(function (Chips $playerChips, $playerName) use ($orderedBetStacks) {
-                $remainingStacks = $orderedBetStacks->filter(function (Chips $chips, $playerName) {
+                $remainingStacks = $orderedBetStacks->filter(function (Chips $chips) {
                     return $chips->amount() !== 0;
                 });
 
@@ -484,7 +467,7 @@ class Round
 
                     $chips->subtract($stackChips);
                     $this->currentPot->addChips($stackChips, $player);
-                    $orderedBetStacks = $orderedBetStacks->put($playerName, Chips::fromAmount($chips->amount()));
+                    $orderedBetStacks->put($playerName, Chips::fromAmount($chips->amount()));
                 });
             });
 
@@ -513,7 +496,7 @@ class Round
 
                     $chips->subtract($stackChips);
                     $this->chipPots->get(0)->addChips($stackChips, $player);
-                    $orderedBetStacks = $orderedBetStacks->put($playerName, Chips::fromAmount($chips->amount()));
+                    $orderedBetStacks->put($playerName, Chips::fromAmount($chips->amount()));
                 });
         } else {
             $this->betStacks()->each(function (Chips $chips, $playerName) {
