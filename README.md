@@ -1,5 +1,9 @@
 # Texas Holdem Library
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Cysha/casino-holdem/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Cysha/casino-holdem/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/Cysha/casino-holdem/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Cysha/casino-holdem/?branch=master)
 [![Build Status](https://travis-ci.org/Cysha/casino-holdem.svg?branch=master)](https://travis-ci.org/Cysha/casino-holdem)
+
+
 PHP 7+ library to extend Cysha/Casino with Texas Holdem!
 
 

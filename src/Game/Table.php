@@ -5,8 +5,8 @@ namespace Cysha\Casino\Holdem\Game;
 use Cysha\Casino\Cards\CardCollection;
 use Cysha\Casino\Cards\Hand;
 use Cysha\Casino\Cards\HandCollection;
-use Cysha\Casino\Game\Contracts\Dealer;
-use Cysha\Casino\Game\Contracts\Player;
+use Cysha\Casino\Game\Contracts\Dealer as DealerContract;
+use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Game\Table as BaseTable;
 use Cysha\Casino\Holdem\Exceptions\TableException;
@@ -36,10 +36,10 @@ class Table extends BaseTable
     /**
      * Table constructor.
      *
-     * @param Dealer           $dealer
+     * @param DealerContract   $dealer
      * @param PlayerCollection $players
      */
-    private function __construct(Dealer $dealer, PlayerCollection $players)
+    private function __construct(DealerContract $dealer, PlayerCollection $players)
     {
         $this->players = $players;
         $this->playersSatOut = PlayerCollection::make();
@@ -47,9 +47,12 @@ class Table extends BaseTable
     }
 
     /**
+     * @param DealerContract   $dealer
+     * @param PlayerCollection $players
+     *
      * @return Table
      */
-    public static function setUp(Dealer $dealer, PlayerCollection $players)
+    public static function setUp(DealerContract $dealer, PlayerCollection $players)
     {
         return new self($dealer, $players);
     }
@@ -63,9 +66,9 @@ class Table extends BaseTable
     }
 
     /**
-     * @return Dealer
+     * @return DealerContract
      */
-    public function dealer(): Dealer
+    public function dealer(): DealerContract
     {
         return $this->dealer;
     }
@@ -79,17 +82,17 @@ class Table extends BaseTable
     }
 
     /**
-     * @return Player
+     * @return PlayerContract
      */
-    public function locatePlayerWithButton(): Player
+    public function locatePlayerWithButton(): PlayerContract
     {
         return $this->playersSatDown()->get($this->button);
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      */
-    public function sitPlayerOut(Player $player)
+    public function sitPlayerOut(PlayerContract $player)
     {
         $this->playersSatOut = $this->playersSatOut->push($player);
     }
@@ -103,11 +106,11 @@ class Table extends BaseTable
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      *
      * @throws TableException
      */
-    public function giveButtonToPlayer(Player $player)
+    public function giveButtonToPlayer(PlayerContract $player)
     {
         $playerIndex = $this->playersSatDown()
             ->filter
@@ -144,12 +147,12 @@ class Table extends BaseTable
         // deal to the player after the button first
         $this->playersSatDown()
             ->resetPlayerListFromSeat($this->button + 1)
-            ->each(function (Player $player) use ($hands) {
+            ->each(function (PlayerContract $player) use ($hands) {
                 $hands->push(Hand::create(CardCollection::make([
                     $this->dealer()->dealCard(),
                 ]), $player));
             })
-            ->each(function (Player $player) use ($hands) {
+            ->each(function (PlayerContract $player) use ($hands) {
                 $hands->map(function (Hand $hand) use ($player, $hands) {
                     if ($hand->player()->equals($player) === false) {
                         return false;
@@ -163,14 +166,14 @@ class Table extends BaseTable
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      *
      * @return int
      */
-    public function findSeat(Player $findPlayer): int
+    public function findSeat(PlayerContract $findPlayer): int
     {
         return $this->players()
-            ->filter(function (Player $player) use ($findPlayer) {
+            ->filter(function (PlayerContract $player) use ($findPlayer) {
                 return $player->equals($findPlayer);
             })
             ->keys()
@@ -182,10 +185,10 @@ class Table extends BaseTable
      *
      * @return Player
      */
-    public function findPlayerByName($playerName): Player
+    public function findPlayerByName($playerName): PlayerContract
     {
         return $this->players()
-            ->filter(function (Player $player) use ($playerName) {
+            ->filter(function (PlayerContract $player) use ($playerName) {
                 return $player->name() === $playerName;
             })
             ->first();

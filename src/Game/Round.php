@@ -8,7 +8,7 @@ use Cysha\Casino\Cards\Hand;
 use Cysha\Casino\Cards\HandCollection;
 use Cysha\Casino\Game\ChipStackCollection;
 use Cysha\Casino\Game\Chips;
-use Cysha\Casino\Game\Contracts\Player;
+use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
@@ -292,7 +292,7 @@ class Round
      *
      * @return bool
      */
-    public function playerIsStillIn(Player $actualPlayer)
+    public function playerIsStillIn(PlayerContract $actualPlayer)
     {
         $playerCount = $this->playersStillIn()->filter->equals($actualPlayer)->count();
 
@@ -300,17 +300,17 @@ class Round
     }
 
     /**
-     * @return Player
+     * @return PlayerContract
      */
-    public function playerWithButton(): Player
+    public function playerWithButton(): PlayerContract
     {
         return $this->table()->locatePlayerWithButton();
     }
 
     /**
-     * @return Player
+     * @return PlayerContract
      */
-    public function playerWithSmallBlind(): Player
+    public function playerWithSmallBlind(): PlayerContract
     {
         if ($this->table()->playersSatDown()->count() === 2) {
             return $this->table()->playersSatDown()->get(0);
@@ -320,9 +320,9 @@ class Round
     }
 
     /**
-     * @return Player
+     * @return PlayerContract
      */
-    public function playerWithBigBlind(): Player
+    public function playerWithBigBlind(): PlayerContract
     {
         if ($this->table()->playersSatDown()->count() === 2) {
             return $this->table()->playersSatDown()->get(1);
@@ -332,9 +332,9 @@ class Round
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      */
-    public function postSmallBlind(Player $player)
+    public function postSmallBlind(PlayerContract $player)
     {
         // Take chips from player
         $chips = $this->smallBlind();
@@ -346,9 +346,9 @@ class Round
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      */
-    public function postBigBlind(Player $player)
+    public function postBigBlind(PlayerContract $player)
     {
         // Take chips from player
         $chips = $this->bigBlind();
@@ -392,20 +392,20 @@ class Round
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      *
      * @return Chips
      */
-    public function playerBetStack(Player $player): Chips
+    public function playerBetStack(PlayerContract $player): Chips
     {
         return $this->betStacks->findByPlayer($player);
     }
 
     /**
-     * @param Player $player
-     * @param Chips  $chips
+     * @param PlayerContract $player
+     * @param Chips          $chips
      */
-    private function postBlind(Player $player, $chips)
+    private function postBlind(PlayerContract $player, $chips)
     {
         $player->chipStack()->subtract($chips);
 
@@ -414,11 +414,11 @@ class Round
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      *
      * @return Hand
      */
-    public function playerHand(Player $player): Hand
+    public function playerHand(PlayerContract $player): Hand
     {
         $hand = $this->hands()->findByPlayer($player);
 
@@ -430,13 +430,13 @@ class Round
     }
 
     /**
-     * @return Player|false
+     * @return PlayerContract|false
      */
     public function whosTurnIsIt()
     {
         $nextPlayer = $this->leftToAct()->getNextPlayer();
 
-        return $this->players()->filter(function (Player $player) use ($nextPlayer) {
+        return $this->players()->filter(function (PlayerContract $player) use ($nextPlayer) {
             return $player->name() === $nextPlayer['player'];
         })->first() ?? false;
     }
@@ -608,7 +608,7 @@ class Round
     /**
      * @throws RoundException
      */
-    public function checkPlayerTryingToAct(Player $player)
+    public function checkPlayerTryingToAct(PlayerContract $player)
     {
         $actualPlayer = $this->whosTurnIsIt();
         if ($actualPlayer === false) {
@@ -620,11 +620,11 @@ class Round
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      *
      * @throws RoundException
      */
-    public function playerCalls(Player $player)
+    public function playerCalls(PlayerContract $player)
     {
         $this->checkPlayerTryingToAct($player);
 
@@ -640,12 +640,12 @@ class Round
     }
 
     /**
-     * @param Player $player
-     * @param Chips  $chips
+     * @param PlayerContract $player
+     * @param Chips          $chips
      *
      * @throws RoundException
      */
-    public function playerRaises(Player $player, Chips $chips)
+    public function playerRaises(PlayerContract $player, Chips $chips)
     {
         $this->checkPlayerTryingToAct($player);
 
@@ -656,11 +656,11 @@ class Round
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      *
      * @throws RoundException
      */
-    public function playerFoldsHand(Player $player)
+    public function playerFoldsHand(PlayerContract $player)
     {
         $this->checkPlayerTryingToAct($player);
 
@@ -671,11 +671,11 @@ class Round
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      *
      * @throws RoundException
      */
-    public function playerPushesAllIn(Player $player)
+    public function playerPushesAllIn(PlayerContract $player)
     {
         $this->checkPlayerTryingToAct($player);
 
@@ -690,11 +690,11 @@ class Round
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      *
      * @throws RoundException
      */
-    public function playerChecks(Player $player)
+    public function playerChecks(PlayerContract $player)
     {
         $this->checkPlayerTryingToAct($player);
 
@@ -713,10 +713,10 @@ class Round
     }
 
     /**
-     * @param Player $player
-     * @param Chips  $chips
+     * @param PlayerContract $player
+     * @param Chips          $chips
      */
-    private function placeChipBet(Player $player, Chips $chips)
+    private function placeChipBet(PlayerContract $player, Chips $chips)
     {
         if ($player->chipStack()->amount() < $chips->amount()) {
             throw RoundException::notEnoughChipsInChipStack($player, $chips);
@@ -734,7 +734,7 @@ class Round
      */
     private function resetBetStacks()
     {
-        $this->players()->each(function (Player $player) {
+        $this->players()->each(function (PlayerContract $player) {
             $this->betStacks->put($player->name(), Chips::zero());
         });
     }
@@ -756,9 +756,9 @@ class Round
     }
 
     /**
-     * @param Player $player
+     * @param PlayerContract $player
      */
-    public function sitPlayerOut(Player $player)
+    public function sitPlayerOut(PlayerContract $player)
     {
         $this->table()->sitPlayerOut($player);
         $this->leftToAct = $this->leftToAct()->removePlayer($player);

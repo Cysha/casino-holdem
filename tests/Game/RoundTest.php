@@ -2,16 +2,16 @@
 
 namespace Cysha\Casino\Holdem\Tests\Game;
 
-use Ramsey\Uuid\Uuid;
+use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Client;
+use Cysha\Casino\Game\Contracts\Game;
 use Cysha\Casino\Holdem\Game\Action;
 use Cysha\Casino\Holdem\Game\ActionCollection;
 use Cysha\Casino\Holdem\Game\CashGame;
-use Cysha\Casino\Game\Chips;
-use Cysha\Casino\Game\Game;
 use Cysha\Casino\Holdem\Game\Player;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Game\Table;
+use Ramsey\Uuid\Uuid;
 
 class RoundTest extends BaseGameTestCase
 {
