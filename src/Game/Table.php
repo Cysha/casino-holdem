@@ -139,26 +139,27 @@ class Table extends BaseTable
      */
     public function dealCardsToPlayers(): HandCollection
     {
-        $this->hands = HandCollection::make();
+        $hands = HandCollection::make();
 
-        $this->playersSatDown()->each(function (Player $player) {
-            $this->hands->push(Hand::create(CardCollection::make([
-                $this->dealer()->dealCard(),
-            ]), $player));
-        });
+        // deal to the player after the button first
+        $this->playersSatDown()
+            ->resetPlayerListFromSeat($this->button + 1)
+            ->each(function (Player $player) use ($hands) {
+                $hands->push(Hand::create(CardCollection::make([
+                    $this->dealer()->dealCard(),
+                ]), $player));
+            })
+            ->each(function (Player $player) use ($hands) {
+                $hands->map(function (Hand $hand) use ($player, $hands) {
+                    if ($hand->player()->equals($player) === false) {
+                        return false;
+                    }
 
-        // Because xLink wants it done "properly"... Cunt.
-        $this->playersSatDown()->each(function (Player $player) {
-            $this->hands->map(function (Hand $hand) use ($player) {
-                if ($hand->player()->equals($player) === false) {
-                    return false;
-                }
-
-                return $hand->addCard($this->dealer()->dealCard());
+                    return $hand->addCard($this->dealer()->dealCard());
+                });
             });
-        });
 
-        return $this->hands;
+        return $hands;
     }
 
     /**

@@ -2,9 +2,11 @@
 
 namespace Cysha\Casino\Holdem\Tests\Game;
 
+use Cysha\Casino\Cards\Card;
 use Cysha\Casino\Cards\CardCollection;
 use Cysha\Casino\Cards\Deck;
 use Cysha\Casino\Cards\Hand;
+use Cysha\Casino\Cards\HandCollection;
 use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\PlayerCollection;
@@ -15,6 +17,7 @@ use Cysha\Casino\Holdem\Game\Dealer;
 use Cysha\Casino\Holdem\Game\Player;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Game\Table;
+use Cysha\Casino\Holdem\Tests\Factory\MockDeckFactory;
 
 class WinningDistributionTest extends BaseGameTestCase
 {
@@ -108,6 +111,14 @@ class WinningDistributionTest extends BaseGameTestCase
             - bob wins, wins pot 1 and 2
             - pot 3 still goes to xLink
 
+        if:
+            - jesus & bob wins, they split pot 1 and 2
+            - pot 3 still goes to xLink
+
+        if:
+            - jesus & xlink wins, they split pot 1 and 2
+            - pot 3 still goes to xLink
+
     */
 
     /** @test */
@@ -181,30 +192,28 @@ class WinningDistributionTest extends BaseGameTestCase
         $blackburn = $players->get(4);
 
         $board = CardCollection::fromString('3s 3h 8h 2s 4c');
-        $bobHand = Hand::fromString('As Ad', $bob);
-        $xLinkHand = Hand::fromString('2c 5d', $xLink);
-        $jesusHand = Hand::fromString('Ts Td', $jesus);
 
-        $sevenCardMock = $this->createMock(SevenCard::class);
-        $sevenCardMock->expects($this->at(0))
-            ->method('evaluateHands')
-            ->with($this->anything(), $this->anything())
-            ->will($this->returnValue(SevenCardResultCollection::make([
-                SevenCardResult::createTwoPair($board->merge($jesusHand->cards()), $jesusHand),
-            ])));
+        $allHands = HandCollection::make([
+            Hand::fromString('Ts Td', $jesus),
+            Hand::fromString('7c 4d', $melk),
+            Hand::fromString('Ac Ad', $bob),
+            Hand::fromString('2h 3c', $blackburn),
+            Hand::fromString('2c 5d', $xLink),
+        ]);
 
-        $sevenCardMock->expects($this->at(1))
-           ->method('evaluateHands')
-           ->with($this->anything(), $this->anything())
-           ->will($this->returnValue(SevenCardResultCollection::make([
-               SevenCardResult::createTwoPair($board->merge($bobHand->cards()), $bobHand),
-           ])));
+        $bobHand = $allHands->findByPlayer($bob);
+        $xLinkHand = $allHands->findByPlayer($xLink);
+        $jesusHand = $allHands->findByPlayer($jesus);
 
         // Do game
-        $dealer = Dealer::startWork(new Deck(), $sevenCardMock);
+
+        $deck = $this->buildSpecificDeck($board, $allHands);
+
+        $dealer = Dealer::startWork($deck, new SevenCard());
         $table = Table::setUp($dealer, $players);
 
         $round = Round::start($table);
+        $round->dealHands();
 
         // Round start
 
@@ -216,6 +225,10 @@ class WinningDistributionTest extends BaseGameTestCase
         $round->playerPushesAllIn($xLink); // 2000 (300)
         $round->playerPushesAllIn($jesus); // SB + 275
         $round->playerFoldsHand($melk); // 0
+
+        $round->dealFlop();
+        $round->dealTurn();
+        $round->dealRiver();
 
         $round->end();
 
@@ -230,13 +243,87 @@ class WinningDistributionTest extends BaseGameTestCase
 
             Pot4: xLink w/ 1700
         */
-        // dump($round->betStacks()->map->__toString());
-        // dump($round->chipPots()->map->__toString());
 
         $this->assertEquals(1700, $round->players()->get(0)->chipStack()->amount());
         $this->assertEquals(300, $round->players()->get(1)->chipStack()->amount());
         $this->assertEquals(750, $round->players()->get(2)->chipStack()->amount());
         $this->assertEquals(500, $round->players()->get(3)->chipStack()->amount());
+        $this->assertEquals(5000, $round->players()->get(4)->chipStack()->amount());
+    }
+
+    /** @test */
+    public function scenario_4()
+    {
+        $players = PlayerCollection::make([
+            Player::fromClient(Client::register('xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
+            Player::fromClient(Client::register('jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register('melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register('bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
+            Player::fromClient(Client::register('blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
+        ]);
+        $xLink = $players->get(0);
+        $jesus = $players->get(1);
+        $melk = $players->get(2);
+        $bob = $players->get(3);
+        $blackburn = $players->get(4);
+
+        $board = CardCollection::fromString('3s 3h 8h 2s 4c');
+
+        $allHands = HandCollection::make([
+            Hand::fromString('Ts Td', $jesus),
+            Hand::fromString('7c 4d', $melk),
+            Hand::fromString('Tc Th', $bob),
+            Hand::fromString('2h 3c', $blackburn),
+            Hand::fromString('2c 5d', $xLink),
+        ]);
+
+        $bobHand = $allHands->findByPlayer($bob);
+        $xLinkHand = $allHands->findByPlayer($xLink);
+        $jesusHand = $allHands->findByPlayer($jesus);
+
+        // Do game
+
+        $deck = $this->buildSpecificDeck($board, $allHands);
+
+        $dealer = Dealer::startWork($deck, new SevenCard());
+        $table = Table::setUp($dealer, $players);
+
+        $round = Round::start($table);
+        $round->dealHands();
+
+        // Round start
+
+        $round->postSmallBlind($jesus); // 25
+        $round->postBigBlind($melk); // 50
+
+        $round->playerPushesAllIn($bob); // 150
+        $round->playerFoldsHand($blackburn); // 0
+        $round->playerPushesAllIn($xLink); // 2000 (300)
+        $round->playerPushesAllIn($jesus); // SB + 275
+        $round->playerFoldsHand($melk); // 0
+
+        $round->dealFlop();
+        $round->dealTurn();
+        $round->dealRiver();
+
+        $round->end();
+
+        /*
+            xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
+
+            Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
+                xLink: 1850, Jesus: 150, BOB: 0
+
+            Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
+                xLink: 1700, Jesus: 0
+
+            Pot4: xLink w/ 1700
+        */
+
+        $this->assertEquals(1700, $round->players()->get(0)->chipStack()->amount());
+        $this->assertEquals(550, $round->players()->get(1)->chipStack()->amount());
+        $this->assertEquals(750, $round->players()->get(2)->chipStack()->amount());
+        $this->assertEquals(250, $round->players()->get(3)->chipStack()->amount());
         $this->assertEquals(5000, $round->players()->get(4)->chipStack()->amount());
     }
 
@@ -325,5 +412,67 @@ class WinningDistributionTest extends BaseGameTestCase
         $round->playerChecks($seat1);
 
         $round->dealRiver();
+    }
+
+    /**
+     * @param $allHands
+     * @param $board
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function buildSpecificDeck(CardCollection $board, HandCollection $allHands): \PHPUnit_Framework_MockObject_MockObject
+    {
+        //        return MockDeckFactory::createDeck($this, $board, $allHands);
+
+        $cards = CardCollection::make();
+
+        $allHands
+            ->each(function (Hand $hand) use ($cards) {
+                $cards->push($hand->cards()->get(0));
+            })
+            ->each(function (Hand $hand) use ($cards) {
+                $cards->push($hand->cards()->get(1));
+            })
+        ;
+
+        $actualDeck = CardCollection::make((new Deck())->getCards())->diff($cards)->shuffle()->values();
+
+        // burn
+        $cards->push($actualDeck->pop());
+
+        // flop
+        $board->splice(0, 3)
+              ->each(function (Card $card) use ($cards) {
+                  $cards->push($card);
+              })
+        ;
+
+        // burn
+        $cards->push($actualDeck->pop());
+
+        // turn
+        $cards->push($board->get(0));
+
+        // burn
+        $cards->push($actualDeck->pop());
+
+        // river
+        $cards->push($board->get(1));
+        $newCards = $cards->merge($actualDeck->diff($cards));
+
+        $deck = $this->createMock(Deck::class);
+
+        $deck->method('shuffle')
+             ->willReturn($newCards->toArray())
+        ;
+
+        $cards->each(function (Card $card, $index) use ($deck) {
+            $deck->expects($this->at($index + 1))
+                 ->method('draw')
+                 ->willReturn($card)
+            ;
+        });
+
+        return $deck;
     }
 }

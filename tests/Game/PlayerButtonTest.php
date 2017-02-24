@@ -4,13 +4,7 @@ namespace Cysha\Casino\Holdem\Tests\Game;
 
 use Cysha\Casino\Cards\Deck;
 use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
-use Cysha\Casino\Cards\Hand;
-use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
-use Cysha\Casino\Game\Client;
-use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Holdem\Game\Dealer;
-use Cysha\Casino\Cards\HandCollection;
-use Cysha\Casino\Holdem\Game\Player;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Game\Table;
 
@@ -133,29 +127,39 @@ class PlayerButtonTest extends BaseGameTestCase
     /** @test */
     public function button_moves_after_round_ends()
     {
-        $game = $this->createGenericGame(5);
-        $evaluator = $this->createMock(SevenCard::class);
-        $results = $this->createMock(SevenCardResultCollection::class);
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(5000)), Chips::fromAmount(500));
-        $hands = $this->createMock(HandCollection::class);
+        $game = $this->createGenericGame(2);
 
-        $evaluator->method('evaluateHands')
-            ->willReturn($results);
+        $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $results->method('map')
-            ->willReturn($hands);
-
-        $hands->method('first')
-            ->willReturn(Hand::fromString('4c 2s', $player));
-
-        $dealer = Dealer::startWork(new Deck(), $evaluator);
-        $players = $game->players();
-
-        $table = Table::setUp($dealer, $players);
+        $table = Table::setUp($dealer, $game->players());
+        $seat1 = $table->players()->get(0);
+        $seat2 = $table->players()->get(1);
 
         $round = Round::start($table);
+        $round->dealHands();
+        $round->postSmallBlind($seat1);
+        $round->postBigBlind($seat2);
+
+        $round->playerCalls($seat1);
+        $round->playerCalls($seat2);
+
+        $round->dealFlop();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+
+        $round->dealTurn();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+
+        $round->dealRiver();
+
+        $round->playerChecks($seat1);
+        $round->playerChecks($seat2);
+
         $round->end();
 
-        $this->assertEquals($table->locatePlayerWithButton(), $players->get(1));
+        $this->assertEquals($table->locatePlayerWithButton(), $seat2);
     }
 }

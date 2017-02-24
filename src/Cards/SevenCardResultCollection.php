@@ -8,6 +8,6 @@ class SevenCardResultCollection extends ResultCollection
 {
     public function __toString()
     {
-        return $this->map->definition();
+        return $this->map->definition()->implode("\n");
     }
 }

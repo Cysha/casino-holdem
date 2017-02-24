@@ -109,19 +109,6 @@ class RoundException extends DomainException
      *
      * @return static
      */
-    public static function callingWinnerBeforeRoundEnd($message = null)
-    {
-        $defaultMessage = sprintf('Cannot get the winner from a round that has not finished');
-        $message = null === $message ? $defaultMessage : $message;
-
-        return new static($message);
-    }
-
-    /**
-     * @param null $message
-     *
-     * @return static
-     */
     public static function invalidButtonPosition($message = null)
     {
         $defaultMessage = sprintf('Tried giving the button to a player that is not sat down.');
