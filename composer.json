@@ -30,11 +30,5 @@
     },
     "config": {
         "bin-dir": "bin"
-    },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../casino"
-        }
-    ]
+    }
 }
