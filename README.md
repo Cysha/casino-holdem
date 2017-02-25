@@ -19,27 +19,13 @@ Via Composer
 $ composer require cysha/casino-holdem
 ```
 
-
-## Features
-    - Todo
-
-## Documentation
-    - Todo
-
-
 ## Testing
 
 We try to follow BDD and TDD, as such we use both [phpspec](http://www.phpspec.net) and [phpunit](https://phpunit.de) to test this library.
 
 ``` bash
-$ composer test
+$ ./bin/phpunit
 ```
-
-
-## Contributing
-    - Todo
-
-
 
 ## License
 
