@@ -65,11 +65,6 @@ class Round
     private $leftToAct;
 
     /**
-     * @var Player
-     */
-    private $winningPlayer = null;
-
-    /**
      * Round constructor.
      *
      * @param Table $table
