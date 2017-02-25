@@ -1,9 +1,8 @@
 # Texas Holdem Library
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Cysha/casino-holdem/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Cysha/casino-holdem/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/Cysha/casino-holdem/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Cysha/casino-holdem/?branch=master)
 [![Build Status](https://travis-ci.org/Cysha/casino-holdem.svg?branch=master)](https://travis-ci.org/Cysha/casino-holdem)
+[![Code Coverage](https://scrutinizer-ci.com/g/Cysha/casino-holdem/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Cysha/casino-holdem/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Cysha/casino-holdem/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Cysha/casino-holdem/?branch=master)
 [![Code Climate](https://codeclimate.com/github/Cysha/casino-holdem/badges/gpa.svg)](https://codeclimate.com/github/Cysha/casino-holdem)
-[![Issue Count](https://codeclimate.com/github/Cysha/casino-holdem/badges/issue_count.svg)](https://codeclimate.com/github/Cysha/casino-holdem)
 
 [![Total Downloads](https://poser.pugx.org/cysha/casino-holdem/downloads)](https://packagist.org/packages/cysha/casino-holdem)
 [![License](https://poser.pugx.org/cysha/casino-holdem/license)](https://packagist.org/packages/cysha/casino-holdem)
