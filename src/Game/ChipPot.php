@@ -21,8 +21,8 @@ class ChipPot
 
     private function __construct()
     {
-        $this->chips = ChipStackCollection::make();
-        $this->players = PlayerCollection::make();
+        $this->chips = new ChipStackCollection();
+        $this->players = new PlayerCollection();
     }
 
     /**
