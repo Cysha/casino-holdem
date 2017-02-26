@@ -120,6 +120,7 @@ class Round
     public function end()
     {
         // TODO: make sure Flop/Turn/River have been dealt before we try and end the round...
+        $this->checkCommunityCards();
 
         $this->collectChipTotal();
 
@@ -536,18 +537,9 @@ class Round
         $this->collectChipTotal();
 
         $seat = $this->table()->findSeat($this->playerWithSmallBlind());
-        $this->leftToAct = $this->leftToAct
-            ->resetActions()
-            ->sortBySeats()
-            ->resetPlayerListFromSeat($seat);
+        $this->resetPlayerList($seat);
 
-        // burn one
-        $this->burnCards->push($this->table()->dealer()->dealCard());
-
-        // deal 3
-        $this->communityCards->push($this->table()->dealer()->dealCard());
-        $this->communityCards->push($this->table()->dealer()->dealCard());
-        $this->communityCards->push($this->table()->dealer()->dealCard());
+        $this->dealCommunityCards(3);
     }
 
     /**
@@ -562,7 +554,12 @@ class Round
             throw RoundException::playerStillNeedsToAct($player);
         }
 
-        $this->dealCommunityCard();
+        $this->collectChipTotal();
+
+        $seat = $this->table()->findSeat($this->playerWithSmallBlind());
+        $this->resetPlayerList($seat);
+
+        $this->dealCommunityCards(1);
     }
 
     /**
@@ -577,27 +574,28 @@ class Round
             throw RoundException::playerStillNeedsToAct($player);
         }
 
-        $this->dealCommunityCard();
+        $this->collectChipTotal();
+
+        $seat = $this->table()->findSeat($this->playerWithSmallBlind());
+        $this->resetPlayerList($seat);
+
+        $this->dealCommunityCards(1);
     }
 
     /**
      * Adds a card to the BurnCards(), also Adds a card to the CommunityCards().
+     *
+     * @param int $cards
      */
-    private function dealCommunityCard()
+    private function dealCommunityCards(int $cards = 1)
     {
-        $this->collectChipTotal();
-
-        $seat = $this->table()->findSeat($this->playerWithSmallBlind());
-        $this->leftToAct = $this->leftToAct
-            ->resetActions()
-            ->sortBySeats()
-            ->resetPlayerListFromSeat($seat);
-
         // burn one
         $this->burnCards->push($this->table()->dealer()->dealCard());
 
         // deal
-        $this->communityCards->push($this->table()->dealer()->dealCard());
+        for ($i = 0; $i < $cards; ++$i) {
+            $this->communityCards->push($this->table()->dealer()->dealCard());
+        }
     }
 
     /**
@@ -757,5 +755,35 @@ class Round
     {
         $this->table()->sitPlayerOut($player);
         $this->leftToAct = $this->leftToAct()->removePlayer($player);
+    }
+
+    public function checkCommunityCards()
+    {
+        if ($this->communityCards()->count() === 5) {
+            return;
+        }
+
+        if ($this->communityCards()->count() === 0) {
+            $this->dealCommunityCards(3);
+        }
+
+        if ($this->communityCards()->count() === 3) {
+            $this->dealCommunityCards(1);
+        }
+
+        if ($this->communityCards()->count() === 4) {
+            $this->dealCommunityCards(1);
+        }
+    }
+
+    /**
+     * @var int
+     */
+    public function resetPlayerList(int $seat)
+    {
+        $this->leftToAct = $this->leftToAct
+            ->resetActions()
+            ->sortBySeats()
+            ->resetPlayerListFromSeat($seat);
     }
 }

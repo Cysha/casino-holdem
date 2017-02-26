@@ -18,7 +18,6 @@ use Cysha\Casino\Holdem\Game\Parameters\CashGameParameters;
 use Cysha\Casino\Holdem\Game\Player;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Game\Table;
-use Cysha\Casino\Holdem\Tests\Factory\MockDeckFactory;
 
 class WinningDistributionTest extends BaseGameTestCase
 {
@@ -230,10 +229,6 @@ class WinningDistributionTest extends BaseGameTestCase
         $round->playerPushesAllIn($jesus); // SB + 275
         $round->playerFoldsHand($melk); // 0
 
-        $round->dealFlop();
-        $round->dealTurn();
-        $round->dealRiver();
-
         $round->end();
 
         /*
@@ -302,10 +297,6 @@ class WinningDistributionTest extends BaseGameTestCase
         $round->playerPushesAllIn($jesus); // SB + 275
         $round->playerFoldsHand($melk); // 0
 
-        $round->dealFlop();
-        $round->dealTurn();
-        $round->dealRiver();
-
         $round->end();
 
         /*
@@ -373,10 +364,6 @@ class WinningDistributionTest extends BaseGameTestCase
         $round->playerPushesAllIn($xLink); // 2000 (300)
         $round->playerPushesAllIn($jesus); // SB + 275
         $round->playerFoldsHand($melk); // 0
-
-        $round->dealFlop();
-        $round->dealTurn();
-        $round->dealRiver();
 
         $round->end();
 
@@ -495,8 +482,6 @@ class WinningDistributionTest extends BaseGameTestCase
      */
     private function buildSpecificDeck(CardCollection $board, HandCollection $allHands): \PHPUnit_Framework_MockObject_MockObject
     {
-        //        return MockDeckFactory::createDeck($this, $board, $allHands);
-
         $cards = CardCollection::make();
 
         $allHands

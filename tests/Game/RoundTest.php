@@ -1149,6 +1149,70 @@ class RoundTest extends BaseGameTestCase
         $this->assertEquals(0, $round->betStacksTotal());
     }
 
+    /** @test */
+    public function ending_the_round_after_the_flop_has_been_dealt_gets_turn_and_river_deal_automatically()
+    {
+        $game = $this->createGenericGame(2);
+
+        $table = $game->tables()->first();
+
+        $player1 = $table->playersSatDown()->get(0);
+        $player2 = $table->playersSatDown()->get(1);
+
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
+
+        // deal some hands
+        $round->dealHands();
+
+        $round->postSmallBlind($player1); // 25
+        $round->postBigBlind($player2); // 50
+        $round->playerCalls($player1); // 25
+        $round->playerChecks($player2);
+
+        $round->dealFlop();
+        $this->assertCount(3, $round->communityCards());
+
+        $round->end();
+        $this->assertCount(5, $round->communityCards());
+    }
+
+    /** @test */
+    public function ending_the_round_after_the_turn_has_been_dealt_gets_river_deal_automatically()
+    {
+        $game = $this->createGenericGame(2);
+
+        $table = $game->tables()->first();
+
+        $player1 = $table->playersSatDown()->get(0);
+        $player2 = $table->playersSatDown()->get(1);
+
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
+
+        // deal some hands
+        $round->dealHands();
+
+        $round->postSmallBlind($player1); // 25
+        $round->postBigBlind($player2); // 50
+        $round->playerCalls($player1); // 25
+        $round->playerChecks($player2);
+
+        $round->dealFlop();
+        $this->assertCount(3, $round->communityCards());
+
+        $round->playerChecks($player1);
+        $round->playerChecks($player2);
+
+        $round->dealTurn();
+        $this->assertCount(4, $round->communityCards());
+
+        $round->end();
+        $this->assertCount(5, $round->communityCards());
+    }
+
     /**
      * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
