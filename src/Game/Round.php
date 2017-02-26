@@ -11,6 +11,7 @@ use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
+use Cysha\Casino\Game\Contracts\GameParameters;
 
 class Round
 {
@@ -65,11 +66,17 @@ class Round
     private $leftToAct;
 
     /**
+     * @var GameParameters
+     */
+    private $gameRules;
+
+    /**
      * Round constructor.
      *
-     * @param Table $table
+     * @param Table          $table
+     * @param GameParameters $gameRules
      */
-    private function __construct(Table $table)
+    private function __construct(Table $table, GameParameters $gameRules)
     {
         $this->table = $table;
         $this->chipPots = ChipPotCollection::make();
@@ -81,6 +88,7 @@ class Round
         $this->foldedPlayers = PlayerCollection::make();
         $this->playerActions = ActionCollection::make();
         $this->leftToAct = LeftToAct::make();
+        $this->gameRules = $gameRules;
 
         // shuffle the deck ready
         $this->table()->dealer()->shuffleDeck();
@@ -96,13 +104,14 @@ class Round
     /**
      * Start a Round of poker.
      *
-     * @param Table $table
+     * @param Table          $table
+     * @param GameParameters $gameRules
      *
      * @return Round
      */
-    public static function start(Table $table): Round
+    public static function start(Table $table, GameParameters $gameRules): Round
     {
-        return new static($table);
+        return new static($table, $gameRules);
     }
 
     /**
@@ -197,6 +206,14 @@ class Round
     public function betStacks(): ChipStackCollection
     {
         return $this->betStacks;
+    }
+
+    /**
+     * @return GameParameters
+     */
+    public function gameRules(): GameParameters
+    {
+        return $this->gameRules;
     }
 
     /**
@@ -342,7 +359,7 @@ class Round
      */
     private function smallBlind(): Chips
     {
-        return Chips::fromAmount(25);
+        return Chips::fromAmount($this->gameRules()->smallBlind()->amount());
     }
 
     /**
@@ -350,7 +367,7 @@ class Round
      */
     private function bigBlind(): Chips
     {
-        return Chips::fromAmount(50);
+        return Chips::fromAmount($this->gameRules()->bigBlind()->amount());
     }
 
     /**

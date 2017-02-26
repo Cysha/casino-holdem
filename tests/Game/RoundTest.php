@@ -20,8 +20,9 @@ class RoundTest extends BaseGameTestCase
     public function it_can_start_a_round_on_a_table()
     {
         $game = $this->createGenericGame();
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($game->tables()->first());
+        $round = Round::start($game->tables()->first(), $gameRules);
 
         $this->assertCount(4, $round->players());
     }
@@ -32,7 +33,9 @@ class RoundTest extends BaseGameTestCase
         $game = $this->createGenericGame();
 
         $table = $game->tables()->first();
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $this->assertEquals($round->playerWithButton(), $table->players()->first());
     }
@@ -43,7 +46,9 @@ class RoundTest extends BaseGameTestCase
         $game = $this->createGenericGame();
 
         $table = $game->tables()->first();
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $this->assertEquals($round->playerWithButton(), $table->players()->first());
         $player2 = $table->players()->get(1);
@@ -56,7 +61,9 @@ class RoundTest extends BaseGameTestCase
         $game = $this->createGenericGame();
 
         $table = $game->tables()->first();
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $this->assertEquals($round->playerWithButton(), $table->players()->first());
         $player3 = $table->players()->get(2);
@@ -72,7 +79,9 @@ class RoundTest extends BaseGameTestCase
         $table = $game->tables()->first();
 
         $table->sitPlayerOut($table->playersSatDown()->get(1));
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $this->assertEquals($round->playerWithButton(), $table->players()->first());
         $player3 = $table->playersSatDown()->get(1);
@@ -88,7 +97,9 @@ class RoundTest extends BaseGameTestCase
         $table = $game->tables()->first();
 
         $table->sitPlayerOut($table->playersSatDown()->get(2));
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $this->assertEquals($round->playerWithButton(), $table->players()->first());
         $player3 = $table->playersSatDown()->get(2);
@@ -105,7 +116,9 @@ class RoundTest extends BaseGameTestCase
 
         $table->sitPlayerOut($table->players()->get(1)); // player 2
         $table->sitPlayerOut($table->players()->get(2)); // player 3
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $player = $table->playersSatDown()->get(0);
         $this->assertEquals($round->playerWithSmallBlind(), $player);
@@ -121,7 +134,9 @@ class RoundTest extends BaseGameTestCase
 
         $table->sitPlayerOut($table->players()->get(2)); // player 3
         $table->sitPlayerOut($table->players()->get(3)); // player 4
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $player1 = $table->playersSatDown()->get(0);
         $this->assertEquals($round->playerWithButton(), $player1, 'Button is with the wrong player');
@@ -159,7 +174,9 @@ class RoundTest extends BaseGameTestCase
         $table->sitPlayerOut($table->players()->get(0)); // player 1
         $table->sitPlayerOut($table->players()->get(2)); // player 3
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $player2 = $table->players()->get(1);
         $this->assertEquals($round->playerWithButton(), $player2, 'Button is with the wrong player');
@@ -181,7 +198,9 @@ class RoundTest extends BaseGameTestCase
         $player2 = $table->playersSatDown()->get(1);
         $player3 = $table->playersSatDown()->get(2);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
         /*
         [
             xLink: 0, // button
@@ -210,7 +229,9 @@ class RoundTest extends BaseGameTestCase
         $player3 = $table->playersSatDown()->get(2);
         $player4 = $table->playersSatDown()->get(3);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -234,7 +255,9 @@ class RoundTest extends BaseGameTestCase
 
         $table->sitPlayerOut($player4);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -255,7 +278,9 @@ class RoundTest extends BaseGameTestCase
         $player4 = $table->playersSatDown()->get(3); // x [Sat out]
         $player5 = $table->playersSatDown()->get(4); // [turn]
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->sitPlayerOut($player4);
 
@@ -277,7 +302,9 @@ class RoundTest extends BaseGameTestCase
         $player2 = $table->playersSatDown()->get(1); // SB
         $player4 = $table->playersSatDown()->get(3); // x [Sat out]
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->postSmallBlind($player1);
         $round->postBigBlind($player2);
@@ -303,7 +330,9 @@ class RoundTest extends BaseGameTestCase
         $player3 = $table->playersSatDown()->get(2);
         $player4 = $table->playersSatDown()->get(3);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->postSmallBlind($player2); // 25
         $round->postBigBlind($player3); // 50
@@ -334,7 +363,9 @@ class RoundTest extends BaseGameTestCase
         $player4 = $table->playersSatDown()->get(3);
         $player5 = $table->playersSatDown()->get(4);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->postSmallBlind($player1);
         $round->postBigBlind($player2);
@@ -359,7 +390,9 @@ class RoundTest extends BaseGameTestCase
         $player2 = $table->playersSatDown()->get(1);
         $randomPlayer = Player::fromClient(Client::register('Random Player', Chips::fromAmount(1)));
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->postSmallBlind($player1);
         $round->postBigBlind($player2);
@@ -380,7 +413,9 @@ class RoundTest extends BaseGameTestCase
         $player3 = $table->playersSatDown()->get(2); // BB - 50
         $player4 = $table->playersSatDown()->get(3); // Call - 50
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->postSmallBlind($player2);
         $round->postBigBlind($player3);
@@ -405,7 +440,9 @@ class RoundTest extends BaseGameTestCase
         $seat3 = $table->playersSatDown()->get(2); // BB - 50
         $seat4 = $table->playersSatDown()->get(3); // Call - 50
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->postSmallBlind($seat2);
         $round->postBigBlind($seat3);
@@ -438,7 +475,9 @@ class RoundTest extends BaseGameTestCase
         $seat3 = $table->playersSatDown()->get(2); // BB - 50
         $seat4 = $table->playersSatDown()->get(3); // Call - 50
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->postSmallBlind($seat2);
         $round->postBigBlind($seat3);
@@ -473,7 +512,9 @@ class RoundTest extends BaseGameTestCase
         $seat3 = $table->playersSatDown()->get(2); // BB - 50
         $seat4 = $table->playersSatDown()->get(3); // Call - 50
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->postSmallBlind($seat2);
         $round->postBigBlind($seat3);
@@ -505,7 +546,9 @@ class RoundTest extends BaseGameTestCase
         /** @var Table $table */
         $table = $game->tables()->first();
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -526,7 +569,9 @@ class RoundTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -562,7 +607,9 @@ class RoundTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -591,7 +638,9 @@ class RoundTest extends BaseGameTestCase
         /** @var Table $table */
         $table = $game->tables()->first();
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -612,7 +661,9 @@ class RoundTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -655,7 +706,9 @@ class RoundTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -699,7 +752,9 @@ class RoundTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -735,7 +790,9 @@ class RoundTest extends BaseGameTestCase
         /** @var Table $table */
         $table = $game->tables()->first();
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -756,7 +813,9 @@ class RoundTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -808,7 +867,9 @@ class RoundTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -861,7 +922,9 @@ class RoundTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $round->dealHands();
 
@@ -907,7 +970,9 @@ class RoundTest extends BaseGameTestCase
         $player3 = $table->playersSatDown()->get(2);
         $player4 = $table->playersSatDown()->get(3);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         // deal some hands
         $round->dealHands();
@@ -943,7 +1008,9 @@ class RoundTest extends BaseGameTestCase
         $player3 = $table->playersSatDown()->get(2);
         $player4 = $table->playersSatDown()->get(3);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         // deal some hands
         $round->dealHands();
@@ -1020,7 +1087,9 @@ class RoundTest extends BaseGameTestCase
         $player1 = $table->playersSatDown()->get(0);
         $player2 = $table->playersSatDown()->get(1);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         // deal some hands
         $round->dealHands();
@@ -1093,7 +1162,9 @@ class RoundTest extends BaseGameTestCase
         $player1 = $table->playersSatDown()->get(0);
         $player2 = $table->playersSatDown()->get(1);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         // deal some hands
         $round->dealHands();

@@ -4,6 +4,7 @@ namespace Cysha\Casino\Holdem\Tests\Game;
 
 use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Holdem\Game\LeftToAct;
+use Cysha\Casino\Holdem\Game\Parameters\CashGameParameters;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Table;
 
@@ -237,7 +238,9 @@ class LeftToActTest extends BaseGameTestCase
         $player3 = $table->playersSatDown()->get(2);
         $player4 = $table->playersSatDown()->get(3);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $expected = LeftToAct::make([
             ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
@@ -333,7 +336,9 @@ class LeftToActTest extends BaseGameTestCase
         /** @var Table $table */
         $table = $game->tables()->first();
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $seat1 = $table->playersSatDown()->get(0);
         $seat2 = $table->playersSatDown()->get(1);
@@ -357,7 +362,9 @@ class LeftToActTest extends BaseGameTestCase
 
         $seat2 = $table->playersSatDown()->get(1);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $expected = LeftToAct::make([
             ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
@@ -403,7 +410,9 @@ class LeftToActTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $expected = LeftToAct::make([
             ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
@@ -450,7 +459,9 @@ class LeftToActTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $expected = LeftToAct::make([
             ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],

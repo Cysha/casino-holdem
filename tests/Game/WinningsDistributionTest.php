@@ -14,6 +14,7 @@ use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
 use Cysha\Casino\Holdem\Game\Dealer;
+use Cysha\Casino\Holdem\Game\Parameters\CashGameParameters;
 use Cysha\Casino\Holdem\Game\Player;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Game\Table;
@@ -61,7 +62,9 @@ class WinningDistributionTest extends BaseGameTestCase
         $seat2 = $table->playersSatDown()->get(1);
         $seat3 = $table->playersSatDown()->get(2);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $this->dealHandsAndPlayGame($round, $seat2, $seat3, $seat1);
 
@@ -212,10 +215,11 @@ class WinningDistributionTest extends BaseGameTestCase
         $dealer = Dealer::startWork($deck, new SevenCard());
         $table = Table::setUp($dealer, $players);
 
-        $round = Round::start($table);
-        $round->dealHands();
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
+        $round = Round::start($table, $gameRules);
+        $round->dealHands();
 
         $round->postSmallBlind($jesus); // 25
         $round->postBigBlind($melk); // 50
@@ -283,10 +287,11 @@ class WinningDistributionTest extends BaseGameTestCase
         $dealer = Dealer::startWork($deck, new SevenCard());
         $table = Table::setUp($dealer, $players);
 
-        $round = Round::start($table);
-        $round->dealHands();
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
+        $round = Round::start($table, $gameRules);
+        $round->dealHands();
 
         $round->postSmallBlind($jesus); // 25
         $round->postBigBlind($melk); // 50
@@ -354,10 +359,11 @@ class WinningDistributionTest extends BaseGameTestCase
         $dealer = Dealer::startWork($deck, new SevenCard());
         $table = Table::setUp($dealer, $players);
 
-        $round = Round::start($table);
-        $round->dealHands();
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
+        $round = Round::start($table, $gameRules);
+        $round->dealHands();
 
         $round->postSmallBlind($jesus); // 25
         $round->postBigBlind($melk); // 50
@@ -415,9 +421,10 @@ class WinningDistributionTest extends BaseGameTestCase
         $dealer = Dealer::startWork(new Deck(), $evaluator);
         $table = Table::setUp($dealer, $players);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
+        $round = Round::start($table, $gameRules);
 
         $round->postSmallBlind($jesus); // 25
         $round->postBigBlind($melk); // 50

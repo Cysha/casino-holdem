@@ -3,8 +3,10 @@
 namespace Cysha\Casino\Holdem\Tests\Game;
 
 use Cysha\Casino\Cards\Deck;
+use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
 use Cysha\Casino\Holdem\Game\Dealer;
+use Cysha\Casino\Holdem\Game\Parameters\CashGameParameters;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Game\Table;
 
@@ -114,7 +116,9 @@ class PlayerButtonTest extends BaseGameTestCase
 
         $table->giveButtonToPlayer($seat3);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
 
         $this->assertEquals($seat4, $round->whosTurnIsIt());
         $round->postSmallBlind($seat4);
@@ -135,7 +139,9 @@ class PlayerButtonTest extends BaseGameTestCase
         $seat1 = $table->players()->get(0);
         $seat2 = $table->players()->get(1);
 
-        $round = Round::start($table);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
         $round->dealHands();
         $round->postSmallBlind($seat1);
         $round->postBigBlind($seat2);
