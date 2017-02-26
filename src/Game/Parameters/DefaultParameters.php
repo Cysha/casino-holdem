@@ -56,7 +56,8 @@ class DefaultParameters implements GameParameters
     public function smallBlind(): Chips
     {
         if ($this->smallBlind === null) {
-            $this->smallBlind = Chips::fromAmount(floor($this->bigBlind()->amount() / 2));
+            $bigBlindAmount = floor($this->bigBlind()->amount() / 2);
+            $this->smallBlind = Chips::fromAmount($bigBlindAmount);
         }
 
         return $this->smallBlind;

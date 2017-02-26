@@ -2,13 +2,12 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
-use Cysha\Casino\Cards\CardCollection;
 use Cysha\Casino\Cards\Contracts\CardResults;
 use Cysha\Casino\Cards\Hand;
-use Cysha\Casino\Cards\HandCollection;
 use Cysha\Casino\Game\ChipStackCollection;
 use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;
+use Cysha\Casino\Game\Contracts\Dealer as DealerContract;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
 use Cysha\Casino\Game\Contracts\GameParameters;
@@ -24,21 +23,6 @@ class Round
      * @var ChipStackCollection
      */
     private $betStacks;
-
-    /**
-     * @var CardCollection
-     */
-    private $burnCards;
-
-    /**
-     * @var CardCollection
-     */
-    private $communityCards;
-
-    /**
-     * @var HandCollection
-     */
-    private $hands;
 
     /**
      * @var PlayerCollection
@@ -82,16 +66,13 @@ class Round
         $this->chipPots = ChipPotCollection::make();
         $this->currentPot = ChipPot::create();
         $this->betStacks = ChipStackCollection::make();
-        $this->hands = HandCollection::make();
-        $this->communityCards = CardCollection::make();
-        $this->burnCards = CardCollection::make();
         $this->foldedPlayers = PlayerCollection::make();
         $this->playerActions = ActionCollection::make();
         $this->leftToAct = LeftToAct::make();
         $this->gameRules = $gameRules;
 
         // shuffle the deck ready
-        $this->table()->dealer()->shuffleDeck();
+        $this->dealer()->shuffleDeck();
 
         // add the default pot to the chipPots
         $this->chipPots->push($this->currentPot);
@@ -119,14 +100,21 @@ class Round
      */
     public function end()
     {
-        // TODO: make sure Flop/Turn/River have been dealt before we try and end the round...
-        $this->checkCommunityCards();
+        $this->dealer()->checkCommunityCards();
 
         $this->collectChipTotal();
 
         $this->distributeWinnings();
 
         $this->table()->moveButton();
+    }
+
+    /**
+     * @return DealerContract
+     */
+    public function dealer(): DealerContract
+    {
+        return $this->table->dealer();
     }
 
     /**
@@ -154,22 +142,6 @@ class Round
     }
 
     /**
-     * @return CardCollection
-     */
-    public function communityCards(): CardCollection
-    {
-        return $this->communityCards;
-    }
-
-    /**
-     * @return CardCollection
-     */
-    public function burnCards(): CardCollection
-    {
-        return $this->burnCards;
-    }
-
-    /**
      * @return ActionCollection
      */
     public function playerActions(): ActionCollection
@@ -194,14 +166,6 @@ class Round
     }
 
     /**
-     * @return HandCollection
-     */
-    public function hands(): HandCollection
-    {
-        return $this->hands;
-    }
-
-    /**
      * @return ChipStackCollection
      */
     public function betStacks(): ChipStackCollection
@@ -218,19 +182,20 @@ class Round
     }
 
     /**
-     * Deal the hands to the players.
-     */
-    public function dealHands()
-    {
-        $this->hands = $this->table()->dealCardsToPlayers();
-    }
-
-    /**
      * @return int
      */
     public function betStacksTotal(): int
     {
         return $this->betStacks()->total()->amount();
+    }
+
+    public function dealHands()
+    {
+        $players = $this->table()
+            ->playersSatDown()
+            ->resetPlayerListFromSeat($this->table()->button() + 1);
+
+        $this->dealer()->dealHands($players);
     }
 
     /**
@@ -254,8 +219,8 @@ class Round
 
                 $activePlayers = $chipPot->players()->diff($this->foldedPlayers());
 
-                $playerHands = $this->hands()->findByPlayers($activePlayers);
-                $evaluate = $this->table()->dealer()->evaluateHands($this->communityCards, $playerHands);
+                $playerHands = $this->dealer()->hands()->findByPlayers($activePlayers);
+                $evaluate = $this->dealer()->evaluateHands($this->dealer()->communityCards(), $playerHands);
 
                 // if just 1, the player with that hand wins
                 if ($evaluate->count() === 1) {
@@ -338,7 +303,7 @@ class Round
         $this->postBlind($player, $chips);
 
         $this->playerActions()->push(new Action($player, Action::SMALL_BLIND, $this->smallBlind()));
-        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::SMALL_BLIND);
+        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::SMALL_BLIND);
     }
 
     /**
@@ -352,7 +317,7 @@ class Round
         $this->postBlind($player, $chips);
 
         $this->playerActions()->push(new Action($player, Action::BIG_BLIND, $this->bigBlind()));
-        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::BIG_BLIND);
+        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::BIG_BLIND);
     }
 
     /**
@@ -407,22 +372,6 @@ class Round
 
         // Add chips to player's table stack
         $this->betStacks->put($player->name(), $chips);
-    }
-
-    /**
-     * @param PlayerContract $player
-     *
-     * @return Hand
-     */
-    public function playerHand(PlayerContract $player): Hand
-    {
-        $hand = $this->hands()->findByPlayer($player);
-
-        if ($hand === null) {
-            throw RoundException::playerHasNoHand($player);
-        }
-
-        return $hand;
     }
 
     /**
@@ -527,7 +476,7 @@ class Round
      */
     public function dealFlop()
     {
-        if ($this->communityCards()->count() !== 0) {
+        if ($this->dealer()->communityCards()->count() !== 0) {
             throw RoundException::flopHasBeenDealt();
         }
         if ($player = $this->whosTurnIsIt()) {
@@ -539,7 +488,7 @@ class Round
         $seat = $this->table()->findSeat($this->playerWithSmallBlind());
         $this->resetPlayerList($seat);
 
-        $this->dealCommunityCards(3);
+        $this->dealer()->dealCommunityCards(3);
     }
 
     /**
@@ -547,7 +496,7 @@ class Round
      */
     public function dealTurn()
     {
-        if ($this->communityCards()->count() !== 3) {
+        if ($this->dealer()->communityCards()->count() !== 3) {
             throw RoundException::turnHasBeenDealt();
         }
         if (($player = $this->whosTurnIsIt()) !== false) {
@@ -559,7 +508,7 @@ class Round
         $seat = $this->table()->findSeat($this->playerWithSmallBlind());
         $this->resetPlayerList($seat);
 
-        $this->dealCommunityCards(1);
+        $this->dealer()->dealCommunityCards(1);
     }
 
     /**
@@ -567,7 +516,7 @@ class Round
      */
     public function dealRiver()
     {
-        if ($this->communityCards()->count() !== 4) {
+        if ($this->dealer()->communityCards()->count() !== 4) {
             throw RoundException::riverHasBeenDealt();
         }
         if (($player = $this->whosTurnIsIt()) !== false) {
@@ -579,23 +528,7 @@ class Round
         $seat = $this->table()->findSeat($this->playerWithSmallBlind());
         $this->resetPlayerList($seat);
 
-        $this->dealCommunityCards(1);
-    }
-
-    /**
-     * Adds a card to the BurnCards(), also Adds a card to the CommunityCards().
-     *
-     * @param int $cards
-     */
-    private function dealCommunityCards(int $cards = 1)
-    {
-        // burn one
-        $this->burnCards->push($this->table()->dealer()->dealCard());
-
-        // deal
-        for ($i = 0; $i < $cards; ++$i) {
-            $this->communityCards->push($this->table()->dealer()->dealCard());
-        }
+        $this->dealer()->dealCommunityCards(1);
     }
 
     /**
@@ -629,7 +562,7 @@ class Round
         $this->playerActions->push(new Action($player, Action::CALL, $amountLeftToBet));
 
         $this->placeChipBet($player, $amountLeftToBet);
-        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::ACTIONED);
+        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::ACTIONED);
     }
 
     /**
@@ -645,7 +578,7 @@ class Round
         $this->playerActions->push(new Action($player, Action::RAISE, $chips));
 
         $this->placeChipBet($player, $chips);
-        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::AGGRESSIVELY_ACTIONED);
+        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::AGGRESSIVELY_ACTIONED);
     }
 
     /**
@@ -660,7 +593,7 @@ class Round
         $this->playerActions()->push(new Action($player, Action::FOLD));
 
         $this->foldedPlayers->push($player);
-        $this->leftToAct = $this->leftToAct->removePlayer($player);
+        $this->leftToAct = $this->leftToAct()->removePlayer($player);
     }
 
     /**
@@ -679,7 +612,7 @@ class Round
         $this->playerActions()->push(new Action($player, Action::ALLIN, Chips::fromAmount($chips->amount())));
 
         $this->placeChipBet($player, $chips);
-        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::ALL_IN);
+        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::ALL_IN);
     }
 
     /**
@@ -692,7 +625,7 @@ class Round
         $this->checkPlayerTryingToAct($player);
 
         $this->playerActions()->push(new Action($player, Action::CHECK));
-        $this->leftToAct = $this->leftToAct->playerHasActioned($player, LeftToAct::ACTIONED);
+        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::ACTIONED);
     }
 
     /**
@@ -738,7 +671,7 @@ class Round
     private function setupLeftToAct()
     {
         if ($this->players()->count() === 2) {
-            $this->leftToAct = $this->leftToAct->setup($this->players());
+            $this->leftToAct = $this->leftToAct()->setup($this->players());
 
             return;
         }
@@ -755,25 +688,6 @@ class Round
     {
         $this->table()->sitPlayerOut($player);
         $this->leftToAct = $this->leftToAct()->removePlayer($player);
-    }
-
-    public function checkCommunityCards()
-    {
-        if ($this->communityCards()->count() === 5) {
-            return;
-        }
-
-        if ($this->communityCards()->count() === 0) {
-            $this->dealCommunityCards(3);
-        }
-
-        if ($this->communityCards()->count() === 3) {
-            $this->dealCommunityCards(1);
-        }
-
-        if ($this->communityCards()->count() === 4) {
-            $this->dealCommunityCards(1);
-        }
     }
 
     /**

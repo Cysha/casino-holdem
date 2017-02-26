@@ -235,10 +235,10 @@ class RoundTest extends BaseGameTestCase
 
         $round->dealHands();
 
-        $this->assertCount(2, $round->playerHand($player1));
-        $this->assertCount(2, $round->playerHand($player2));
-        $this->assertCount(2, $round->playerHand($player3));
-        $this->assertCount(2, $round->playerHand($player4));
+        $this->assertCount(2, $round->dealer()->playerHand($player1));
+        $this->assertCount(2, $round->dealer()->playerHand($player2));
+        $this->assertCount(2, $round->dealer()->playerHand($player3));
+        $this->assertCount(2, $round->dealer()->playerHand($player4));
     }
 
     /**
@@ -262,7 +262,7 @@ class RoundTest extends BaseGameTestCase
         $round->dealHands();
 
         // This should throw an exception
-        $round->playerHand($player4);
+        $round->dealer()->playerHand($player4);
     }
 
     /** @test */
@@ -586,8 +586,8 @@ class RoundTest extends BaseGameTestCase
         $round->playerChecks($seat3);
 
         $round->dealFlop();
-        $this->assertCount(1, $round->burnCards());
-        $this->assertCount(3, $round->communityCards());
+        $this->assertCount(1, $round->dealer()->burnCards());
+        $this->assertCount(3, $round->dealer()->communityCards());
     }
 
     /**
@@ -1172,10 +1172,10 @@ class RoundTest extends BaseGameTestCase
         $round->playerChecks($player2);
 
         $round->dealFlop();
-        $this->assertCount(3, $round->communityCards());
+        $this->assertCount(3, $round->dealer()->communityCards());
 
         $round->end();
-        $this->assertCount(5, $round->communityCards());
+        $this->assertCount(5, $round->dealer()->communityCards());
     }
 
     /** @test */
@@ -1201,16 +1201,16 @@ class RoundTest extends BaseGameTestCase
         $round->playerChecks($player2);
 
         $round->dealFlop();
-        $this->assertCount(3, $round->communityCards());
+        $this->assertCount(3, $round->dealer()->communityCards());
 
         $round->playerChecks($player1);
         $round->playerChecks($player2);
 
         $round->dealTurn();
-        $this->assertCount(4, $round->communityCards());
+        $this->assertCount(4, $round->dealer()->communityCards());
 
         $round->end();
-        $this->assertCount(5, $round->communityCards());
+        $this->assertCount(5, $round->dealer()->communityCards());
     }
 
     /**

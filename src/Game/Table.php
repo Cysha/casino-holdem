@@ -2,9 +2,6 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
-use Cysha\Casino\Cards\CardCollection;
-use Cysha\Casino\Cards\Hand;
-use Cysha\Casino\Cards\HandCollection;
 use Cysha\Casino\Game\Contracts\Dealer as DealerContract;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 use Cysha\Casino\Game\PlayerCollection;
@@ -135,34 +132,6 @@ class Table extends BaseTable
         if ($this->button >= $this->playersSatDown()->count()) {
             $this->button = 0;
         }
-    }
-
-    /**
-     * @return HandCollection
-     */
-    public function dealCardsToPlayers(): HandCollection
-    {
-        $hands = HandCollection::make();
-
-        // deal to the player after the button first
-        $this->playersSatDown()
-            ->resetPlayerListFromSeat($this->button + 1)
-            ->each(function (PlayerContract $player) use ($hands) {
-                $hands->push(Hand::create(CardCollection::make([
-                    $this->dealer()->dealCard(),
-                ]), $player));
-            })
-            ->each(function (PlayerContract $player) use ($hands) {
-                $hands->map(function (Hand $hand) use ($player, $hands) {
-                    if ($hand->player()->equals($player) === false) {
-                        return false;
-                    }
-
-                    return $hand->addCard($this->dealer()->dealCard());
-                });
-            });
-
-        return $hands;
     }
 
     /**
