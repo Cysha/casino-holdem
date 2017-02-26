@@ -101,6 +101,22 @@ final class CashGame implements Game
     }
 
     /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return TableCollection
+     */
+    public function tables(): TableCollection
+    {
+        return $this->tables;
+    }
+
+    /**
      * @param Client $client
      * @param Chips  $buyinAmount
      *
@@ -129,34 +145,18 @@ final class CashGame implements Game
         $this->players()->push($addPlayer);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * TODO: Refactor out table creation to make it more readable.
-     */
     public function assignPlayersToTables()
     {
-        // $groupedPlayers = $this->players()->shuffle()->chunk(9);
-        $groupedPlayers = $this->players()->chunk(9);
+        $groupedPlayers = $this->players()
+            //->shuffle()
+            ->chunk($this->rules()->tableSize())
+            ->map(function (PlayerCollection $players) {
+                $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-        $this->tables = TableCollection::make($groupedPlayers->map(function (PlayerCollection $players) {
-            $dealer = Dealer::startWork(new Deck(), new SevenCard());
+                return Table::setUp($dealer, $players);
+            })
+            ->toArray();
 
-            return Table::setUp($dealer, $players);
-        })->toArray());
-    }
-
-    /**
-     * @return TableCollection
-     */
-    public function tables(): TableCollection
-    {
-        return $this->tables;
+        $this->tables = TableCollection::make($groupedPlayers);
     }
 }
