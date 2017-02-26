@@ -3,7 +3,6 @@
 namespace Cysha\Casino\Holdem\Game;
 
 use Cysha\Casino\Cards\Contracts\CardResults;
-use Cysha\Casino\Cards\Hand;
 use Cysha\Casino\Game\ChipStackCollection;
 use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;

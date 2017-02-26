@@ -2,20 +2,19 @@
 
 namespace Cysha\Casino\Holdem\Exceptions;
 
-use DomainException;
-use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\Chips;
-use Cysha\Casino\Holdem\Game\Player;
+use Cysha\Casino\Game\Contracts\Player;
+use DomainException;
 
 class RoundException extends DomainException
 {
     /**
-     * @param Client      $player
+     * @param Player      $player
      * @param null|string $message
      *
      * @return static
      */
-    public static function playerHasNoHand(Client $player, $message = null)
+    public static function playerHasNoHand(Player $player, $message = null)
     {
         $defaultMessage = sprintf('%s has not been dealt into this round', $player);
         $message = null === $message ? $defaultMessage : $message;
