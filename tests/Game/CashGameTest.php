@@ -8,6 +8,7 @@ use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Game\TableCollection;
 use Cysha\Casino\Holdem\Game\CashGame;
 use Cysha\Casino\Holdem\Game\Dealer;
+use Cysha\Casino\Holdem\Game\Parameters\CashGameParameters;
 use Cysha\Casino\Holdem\Game\Player;
 use Cysha\Casino\Holdem\Game\Table;
 use Ramsey\Uuid\Uuid;
@@ -20,9 +21,9 @@ class CashGameTest extends BaseGameTestCase
     {
         $id = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $minimumBuyIn = Chips::fromAmount(500);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $game = CashGame::setUp($id, $name, $minimumBuyIn);
+        $game = CashGame::setUp($id, $name, $gameRules);
         $this->assertInstanceOf(CashGame::class, $game);
     }
 
@@ -34,9 +35,9 @@ class CashGameTest extends BaseGameTestCase
     {
         $id = 'abc';
         $name = 'Demo Cash Game';
-        $minimumBuyIn = Chips::fromAmount(500);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $game = CashGame::setUp($id, $name, $minimumBuyIn);
+        $game = CashGame::setUp($id, $name, $gameRules);
     }
 
     /** @test */
@@ -44,9 +45,9 @@ class CashGameTest extends BaseGameTestCase
     {
         $id = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $minimumBuyIn = Chips::fromAmount(500);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $game = CashGame::setUp($id, $name, $minimumBuyIn);
+        $game = CashGame::setUp($id, $name, $gameRules);
         $this->assertEquals($id, $game->id());
     }
 
@@ -55,9 +56,9 @@ class CashGameTest extends BaseGameTestCase
     {
         $id = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $minimumBuyIn = Chips::fromAmount(500);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $game = CashGame::setUp($id, $name, $minimumBuyIn);
+        $game = CashGame::setUp($id, $name, $gameRules);
         $this->assertEquals($name, $game->name());
     }
 
@@ -66,9 +67,9 @@ class CashGameTest extends BaseGameTestCase
     {
         $id = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $minimumBuyIn = Chips::fromAmount(500);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $game = CashGame::setUp($id, $name, $minimumBuyIn);
+        $game = CashGame::setUp($id, $name, $gameRules);
         $this->assertEquals(PlayerCollection::make(), $game->players());
         $this->assertEquals(0, $game->players()->count());
     }
@@ -82,7 +83,9 @@ class CashGameTest extends BaseGameTestCase
         $playerName = 'xLink';
         $xLink = Client::register($playerName, $minimumBuyIn);
 
-        $game = CashGame::setUp($id, $name, $minimumBuyIn);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, $minimumBuyIn);
+
+        $game = CashGame::setUp($id, $name, $gameRules);
         $game->registerPlayer($xLink);
 
         /** @var Client $firstPlayer */
@@ -98,8 +101,9 @@ class CashGameTest extends BaseGameTestCase
         $id = Uuid::uuid4();
         $name = 'Demo Cash Game';
         $minimumBuyIn = Chips::fromAmount(500);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, $minimumBuyIn);
 
-        $game = CashGame::setUp($id, $name, $minimumBuyIn);
+        $game = CashGame::setUp($id, $name, $gameRules);
 
         $xLink = Client::register('xLink', Chips::fromAmount(1000));
         $Jebus = Client::register('Jebus', Chips::fromAmount(1000));
@@ -120,9 +124,9 @@ class CashGameTest extends BaseGameTestCase
     {
         $id = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $minimumBuyIn = Chips::fromAmount(500);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $game = CashGame::setUp($id, $name, $minimumBuyIn);
+        $game = CashGame::setUp($id, $name, $gameRules);
 
         $xLink = Client::register('xLink', Chips::fromAmount(1000));
         $Jebus = Client::register('Jebus', Chips::fromAmount(1000));
@@ -136,9 +140,12 @@ class CashGameTest extends BaseGameTestCase
     public function a_player_can_buy_into_a_game_with_the_minimum_buy_in()
     {
         $client = Client::register('Bob', Chips::fromAmount(1000));
+        $id = Uuid::uuid4();
+        $name = 'Demo Cash Game';
         $minimumBuyIn = Chips::fromAmount(500);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, $minimumBuyIn);
 
-        $game = CashGame::setUp(Uuid::uuid4(), 'Cash Game', $minimumBuyIn);
+        $game = CashGame::setUp($id, $name, $gameRules);
 
         $game->registerPlayer($client, $minimumBuyIn);
 
@@ -156,9 +163,11 @@ class CashGameTest extends BaseGameTestCase
      */
     public function test_an_exception_is_thrown_if_a_player_has_insufficient_funds_to_buy_in()
     {
-        $uuid = Uuid::uuid4();
-        $gameName = 'game name';
-        $game = CashGame::setUp($uuid, $gameName, Chips::fromAmount(100));
+        $id = Uuid::uuid4();
+        $name = 'Demo Cash Game';
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $game = CashGame::setUp($id, $name, $gameRules);
         $player = Client::register('xLink', Chips::fromAmount(0));
 
         $game->registerPlayer($player);
@@ -167,7 +176,11 @@ class CashGameTest extends BaseGameTestCase
     /** @test */
     public function can_create_game_with_a_table()
     {
-        $game = CashGame::setUp(Uuid::uuid4(), 'game name', Chips::fromAmount(100));
+        $id = Uuid::uuid4();
+        $name = 'Demo Cash Game';
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $game = CashGame::setUp($id, $name, $gameRules);
 
         $xLink = Client::register('xLink', Chips::fromAmount(5500));
         $jesus = Client::register('jesus', Chips::fromAmount(5500));

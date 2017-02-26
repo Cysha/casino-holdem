@@ -7,6 +7,7 @@ use Cysha\Casino\Exceptions\GameException;
 use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\Contracts\Game;
+use Cysha\Casino\Game\Contracts\GameParameters;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Game\TableCollection;
 use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
@@ -25,9 +26,9 @@ final class CashGame implements Game
     private $name;
 
     /**
-     * @var Chips
+     * @var DefaultParameters
      */
-    private $minimumBuyIn;
+    private $rules;
 
     /**
      * @var PlayerCollection
@@ -42,29 +43,29 @@ final class CashGame implements Game
     /**
      * CashGame constructor.
      *
-     * @param UuidInterface $id
-     * @param string        $name
-     * @param Chips         $minimumBuyIn
+     * @param UuidInterface  $id
+     * @param string         $name
+     * @param GameParameters $rules
      */
-    public function __construct(UuidInterface $id, string $name, Chips $minimumBuyIn)
+    public function __construct(UuidInterface $id, string $name, GameParameters $rules)
     {
         $this->id = $id;
         $this->name = $name;
         $this->players = PlayerCollection::make();
-        $this->minimumBuyIn = $minimumBuyIn;
         $this->tables = TableCollection::make();
+        $this->rules = $rules;
     }
 
     /**
-     * @param UuidInterface $id
-     * @param string        $name
-     * @param Chips         $minimumBuyIn
+     * @param UuidInterface  $id
+     * @param string         $name
+     * @param GameParameters $rules
      *
      * @return CashGame
      */
-    public static function setUp(UuidInterface $id, string $name, Chips $minimumBuyIn)
+    public static function setUp(UuidInterface $id, string $name, GameParameters $rules)
     {
-        return new self($id, $name, $minimumBuyIn);
+        return new self($id, $name, $rules);
     }
 
     /**
@@ -84,11 +85,11 @@ final class CashGame implements Game
     }
 
     /**
-     * @return Chips
+     * @return GameParameters
      */
-    public function minimumBuyIn(): Chips
+    public function rules(): GameParameters
     {
-        return $this->minimumBuyIn;
+        return $this->rules;
     }
 
     /**
@@ -107,14 +108,14 @@ final class CashGame implements Game
      */
     public function registerPlayer(Client $client, Chips $buyinAmount = null)
     {
-        $buyinAmount = $buyinAmount ?? $this->minimumBuyIn();
+        $buyinAmount = $buyinAmount ?? $this->rules()->minimumBuyIn();
 
-        $playersWithTheSameName = $this->players()
+        $playerRegistered = $this->players()
             ->filter(function (Client $player) use ($client) {
                 return $client->name() === $player->name();
             });
 
-        if ($playersWithTheSameName->count() !== 0) {
+        if ($playerRegistered->count() !== 0) {
             throw GameException::alreadyRegistered($client, $this);
         }
 

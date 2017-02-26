@@ -8,6 +8,7 @@ use Cysha\Casino\Game\Contracts\Game;
 use Cysha\Casino\Holdem\Game\Action;
 use Cysha\Casino\Holdem\Game\ActionCollection;
 use Cysha\Casino\Holdem\Game\CashGame;
+use Cysha\Casino\Holdem\Game\Parameters\CashGameParameters;
 use Cysha\Casino\Holdem\Game\Player;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Game\Table;
@@ -139,8 +140,10 @@ class RoundTest extends BaseGameTestCase
         $bob = Client::register('bob', Chips::fromAmount(5500));
         $blackburn = Client::register('blackburn', Chips::fromAmount(5500));
 
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
         // we got a game
-        $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', Chips::fromAmount(500));
+        $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', $gameRules);
 
         // register clients to game
         $game->registerPlayer($xLink, Chips::fromAmount(5000)); // x

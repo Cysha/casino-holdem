@@ -2,12 +2,13 @@
 
 namespace Cysha\Casino\Holdem\Tests\Game;
 
-use Ramsey\Uuid\Uuid;
-use Cysha\Casino\Game\Client;
-use Cysha\Casino\Holdem\Game\CashGame;
 use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\Contracts\Game;
+use Cysha\Casino\Holdem\Game\CashGame;
+use Cysha\Casino\Holdem\Game\Parameters\CashGameParameters;
 use PHPUnit_Framework_TestCase as PHPUnit;
+use Ramsey\Uuid\Uuid;
 
 class BaseGameTestCase extends PHPUnit
 {
@@ -23,8 +24,10 @@ class BaseGameTestCase extends PHPUnit
             $players[] = Client::register('player'.($i + 1), Chips::fromAmount(5500));
         }
 
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
         // we got a game
-        $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', Chips::fromAmount(500));
+        $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', $gameRules);
 
         // register clients to game
         foreach ($players as $player) {

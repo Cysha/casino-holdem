@@ -277,12 +277,7 @@ class WinningDistributionTest extends BaseGameTestCase
             Hand::fromString('2c 5d', $xLink),
         ]);
 
-        $bobHand = $allHands->findByPlayer($bob);
-        $xLinkHand = $allHands->findByPlayer($xLink);
-        $jesusHand = $allHands->findByPlayer($jesus);
-
         // Do game
-
         $deck = $this->buildSpecificDeck($board, $allHands);
 
         $dealer = Dealer::startWork($deck, new SevenCard());
@@ -324,6 +319,77 @@ class WinningDistributionTest extends BaseGameTestCase
         $this->assertEquals(550, $round->players()->get(1)->chipStack()->amount());
         $this->assertEquals(750, $round->players()->get(2)->chipStack()->amount());
         $this->assertEquals(250, $round->players()->get(3)->chipStack()->amount());
+        $this->assertEquals(5000, $round->players()->get(4)->chipStack()->amount());
+    }
+
+    /** @test */
+    public function scenario_5()
+    {
+        $players = PlayerCollection::make([
+            Player::fromClient(Client::register('xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
+            Player::fromClient(Client::register('jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register('melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register('bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
+            Player::fromClient(Client::register('blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
+        ]);
+        $xLink = $players->get(0);
+        $jesus = $players->get(1);
+        $melk = $players->get(2);
+        $bob = $players->get(3);
+        $blackburn = $players->get(4);
+
+        $board = CardCollection::fromString('3s 3h 8h 2s 4c');
+
+        $allHands = HandCollection::make([
+            Hand::fromString('Ts Td', $jesus),
+            Hand::fromString('7c 4d', $melk),
+            Hand::fromString('2c 5d', $bob),
+            Hand::fromString('2h 3c', $blackburn),
+            Hand::fromString('Tc Th', $xLink),
+        ]);
+
+        // Do game
+        $deck = $this->buildSpecificDeck($board, $allHands);
+
+        $dealer = Dealer::startWork($deck, new SevenCard());
+        $table = Table::setUp($dealer, $players);
+
+        $round = Round::start($table);
+        $round->dealHands();
+
+        // Round start
+
+        $round->postSmallBlind($jesus); // 25
+        $round->postBigBlind($melk); // 50
+
+        $round->playerPushesAllIn($bob); // 150
+        $round->playerFoldsHand($blackburn); // 0
+        $round->playerPushesAllIn($xLink); // 2000 (300)
+        $round->playerPushesAllIn($jesus); // SB + 275
+        $round->playerFoldsHand($melk); // 0
+
+        $round->dealFlop();
+        $round->dealTurn();
+        $round->dealRiver();
+
+        $round->end();
+
+        /*
+            xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
+
+            Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
+                xLink: 1850, Jesus: 150, BOB: 0
+
+            Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
+                xLink: 1700, Jesus: 0
+
+            Pot4: xLink w/ 1700
+        */
+
+        $this->assertEquals(2100, $round->players()->get(0)->chipStack()->amount());
+        $this->assertEquals(400, $round->players()->get(1)->chipStack()->amount());
+        $this->assertEquals(750, $round->players()->get(2)->chipStack()->amount());
+        $this->assertEquals(0, $round->players()->get(3)->chipStack()->amount());
         $this->assertEquals(5000, $round->players()->get(4)->chipStack()->amount());
     }
 
