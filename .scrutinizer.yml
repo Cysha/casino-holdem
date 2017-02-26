@@ -7,8 +7,7 @@ tools:
         test_command: ./bin/phpunit
     php_code_sniffer:
         enabled: true
-        config:
-            standard: PSR2
+        config: { level: psr2 }
         filter:
             paths: ["src/*", "tests/*"]
     php_cpd:
@@ -32,3 +31,8 @@ tools:
         excluded_dirs: ["tests", "vendor", "bin"]
     sensiolabs_security_checker: true
 
+coding_style:
+    php:
+        spaces:
+            general:
+                linefeed_character: return-newline
