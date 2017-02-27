@@ -47,10 +47,10 @@ class WinningDistributionTest extends BaseGameTestCase
         /** @var SevenCard $evaluator */
         $evaluator = $this->createMock(SevenCard::class);
         $evaluator->method('evaluateHands')
-                  ->with($this->anything(), $this->anything())
-                  ->will($this->returnValue(SevenCardResultCollection::make([
-                      SevenCardResult::createTwoPair($board->merge($winningHand->cards()), $winningHand),
-                  ])))
+            ->with($this->anything(), $this->anything())
+            ->will($this->returnValue(SevenCardResultCollection::make([
+                SevenCardResult::createTwoPair($board->merge($winningHand->cards()), $winningHand),
+            ])))
         ;
 
         // Do game
@@ -76,52 +76,52 @@ class WinningDistributionTest extends BaseGameTestCase
     }
 
     /*
-        5 Player Hand:
-            xLink 2000 chips
-            jesus 300 chips
-            melk 800 chips
-            bob 150 chips
-            blackburn 5000 chips
+    5 Player Hand:
+    xLink 2000 chips
+    jesus 300 chips
+    melk 800 chips
+    bob 150 chips
+    blackburn 5000 chips
 
-        Round plays out like such:
-            $round->postSmallBlind($jesus); // 25
-            $round->postBigBlind($melk); // 50
+    Round plays out like such:
+    $round->postSmallBlind($jesus); // 25
+    $round->postBigBlind($melk); // 50
 
-            $round->playerPushesAllIn($bob); // 150
-            $round->playerFoldsHand($blackburn); // 0
-            $round->playerPushesAllIn($xLink); // 2000
-            $round->playerPushesAllIn($jesus); // SB + 275
-            $round->playerFoldsHand($melk); // 50
+    $round->playerPushesAllIn($bob); // 150
+    $round->playerFoldsHand($blackburn); // 0
+    $round->playerPushesAllIn($xLink); // 2000
+    $round->playerPushesAllIn($jesus); // SB + 275
+    $round->playerFoldsHand($melk); // 50
 
-        No more player action left:
-            Flop, Turn && River get dealt out
+    No more player action left:
+    Flop, Turn && River get dealt out
 
-        Pots have following amounts in
-            1: 500   [xLink, jesus, bob, [melk]]
-            2: 300   [xLink, jesus, bob]
-            3: 1700  [xLink]
+    Pots have following amounts in
+    1: 500   [xLink, jesus, bob, [melk]]
+    2: 300   [xLink, jesus, bob]
+    3: 1700  [xLink]
 
     Winning Scenarios::::
-        if:
-            - xLink wins, wins EVERYTHING
+    if:
+    - xLink wins, wins EVERYTHING
 
-        if:
-            - Jesus wins, wins everything from pot 1, 2
-            - pot 3 still goes to xLink
+    if:
+    - Jesus wins, wins everything from pot 1, 2
+    - pot 3 still goes to xLink
 
-        if:
-            - bob wins, wins pot 1 and 2
-            - pot 3 still goes to xLink
+    if:
+    - bob wins, wins pot 1 and 2
+    - pot 3 still goes to xLink
 
-        if:
-            - jesus & bob wins, they split pot 1 and 2
-            - pot 3 still goes to xLink
+    if:
+    - jesus & bob wins, they split pot 1 and 2
+    - pot 3 still goes to xLink
 
-        if:
-            - jesus & xlink wins, they split pot 1 and 2
-            - pot 3 still goes to xLink
+    if:
+    - jesus & xlink wins, they split pot 1 and 2
+    - pot 3 still goes to xLink
 
-    */
+     */
 
     /** @test */
     public function scenario_1()
@@ -232,16 +232,16 @@ class WinningDistributionTest extends BaseGameTestCase
         $round->end();
 
         /*
-            xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
+        xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
 
-            Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
-                xLink: 1850, Jesus: 150, BOB: 0
+        Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
+        xLink: 1850, Jesus: 150, BOB: 0
 
-            Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
-                xLink: 1700, Jesus: 0
+        Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
+        xLink: 1700, Jesus: 0
 
-            Pot4: xLink w/ 1700
-        */
+        Pot4: xLink w/ 1700
+         */
 
         $this->assertEquals(1700, $round->players()->get(0)->chipStack()->amount());
         $this->assertEquals(300, $round->players()->get(1)->chipStack()->amount());
@@ -300,16 +300,16 @@ class WinningDistributionTest extends BaseGameTestCase
         $round->end();
 
         /*
-            xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
+        xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
 
-            Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
-                xLink: 1850, Jesus: 150, BOB: 0
+        Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
+        xLink: 1850, Jesus: 150, BOB: 0
 
-            Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
-                xLink: 1700, Jesus: 0
+        Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
+        xLink: 1700, Jesus: 0
 
-            Pot4: xLink w/ 1700
-        */
+        Pot4: xLink w/ 1700
+         */
 
         $this->assertEquals(1700, $round->players()->get(0)->chipStack()->amount());
         $this->assertEquals(550, $round->players()->get(1)->chipStack()->amount());
@@ -368,16 +368,16 @@ class WinningDistributionTest extends BaseGameTestCase
         $round->end();
 
         /*
-            xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
+        xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
 
-            Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
-                xLink: 1850, Jesus: 150, BOB: 0
+        Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
+        xLink: 1850, Jesus: 150, BOB: 0
 
-            Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
-                xLink: 1700, Jesus: 0
+        Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
+        xLink: 1700, Jesus: 0
 
-            Pot4: xLink w/ 1700
-        */
+        Pot4: xLink w/ 1700
+         */
 
         $this->assertEquals(2100, $round->players()->get(0)->chipStack()->amount());
         $this->assertEquals(400, $round->players()->get(1)->chipStack()->amount());
@@ -426,16 +426,16 @@ class WinningDistributionTest extends BaseGameTestCase
         $round->end();
 
         /*
-            xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
+        xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
 
-            Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
-                xLink: 1850, Jesus: 150, BOB: 0
+        Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
+        xLink: 1850, Jesus: 150, BOB: 0
 
-            Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
-                xLink: 1700, Jesus: 0
+        Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
+        xLink: 1700, Jesus: 0
 
-            Pot4: xLink w/ 1700
-        */
+        Pot4: xLink w/ 1700
+         */
         // dump($round->betStacks()->map->__toString());
         // dump($round->chipPots()->map->__toString());
 
@@ -500,9 +500,9 @@ class WinningDistributionTest extends BaseGameTestCase
 
         // flop
         $board->splice(0, 3)
-              ->each(function (Card $card) use ($cards) {
-                  $cards->push($card);
-              })
+            ->each(function (Card $card) use ($cards) {
+                $cards->push($card);
+            })
         ;
 
         // burn
@@ -521,13 +521,13 @@ class WinningDistributionTest extends BaseGameTestCase
         $deck = $this->createMock(Deck::class);
 
         $deck->method('shuffle')
-             ->willReturn($newCards->toArray())
+            ->willReturn($newCards->toArray())
         ;
 
         $cards->each(function (Card $card, $index) use ($deck) {
             $deck->expects($this->at($index + 1))
-                 ->method('draw')
-                 ->willReturn($card)
+                ->method('draw')
+                ->willReturn($card)
             ;
         });
 

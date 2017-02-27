@@ -32,10 +32,9 @@ class MockDeckFactory
 
         // flop
         $board->splice(0, 3)
-              ->each(function (Card $card) use ($cards) {
-                  $cards->push($card);
-              })
-        ;
+            ->each(function (Card $card) use ($cards) {
+                $cards->push($card);
+            });
 
         // burn
         $cards->push($actualDeck->pop());
@@ -53,14 +52,12 @@ class MockDeckFactory
         $deck = $testCase->createMock(Deck::class);
 
         $deck->method('shuffle')
-             ->willReturn($newCards->toArray())
-        ;
+            ->willReturn($newCards->toArray());
 
         $cards->each(function (Card $card, $index) use ($deck, $testCase) {
             $deck->expects($testCase->at($index + 1))
-                 ->method('draw')
-                 ->willReturn($card)
-            ;
+                ->method('draw')
+                ->willReturn($card);
         });
 
         return $deck;

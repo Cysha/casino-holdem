@@ -73,13 +73,13 @@ class PotBuildingTest extends BaseGameTestCase
         xLink: 800, Jesus: 300, Melk: 150,
 
         Pot1: (melk smallest...) melk -150, jesus -150, xlink -150 = 450
-            xLink: 650, Jesus: 150, Melk: 0
+        xLink: 650, Jesus: 150, Melk: 0
 
         Pot2: (jesus smallest...)  jesus -150, xlink -150 = 300
-            xLink: 500, Jesus: 0
+        xLink: 500, Jesus: 0
 
         Pot3: xLink w/ 500
-        */
+         */
         $this->assertEquals(450, $round->chipPots()->get(0)->total()->amount());
         $this->assertEquals(300, $round->chipPots()->get(1)->total()->amount());
         $this->assertEquals(500, $round->chipPots()->get(2)->total()->amount());
@@ -140,17 +140,17 @@ class PotBuildingTest extends BaseGameTestCase
         $round->end();
 
         /*
-            xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
+        xLink: 2000, Jesus: 300, Melk: 800, BOB: 150
 
-            Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
-                xLink: 1850, Jesus: 150, BOB: 0
+        Pot1: (bob smallest...) melk -50, bob -150, jesus -150, xlink -150 = 500
+        xLink: 1850, Jesus: 150, BOB: 0
 
-            Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
-                xLink: 1700, Jesus: 0
+        Pot2: (jesus smallest...) jesus -150, xlink -150 = 300
+        xLink: 1700, Jesus: 0
 
-            Pot3: xLink w/ 1700
+        Pot3: xLink w/ 1700
 
-        */
+         */
 
         $this->assertEquals(500, $round->chipPots()->get(0)->total()->amount());
         $this->assertEquals(300, $round->chipPots()->get(1)->total()->amount());

@@ -2,8 +2,8 @@
 
 namespace Cysha\Casino\Holdem\Tests\Exceptions;
 
-use PHPUnit_Framework_TestCase;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
+use PHPUnit_Framework_TestCase;
 
 class RoundExceptionTest extends PHPUnit_Framework_TestCase
 {

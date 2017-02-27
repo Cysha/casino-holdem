@@ -135,7 +135,7 @@ class Table extends BaseTable
     }
 
     /**
-     * @param PlayerContract $player
+     * @param PlayerContract $findPlayer
      *
      * @return int
      */

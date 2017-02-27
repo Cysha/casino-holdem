@@ -3,13 +3,13 @@
 namespace Cysha\Casino\Holdem\Game;
 
 use Cysha\Casino\Cards\Contracts\CardResults;
-use Cysha\Casino\Game\ChipStackCollection;
 use Cysha\Casino\Game\Chips;
-use Cysha\Casino\Game\Contracts\Player as PlayerContract;
+use Cysha\Casino\Game\ChipStackCollection;
 use Cysha\Casino\Game\Contracts\Dealer as DealerContract;
+use Cysha\Casino\Game\Contracts\GameParameters;
+use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
-use Cysha\Casino\Game\Contracts\GameParameters;
 
 class Round
 {
@@ -230,9 +230,9 @@ class Round
 
                     $this->chipPots()->remove($chipPot);
 
-                // if > 1 hand is evaluated as highest, split the pot evenly between the players
                 } else {
-                    // grab the chips
+                    // if > 1 hand is evaluated as highest, split the pot evenly between the players
+
                     $potTotal = $chipPot->chips()->total();
 
                     // split the pot between the number of players
@@ -449,7 +449,6 @@ class Round
 
                     return false;
                 })
-                // and add their chips into the first created pot
                 ->each(function (Chips $chips, $playerName) use ($orderedBetStacks) {
                     $player = $this->players()->findByName($playerName);
 

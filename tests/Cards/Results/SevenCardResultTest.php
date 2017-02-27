@@ -2,12 +2,11 @@
 
 namespace Cysha\Casino\Tests\Cards\Results;
 
-use Cysha\Casino\Cards\Card;
 use Cysha\Casino\Cards\CardCollection;
 use Cysha\Casino\Cards\Hand;
-use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
-use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Client;
+use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Game\Player;
 
 class SevenCardResultTest extends \PHPUnit_Framework_TestCase

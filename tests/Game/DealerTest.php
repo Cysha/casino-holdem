@@ -4,8 +4,8 @@ namespace Cysha\Casino\Holdem\Tests\Game;
 
 use Cysha\Casino\Cards\CardCollection;
 use Cysha\Casino\Cards\Deck;
-use Cysha\Casino\Cards\HandCollection;
 use Cysha\Casino\Cards\Hand;
+use Cysha\Casino\Cards\HandCollection;
 use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Client;
 use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;

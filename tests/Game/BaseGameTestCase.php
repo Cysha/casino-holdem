@@ -21,7 +21,7 @@ class BaseGameTestCase extends PHPUnit
     {
         $players = [];
         for ($i = 0; $i < $playerCount; ++$i) {
-            $players[] = Client::register('player'.($i + 1), Chips::fromAmount(5500));
+            $players[] = Client::register('player' . ($i + 1), Chips::fromAmount(5500));
         }
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));

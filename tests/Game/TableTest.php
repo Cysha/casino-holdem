@@ -3,12 +3,12 @@
 namespace Cysha\Casino\Holdem\Game\Tests;
 
 use Cysha\Casino\Cards\Deck;
-use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
-use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Client;
+use Cysha\Casino\Game\PlayerCollection;
+use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
 use Cysha\Casino\Holdem\Game\Dealer;
 use Cysha\Casino\Holdem\Game\Player;
-use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Game\Table;
 
 class TableTest extends \PHPUnit_Framework_TestCase

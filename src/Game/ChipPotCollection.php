@@ -2,8 +2,8 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
-use Illuminate\Support\Collection;
 use Cysha\Casino\Game\Chips;
+use Illuminate\Support\Collection;
 
 class ChipPotCollection extends Collection
 {

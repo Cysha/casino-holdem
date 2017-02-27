@@ -203,12 +203,12 @@ class RoundTest extends BaseGameTestCase
         $round = Round::start($table, $gameRules);
         /*
         [
-            xLink: 0, // button
-            jesus: 25, // SB
-            melk: 50, // BB
-            bob: 0,
+        xLink: 0, // button
+        jesus: 25, // SB
+        melk: 50, // BB
+        bob: 0,
         ]
-        */
+         */
 
         $round->postSmallBlind($player2);
         $this->assertEquals(Chips::fromAmount(25), $round->playerBetStack($player2));

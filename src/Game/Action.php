@@ -66,31 +66,31 @@ class Action
         switch ($this->action) {
             case static::BIG_BLIND:
                 $message = sprintf('%s has posted Big Blind (%d).', $this->player->name(), $this->chips->amount());
-            break;
+                break;
 
             case static::SMALL_BLIND:
                 $message = sprintf('%s has posted Small Blind (%d).', $this->player->name(), $this->chips->amount());
-            break;
+                break;
 
             case static::ALLIN:
                 $message = sprintf('%s has pushed ALL IN (%d).', $this->player->name(), $this->chips->amount());
-            break;
+                break;
 
             case static::FOLD:
                 $message = sprintf('%s has folded.', $this->player->name());
-            break;
+                break;
 
             case static::RAISE:
                 $message = sprintf('%s has raised %d.', $this->player->name(), $this->chips->amount());
-            break;
+                break;
 
             case static::CALL:
                 $message = sprintf('%s has called %d.', $this->player->name(), $this->chips->amount());
-            break;
+                break;
 
             case static::CHECK:
                 $message = sprintf('%s has checked.', $this->player->name());
-            break;
+                break;
         }
 
         return $message;

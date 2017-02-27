@@ -2,8 +2,8 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
-use Cysha\Casino\Game\ChipStackCollection;
 use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\ChipStackCollection;
 use Cysha\Casino\Game\Contracts\Player;
 use Cysha\Casino\Game\PlayerCollection;
 
@@ -92,9 +92,9 @@ class ChipPot
     public function equals(ChipPot $object): bool
     {
         return static::class === get_class($object)
-            && $this->chips() === $object->chips()
-            && $this->players() === $object->players()
-            && $this->total() === $object->total();
+        && $this->chips() === $object->chips()
+        && $this->players() === $object->players()
+        && $this->total() === $object->total();
     }
 
     /**

@@ -148,7 +148,7 @@ final class CashGame implements Game
     public function assignPlayersToTables()
     {
         $groupedPlayers = $this->players()
-            //->shuffle()
+        //->shuffle()
             ->chunk($this->rules()->tableSize())
             ->map(function (PlayerCollection $players) {
                 $dealer = Dealer::startWork(new Deck(), new SevenCard());

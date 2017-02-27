@@ -3,8 +3,8 @@
 namespace Cysha\Casino\Holdem\Game;
 
 use Assert\Assertion;
-use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\Chips;
+use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 
 class Player extends Client implements PlayerContract
@@ -46,9 +46,9 @@ class Player extends Client implements PlayerContract
     public function equals(PlayerContract $object): bool
     {
         return static::class === get_class($object)
-            && $this->name() === $object->name()
-            && $this->wallet() === $object->wallet()
-            && $this->chipStack() === $object->chipStack();
+        && $this->name() === $object->name()
+        && $this->wallet() === $object->wallet()
+        && $this->chipStack() === $object->chipStack();
     }
 
     /**

@@ -10,8 +10,8 @@ use Cysha\Casino\Cards\Hand;
 use Cysha\Casino\Cards\HandCollection;
 use Cysha\Casino\Cards\ResultCollection;
 use Cysha\Casino\Game\Contracts\Dealer as DealerContract;
-use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;
+use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
 
 class Dealer implements DealerContract

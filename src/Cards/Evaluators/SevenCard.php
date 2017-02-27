@@ -73,23 +73,22 @@ class SevenCard implements CardEvaluator
     public function evaluateHands(CardCollection $board, HandCollection $playerHands): ResultCollection
     {
         $playerHands = $playerHands
-            // evaluate hands
-            ->map(function (Hand $hand) use ($board) {
+        // evaluate hands
+        ->map(function (Hand $hand) use ($board) {
+            return static::evaluate($board, $hand);
+        })
 
-                return static::evaluate($board, $hand);
-            })
-
-            // sort the hands by their hand rank
+        // sort the hands by their hand rank
             ->sortByDesc(function (SevenCardResult $result) {
                 return [$result->rank(), $result->value()];
             })
 
-            // group by the hand rank
+        // group by the hand rank
             ->groupBy(function (SevenCardResult $result) {
                 return $result->rank();
             })
 
-            // sort the collection by the count
+        // sort the collection by the count
             ->sortByDesc(function (Collection $collection) {
                 return $collection->count();
             })
