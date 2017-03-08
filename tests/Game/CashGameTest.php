@@ -212,4 +212,30 @@ class CashGameTest extends BaseGameTestCase
         $this->assertEquals($jesus->name(), $actualPlayer->name());
         $this->assertEquals($jesus->wallet(), $actualPlayer->wallet());
     }
+
+    /** @test */
+    public function can_remove_player_from_game()
+    {
+        $id = Uuid::uuid4();
+        $name = 'Demo Cash Game';
+        $minimumBuyIn = Chips::fromAmount(500);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, $minimumBuyIn);
+
+        $game = CashGame::setUp($id, $name, $gameRules);
+
+        $xLink = Client::register('xLink', Chips::fromAmount(1000));
+        $Jebus = Client::register('Jebus', Chips::fromAmount(1000));
+
+        $game->registerPlayer($xLink);
+        $game->registerPlayer($Jebus);
+
+        $this->assertEquals(Player::fromClient($xLink, $minimumBuyIn), $game->players()->get(0));
+        $this->assertEquals(Player::fromClient($Jebus, $minimumBuyIn), $game->players()->get(1));
+        $this->assertEquals(2, $game->players()->count());
+
+        $game->removePlayer($xLink);
+        $this->assertEquals(1, $game->players()->count());
+
+    }
+
 }

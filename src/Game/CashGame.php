@@ -145,6 +145,24 @@ final class CashGame implements Game
         $this->players()->push($addPlayer);
     }
 
+    public function removePlayer(Client $client)
+    {
+        $player = $this->players()
+            ->filter(function (Player $player) use ($client) {
+                return $player->name() === $client->name();
+            })
+            ->first()
+        ;
+
+        $client->wallet()->add($player->chipstack());
+
+        $this->players = $this->players()
+            ->reject(function (Player $player) use ($client) {
+                return $player->name() === $client->name();
+            })
+            ->values();
+    }
+
     public function assignPlayersToTables()
     {
         $groupedPlayers = $this->players()
