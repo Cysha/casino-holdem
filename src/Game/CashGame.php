@@ -154,6 +154,10 @@ final class CashGame implements Game
             ->first()
         ;
 
+        if ($player === null) {
+            throw GameException::notRegistered($client, $this);
+        }
+
         $client->wallet()->add($player->chipstack());
 
         $this->players = $this->players()

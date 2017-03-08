@@ -2,6 +2,7 @@
 
 namespace Cysha\Casino\Holdem\Tests\Game;
 
+use Cysha\Casino\Exceptions\GameException;
 use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\PlayerCollection;
@@ -236,6 +237,33 @@ class CashGameTest extends BaseGameTestCase
         $game->removePlayer($xLink);
         $this->assertEquals(1, $game->players()->count());
 
+    }
+
+    /**
+     * @expectedException Cysha\Casino\Exceptions\GameException
+     * @test
+     */
+    public function ensures_that_players_cant_be_removed_if_they_dont_exist_on_game()
+    {
+        $id = Uuid::uuid4();
+        $name = 'Demo Cash Game';
+        $minimumBuyIn = Chips::fromAmount(500);
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, $minimumBuyIn);
+
+        $game = CashGame::setUp($id, $name, $gameRules);
+
+        $xLink = Client::register('xLink', Chips::fromAmount(1000));
+        $Jebus = Client::register('Jebus', Chips::fromAmount(1000));
+        $melk = Client::register('melk', Chips::fromAmount(1000));
+
+        $game->registerPlayer($xLink);
+        $game->registerPlayer($Jebus);
+
+        $this->assertEquals(Player::fromClient($xLink, $minimumBuyIn), $game->players()->get(0));
+        $this->assertEquals(Player::fromClient($Jebus, $minimumBuyIn), $game->players()->get(1));
+        $this->assertEquals(2, $game->players()->count());
+
+        $game->removePlayer($melk);
     }
 
 }
