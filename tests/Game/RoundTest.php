@@ -350,6 +350,33 @@ class RoundTest extends BaseGameTestCase
      * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
      * @test
      */
+    public function player_cant_check_when_bet_has_been_made()
+    {
+        $game = $this->createGenericGame(4);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+        /** @var Player $player1 */
+        $player1 = $table->playersSatDown()->first();
+        $player2 = $table->playersSatDown()->get(1);
+        $player3 = $table->playersSatDown()->get(2);
+        $player4 = $table->playersSatDown()->get(3);
+
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
+
+        $round->postSmallBlind($player2); // 25
+        $round->postBigBlind($player3); // 50
+
+        $round->playerRaises($player4, Chips::fromAmount(250)); // 250
+        $round->playerChecks($player1); // 0
+    }
+
+    /**
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
+     * @test
+     */
     public function fifth_player_tries_to_raise_the_hand_after_blinds_without_enough_chips()
     {
         $game = $this->createGenericGame(5);

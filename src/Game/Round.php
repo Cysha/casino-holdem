@@ -622,6 +622,10 @@ class Round
     {
         $this->checkPlayerTryingToAct($player);
 
+        if ($this->playerBetStack($player)->amount() !== $this->betStacks()->max()->amount()) {
+            throw RoundException::cantCheckWithBetActive();
+        }
+
         $this->playerActions()->push(new Action($player, Action::CHECK));
         $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::ACTIONED);
     }

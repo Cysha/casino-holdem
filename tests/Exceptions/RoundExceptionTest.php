@@ -34,4 +34,11 @@ class RoundExceptionTest extends PHPUnit_Framework_TestCase
         $expectedException = new RoundException('custom message');
         $this->assertEquals($expectedException, RoundException::invalidButtonPosition('custom message'));
     }
+
+    /** @test */
+    public function cant_check_with_bet_active_can_accept_custom_messages()
+    {
+        $expectedException = new RoundException('custom message');
+        $this->assertEquals($expectedException, RoundException::cantCheckWithBetActive('custom message'));
+    }
 }

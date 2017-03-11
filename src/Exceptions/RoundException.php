@@ -128,4 +128,17 @@ class RoundException extends DomainException
 
         return new static($message);
     }
+
+    /**
+     * @param null $message
+     *
+     * @return static
+     */
+    public static function cantCheckWithBetActive($message = null)
+    {
+        $defaultMessage = 'Cannot check when there has been a bet made';
+        $message = null === $message ? $defaultMessage : $message;
+
+        return new static($message);
+    }
 }
