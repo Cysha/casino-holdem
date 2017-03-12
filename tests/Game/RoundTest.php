@@ -1264,4 +1264,47 @@ class RoundTest extends BaseGameTestCase
         $round->postBigBlind($player2); // 50
         $round->playerChecks($player2); // 50
     }
+
+    /** @test */
+    public function automatically_end_game_when_no_player_actions_left()
+    {
+        $game = $this->createGenericGame(2);
+
+        $table = $game->tables()->first();
+
+        $player1 = $table->playersSatDown()->get(0);
+        $player2 = $table->playersSatDown()->get(1);
+
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
+
+        // deal some hands
+        $round->dealHands();
+
+        // make sure we start with no chips on the table
+        $this->assertEquals(0, $round->betStacksTotal());
+
+        $round->postSmallBlind($player1); // 25
+        $round->postBigBlind($player2); // 50
+
+        $round->playerRaises($player1, Chips::fromAmount(100)); // 100
+        $round->playerCalls($player2); // 100
+
+        // collect the chips, burn a card, deal the flop
+        $round->dealFlop();
+
+        $round->playerChecks($player1); // 0
+        $round->playerPushesAllIn($player2); // 900
+        $round->playerCalls($player1); // 900
+
+        $this->assertFalse($round->whosTurnIsIt());
+        //var_dump($round->leftToAct());
+        // collect chips, burn 1, deal 1
+        $round->dealTurn();
+
+        //var_dump($round->playerActions()->all());
+        $this->assertFalse($round->whosTurnIsIt());
+    }
+
 }

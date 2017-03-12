@@ -10,6 +10,7 @@ use Cysha\Casino\Game\Contracts\GameParameters;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
+use Cysha\Casino\Holdem\Game\LeftToAct;
 
 class Round
 {
@@ -378,11 +379,29 @@ class Round
      */
     public function whosTurnIsIt()
     {
-        $nextPlayer = $this->leftToAct()->getNextPlayer();
+        // if there is only 1 player left cause of heads up etc, return false
+        $leftToAct = $this->leftToAct();
+        $allIn = $leftToAct->findByAction(LeftToAct::ALL_IN)->count();
 
-        return $this->players()->filter(function (PlayerContract $player) use ($nextPlayer) {
-            return $player->name() === $nextPlayer['player'];
-        })->first() ?? false;
+        /*if ($allIn > 0) {
+        $stillToAct = $leftToAct->findByAction(LeftToAct::STILL_TO_ACT)->count();
+        // var_dump([$stillToAct, $allIn]);
+        if ($stillToAct === 0) {
+        return false;
+        }
+        }*/
+
+        $nextPlayer = $this->leftToAct()->getNextPlayer();
+        if ($nextPlayer === null) {
+            return false;
+        }
+
+        return $this->players()
+            ->filter(function (PlayerContract $player) use ($nextPlayer) {
+                return $player->name() === $nextPlayer['player'];
+            })
+            ->first()
+        ;
     }
 
     /**
@@ -394,17 +413,18 @@ class Round
             return $value['action'] === LeftToAct::ALL_IN;
         });
 
-        if ($allInActionsThisRound->count() > 1) {
-            $orderedBetStacks = $this->betStacks()
-                ->reject(function (Chips $chips, $playerName) {
-                    $foldedPlayer = $this->foldedPlayers()->findByName($playerName);
-                    if ($foldedPlayer) {
-                        return true;
-                    }
+        $orderedBetStacks = $this->betStacks()
+            ->reject(function (Chips $chips, $playerName) {
+                $foldedPlayer = $this->foldedPlayers()->findByName($playerName);
+                if ($foldedPlayer) {
+                    return true;
+                }
 
-                    return false;
-                })
-                ->sortByChipAmount();
+                return false;
+            })
+            ->sortByChipAmount();
+
+        if ($allInActionsThisRound->count() > 1 && $orderedBetStacks->unique()->count() > 1) {
 
             $orderedBetStacks->each(function (Chips $playerChips, $playerName) use ($orderedBetStacks) {
                 $remainingStacks = $orderedBetStacks->filter(function (Chips $chips) {
@@ -552,15 +572,20 @@ class Round
     {
         $this->checkPlayerTryingToAct($player);
 
-        $chips = $this->highestBet();
+        $highestChipBet = $this->highestBet();
 
         // current highest bet - currentPlayersChipStack
-        $amountLeftToBet = Chips::fromAmount($chips->amount() - $this->playerBetStack($player)->amount());
+        $amountLeftToBet = Chips::fromAmount($highestChipBet->amount() - $this->playerBetStack($player)->amount());
 
-        $this->playerActions->push(new Action($player, Action::CALL, $amountLeftToBet));
+        $chipStackLeft = Chips::fromAmount($player->chipStack()->amount() - $amountLeftToBet->amount());
+
+        $action = $chipStackLeft->amount() === 0 ? Action::ALLIN : Action::CALL;
+        $this->playerActions->push(new Action($player, $action, $amountLeftToBet));
 
         $this->placeChipBet($player, $amountLeftToBet);
-        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::ACTIONED);
+
+        $action = $chipStackLeft->amount() === 0 ? LeftToAct::ALL_IN : LeftToAct::ACTIONED;
+        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, $action);
     }
 
     /**
@@ -573,10 +598,20 @@ class Round
     {
         $this->checkPlayerTryingToAct($player);
 
-        $this->playerActions->push(new Action($player, Action::RAISE, $chips));
+        $highestChipBet = $this->highestBet();
+        if ($chips->amount() < $highestChipBet->amount()) {
+            throw RoundException::raiseNotHighEnough($chips, $highestChipBet);
+        }
+
+        $chipStackLeft = Chips::fromAmount($player->chipStack()->amount() - $chips->amount());
+
+        $action = $chipStackLeft->amount() === 0 ? Action::ALLIN : Action::RAISE;
+        $this->playerActions->push(new Action($player, $action, $chips));
 
         $this->placeChipBet($player, $chips);
-        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::AGGRESSIVELY_ACTIONED);
+
+        $action = $chipStackLeft->amount() === 0 ? LeftToAct::ALL_IN : LeftToAct::AGGRESSIVELY_ACTIONED;
+        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, $action);
     }
 
     /**

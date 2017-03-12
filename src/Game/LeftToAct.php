@@ -167,15 +167,31 @@ class LeftToAct extends Collection
     }
 
     /**
+     * @return self
+     */
+    public function findByAction(int $action)
+    {
+        return $this->filter(function ($value) use ($action) {
+            return $value['action'] === $action;
+        });
+    }
+
+    /**
      * @return array
      */
-    public function getNextPlayer()
+    public function getRemainingPlayers()
     {
         return $this
             ->reject(function ($value) {
                 return in_array($value['action'], [self::ACTIONED, self::AGGRESSIVELY_ACTIONED, self::ALL_IN]);
-            })
-            ->first()
-        ;
+            });
+    }
+
+    /**
+     * @return array
+     */
+    public function getNextPlayer()
+    {
+        return $this->getRemainingPlayers()->first();
     }
 }

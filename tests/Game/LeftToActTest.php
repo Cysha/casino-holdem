@@ -321,7 +321,7 @@ class LeftToActTest extends BaseGameTestCase
 
         $expected = LeftToAct::make([
             ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::ALL_IN],
-            ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::ACTIONED],
+            ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::ALL_IN],
         ]);
         $this->assertEquals($expected, $round->leftToAct());
 
@@ -499,5 +499,70 @@ class LeftToActTest extends BaseGameTestCase
             ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALL_IN],
         ]);
         $this->assertEquals($expected, $round->leftToAct());
+    }
+
+    /** @test */
+    public function player_can_raise_for_all_stack_but_counts_as_allin()
+    {
+        $game = $this->createGenericGame(2);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
+
+        $expected = LeftToAct::make([
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
+            ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+
+        $round->postSmallBlind($seat1); // 25
+        $round->postBigBlind($seat2); // 50
+
+        $round->playerCalls($seat1); // 50
+        $round->playerRaises($seat2, Chips::fromAmount(950));
+        $round->playerCalls($seat1); // 950
+
+        $expected = LeftToAct::make([
+            ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::ALL_IN],
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALL_IN],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+    }
+
+    /**
+     * @expectedException Cysha\Casino\Holdem\Exceptions\RoundException
+     * @test
+     */
+    public function make_sure_that_raise_is_higher_than_highest_bet_this_mini_round()
+    {
+        $game = $this->createGenericGame(2);
+
+        /** @var Table $table */
+        $table = $game->tables()->first();
+
+        $seat1 = $table->playersSatDown()->get(0);
+        $seat2 = $table->playersSatDown()->get(1);
+
+        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start($table, $gameRules);
+
+        $expected = LeftToAct::make([
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
+            ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
+        ]);
+        $this->assertEquals($expected, $round->leftToAct());
+
+        $round->postSmallBlind($seat1); // 25
+        $round->postBigBlind($seat2); // 50
+
+        $round->playerRaises($seat1, Chips::fromAmount(5));
     }
 }

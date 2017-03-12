@@ -2,6 +2,7 @@
 
 namespace Cysha\Casino\Holdem\Tests\Exceptions;
 
+use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
 use PHPUnit_Framework_TestCase;
 
@@ -40,5 +41,14 @@ class RoundExceptionTest extends PHPUnit_Framework_TestCase
     {
         $expectedException = new RoundException('custom message');
         $this->assertEquals($expectedException, RoundException::cantCheckWithBetActive('custom message'));
+    }
+
+    /** @test */
+    public function cant_raise_lower_amount_than_highest_bet_custom_message()
+    {
+        $expectedException = new RoundException('custom message');
+        $raise = Chips::fromAmount(10);
+        $bet = Chips::fromAmount(20);
+        $this->assertEquals($expectedException, RoundException::raiseNotHighEnough($raise, $bet, 'custom message'));
     }
 }

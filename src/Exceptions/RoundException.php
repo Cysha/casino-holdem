@@ -110,7 +110,7 @@ class RoundException extends DomainException
      */
     public static function invalidButtonPosition($message = null)
     {
-        $defaultMessage = sprintf('Tried giving the button to a player that is not sat down.');
+        $defaultMessage = 'Tried giving the button to a player that is not sat down.';
         $message = null === $message ? $defaultMessage : $message;
 
         return new static($message);
@@ -123,7 +123,7 @@ class RoundException extends DomainException
      */
     public static function noPlayerActionsNeeded($message = null)
     {
-        $defaultMessage = sprintf('A player is trying to act when there is no valid player actions left.');
+        $defaultMessage = 'A player is trying to act when there is no valid player actions left.';
         $message = null === $message ? $defaultMessage : $message;
 
         return new static($message);
@@ -137,6 +137,23 @@ class RoundException extends DomainException
     public static function cantCheckWithBetActive($message = null)
     {
         $defaultMessage = 'Cannot check when there has been a bet made';
+        $message = null === $message ? $defaultMessage : $message;
+
+        return new static($message);
+    }
+
+    /**
+     * @param null $message
+     *
+     * @return static
+     */
+    public static function raiseNotHighEnough(Chips $raise, Chips $bet, $message = null)
+    {
+        $defaultMessage = sprintf(
+            'Cannot make a raise of %d when there is a bet of %d active.',
+            $raise->amount(),
+            $bet->amount()
+        );
         $message = null === $message ? $defaultMessage : $message;
 
         return new static($message);
