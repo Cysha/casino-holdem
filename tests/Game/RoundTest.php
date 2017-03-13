@@ -1299,12 +1299,10 @@ class RoundTest extends BaseGameTestCase
         $round->playerCalls($player1); // 900
 
         $this->assertFalse($round->whosTurnIsIt());
-        //var_dump($round->leftToAct());
+
         // collect chips, burn 1, deal 1
         $round->dealTurn();
 
-        //var_dump($round->playerActions()->all());
         $this->assertFalse($round->whosTurnIsIt());
     }
-
 }

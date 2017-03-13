@@ -236,7 +236,6 @@ class CashGameTest extends BaseGameTestCase
 
         $game->removePlayer($xLink);
         $this->assertEquals(1, $game->players()->count());
-
     }
 
     /**
@@ -265,5 +264,4 @@ class CashGameTest extends BaseGameTestCase
 
         $game->removePlayer($melk);
     }
-
 }

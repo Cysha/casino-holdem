@@ -19,7 +19,7 @@ use Cysha\Casino\Holdem\Game\Player;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Game\Table;
 
-class WinningDistributionTest extends BaseGameTestCase
+class WinningsDistributionTest extends BaseGameTestCase
 {
     public function setUp()
     {

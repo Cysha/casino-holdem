@@ -230,7 +230,6 @@ class Round
                     $player->chipStack()->add($potTotal);
 
                     $this->chipPots()->remove($chipPot);
-
                 } else {
                     // if > 1 hand is evaluated as highest, split the pot evenly between the players
 
@@ -379,18 +378,6 @@ class Round
      */
     public function whosTurnIsIt()
     {
-        // if there is only 1 player left cause of heads up etc, return false
-        $leftToAct = $this->leftToAct();
-        $allIn = $leftToAct->findByAction(LeftToAct::ALL_IN)->count();
-
-        /*if ($allIn > 0) {
-        $stillToAct = $leftToAct->findByAction(LeftToAct::STILL_TO_ACT)->count();
-        // var_dump([$stillToAct, $allIn]);
-        if ($stillToAct === 0) {
-        return false;
-        }
-        }*/
-
         $nextPlayer = $this->leftToAct()->getNextPlayer();
         if ($nextPlayer === null) {
             return false;
@@ -425,7 +412,6 @@ class Round
             ->sortByChipAmount();
 
         if ($allInActionsThisRound->count() > 1 && $orderedBetStacks->unique()->count() > 1) {
-
             $orderedBetStacks->each(function (Chips $playerChips, $playerName) use ($orderedBetStacks) {
                 $remainingStacks = $orderedBetStacks->filter(function (Chips $chips) {
                     return $chips->amount() !== 0;
