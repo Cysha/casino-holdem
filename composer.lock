@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "023637c0a74acd09d216f717cc6cdf1f",
+    "content-hash": "d0f38ecea6f03e94638e344b2f0e27b0",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -64,11 +64,16 @@
         {
             "name": "cysha/casino",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Cysha/casino.git",
+                "reference": "f8253010563e0b723e21ac85c87d035dfaf661a9"
+            },
             "dist": {
-                "type": "path",
-                "url": "../casino",
+                "type": "zip",
+                "url": "https://api.github.com/repos/Cysha/casino/zipball/f8253010563e0b723e21ac85c87d035dfaf661a9",
                 "reference": "f8253010563e0b723e21ac85c87d035dfaf661a9",
-                "shasum": null
+                "shasum": ""
             },
             "require": {
                 "beberlei/assert": "^2.7",
@@ -87,11 +92,7 @@
                     "Cysha\\Casino\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Cysha\\Casino\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -105,7 +106,8 @@
                     "email": "Daniel@noeldavi.es"
                 }
             ],
-            "description": "Casino Package for PHP"
+            "description": "Casino Package for PHP",
+            "time": "2017-03-08 00:44:25"
         },
         {
             "name": "paragonie/random_compat",
