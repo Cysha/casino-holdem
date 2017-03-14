@@ -11,6 +11,7 @@ use Cysha\Casino\Game\Client;
 use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Game\Player;
+use Ramsey\Uuid\Uuid;
 
 class SevenCardTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +22,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_royal_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d 10c Ac 8h Qc');
         $hand = Hand::fromString('Jc Kc', $player);
 
@@ -35,7 +36,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function fix_issue_with_descending_order_flushes()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('Ts 9h Qs Ks Js');
         $hand = Hand::fromString('As 3d', $player);
 
@@ -49,7 +50,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_straight_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('6d Tc 9c 6h Qc');
         $hand = Hand::fromString('Jc Kc', $player);
 
@@ -63,7 +64,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_four_of_a_kind()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Qc Tc 2h Qd');
         $hand = Hand::fromString('Qs Qh', $player);
 
@@ -77,7 +78,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_full_house()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Qc Tc 8h Qd');
         $hand = Hand::fromString('7s Qh', $player);
 
@@ -91,7 +92,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Tc 7c 8h Qc');
         $hand = Hand::fromString('Jc Kc', $player);
 
@@ -105,7 +106,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_straight()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('9d Ac 2c 6h 8d');
         $hand = Hand::fromString('5c 7d', $player);
 
@@ -119,7 +120,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_straight_on_the_board()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('3d 4c 5c 6h 7d');
         $hand = Hand::fromString('Kc Ad', $player);
 
@@ -133,7 +134,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_three_of_a_kind()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d 3c 10c 2h Qd');
         $hand = Hand::fromString('Qs Qh', $player);
 
@@ -147,7 +148,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_two_pair()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Qc 10c 8h Qd');
         $hand = Hand::fromString('7s 6h', $player);
 
@@ -161,7 +162,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_one_pair()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Qc 10c 2h Qd');
         $hand = Hand::fromString('7s 6h', $player);
 
@@ -175,7 +176,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_high_card()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Jc 10c 2h Qd');
         $hand = Hand::fromString('7s 6h', $player);
 
@@ -189,7 +190,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function can_eval_hand_ace_high_card()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = CardCollection::fromString('8d Jc 10c 2h Qd');
         $hand = Hand::fromString('As 6h', $player);
 
@@ -203,7 +204,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_royal_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(10, Suit::club()),
@@ -234,7 +235,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function straight_flush_is_not_a_royal_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(2, Suit::club()),
@@ -256,7 +257,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function flush_is_not_a_royal_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(6, Suit::diamond()),
             new Card(10, Suit::club()),
@@ -278,7 +279,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_straight_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(6, Suit::diamond()),
             new Card(10, Suit::club()),
@@ -309,7 +310,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function flush_is_not_straight_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(10, Suit::club()),
@@ -331,7 +332,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function straight_is_not_straight_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(9, Suit::diamond()),
             new Card(Card::ACE, Suit::club()),
@@ -353,7 +354,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function straight_and_flush_dont_always_make_straight_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(Card::KING, Suit::spade()),
             new Card(9, Suit::spade()),
@@ -375,7 +376,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_four_of_a_kind()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(Card::QUEEN, Suit::club()),
@@ -407,7 +408,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function three_of_a_kind_is_not_four_of_a_kind()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(Card::KING, Suit::club()),
@@ -429,7 +430,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_full_house()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(Card::QUEEN, Suit::club()),
@@ -461,7 +462,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function flush_is_not_full_house()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(10, Suit::club()),
@@ -483,7 +484,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_flush()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(10, Suit::club()),
@@ -515,7 +516,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_flush_ace_high()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(Card::KING, Suit::diamond()),
             new Card(Card::QUEEN, Suit::diamond()),
@@ -547,7 +548,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_straight()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(9, Suit::diamond()),
             new Card(Card::ACE, Suit::club()),
@@ -578,7 +579,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function hand_evals_to_straight_with_high_ace()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(6, Suit::diamond()),
             new Card(10, Suit::club()),
@@ -609,7 +610,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function hand_evals_to_straight_with_low_ace()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(5, Suit::diamond()),
             new Card(10, Suit::club()),
@@ -640,7 +641,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function hand_doesnt_eval_to_straight_without_10_or_5()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(6, Suit::diamond()),
             new Card(9, Suit::club()),
@@ -661,7 +662,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_three_of_a_kind()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(3, Suit::club()),
@@ -693,7 +694,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_two_pair()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(Card::QUEEN, Suit::club()),
@@ -725,7 +726,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function one_pair_is_not_two_pair()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(Card::QUEEN, Suit::club()),
@@ -747,7 +748,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_one_pair()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(Card::QUEEN, Suit::club()),
@@ -779,7 +780,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_high_card()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(Card::JACK, Suit::club()),
@@ -811,7 +812,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function hand_evals_to_ace_high_card()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(Card::JACK, Suit::club()),
@@ -843,7 +844,7 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     /** @test **/
     public function high_card_is_not_one_pair()
     {
-        $player = Player::fromClient(Client::register('xLink', Chips::fromAmount(500)));
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
         $board = new CardCollection([
             new Card(8, Suit::diamond()),
             new Card(Card::JACK, Suit::club()),

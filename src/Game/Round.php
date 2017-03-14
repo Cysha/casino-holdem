@@ -11,9 +11,15 @@ use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
 use Cysha\Casino\Holdem\Game\LeftToAct;
+use Ramsey\Uuid\Uuid;
 
 class Round
 {
+    /**
+     * @var Uuid
+     */
+    private $id;
+
     /**
      * @var Table
      */
@@ -57,11 +63,13 @@ class Round
     /**
      * Round constructor.
      *
-     * @param Table          $table
+     * @param Uuid $id
+     * @param Table $table
      * @param GameParameters $gameRules
      */
-    private function __construct(Table $table, GameParameters $gameRules)
+    private function __construct(Uuid $id, Table $table, GameParameters $gameRules)
     {
+        $this->id = $id;
         $this->table = $table;
         $this->chipPots = ChipPotCollection::make();
         $this->currentPot = ChipPot::create();
@@ -85,14 +93,15 @@ class Round
     /**
      * Start a Round of poker.
      *
-     * @param Table          $table
+     * @param Uuid $id
+     * @param Table $table
      * @param GameParameters $gameRules
      *
      * @return Round
      */
-    public static function start(Table $table, GameParameters $gameRules): Round
+    public static function start(Uuid $id, Table $table, GameParameters $gameRules): Round
     {
-        return new static($table, $gameRules);
+        return new static($id, $table, $gameRules);
     }
 
     /**
@@ -107,6 +116,14 @@ class Round
         $this->distributeWinnings();
 
         $this->table()->moveButton();
+    }
+
+    /**
+     * @return Uuid
+     */
+    public function id(): Uuid
+    {
+        return $this->id;
     }
 
     /**

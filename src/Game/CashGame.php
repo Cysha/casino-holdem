@@ -11,6 +11,7 @@ use Cysha\Casino\Game\Contracts\GameParameters;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Game\TableCollection;
 use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 final class CashGame implements Game
@@ -175,7 +176,7 @@ final class CashGame implements Game
             ->map(function (PlayerCollection $players) {
                 $dealer = Dealer::startWork(new Deck(), new SevenCard());
 
-                return Table::setUp($dealer, $players);
+                return Table::setUp(Uuid::uuid4(), $dealer, $players);
             })
             ->toArray();
 

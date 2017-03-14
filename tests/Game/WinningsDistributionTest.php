@@ -18,6 +18,7 @@ use Cysha\Casino\Holdem\Game\Parameters\CashGameParameters;
 use Cysha\Casino\Holdem\Game\Player;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Game\Table;
+use Ramsey\Uuid\Uuid;
 
 class WinningsDistributionTest extends BaseGameTestCase
 {
@@ -28,9 +29,9 @@ class WinningsDistributionTest extends BaseGameTestCase
     /** @test */
     public function winning_player_get_entire_pot_added_to_chipstack()
     {
-        $client1 = Client::register('player1', Chips::fromAmount(5500));
-        $client2 = Client::register('player2', Chips::fromAmount(5500));
-        $client3 = Client::register('player3', Chips::fromAmount(5500));
+        $client1 = Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(5500));
+        $client2 = Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(5500));
+        $client3 = Client::register(Uuid::uuid4(), 'player3', Chips::fromAmount(5500));
         $player1 = Player::fromClient($client1, Chips::fromAmount(5500));
         $player2 = Player::fromClient($client2, Chips::fromAmount(5500));
         $player3 = Player::fromClient($client3, Chips::fromAmount(5500));
@@ -55,7 +56,7 @@ class WinningsDistributionTest extends BaseGameTestCase
 
         // Do game
         $dealer = Dealer::startWork(new Deck(), $evaluator);
-        $table = Table::setUp($dealer, $players);
+        $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
         $seat1 = $table->playersSatDown()->get(0);
         $seat2 = $table->playersSatDown()->get(1);
@@ -63,7 +64,7 @@ class WinningsDistributionTest extends BaseGameTestCase
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $this->dealHandsAndPlayGame($round, $seat2, $seat3, $seat1);
 
@@ -127,11 +128,11 @@ class WinningsDistributionTest extends BaseGameTestCase
     public function scenario_1()
     {
         $players = PlayerCollection::make([
-            Player::fromClient(Client::register('xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
-            Player::fromClient(Client::register('jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
-            Player::fromClient(Client::register('melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
-            Player::fromClient(Client::register('bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
-            Player::fromClient(Client::register('blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
         ]);
         $xLink = $players->get(0);
         $jesus = $players->get(1);
@@ -154,11 +155,11 @@ class WinningsDistributionTest extends BaseGameTestCase
     public function scenario_2()
     {
         $players = PlayerCollection::make([
-            Player::fromClient(Client::register('xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
-            Player::fromClient(Client::register('jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
-            Player::fromClient(Client::register('melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
-            Player::fromClient(Client::register('bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
-            Player::fromClient(Client::register('blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
         ]);
         $xLink = $players->get(0);
         $jesus = $players->get(1);
@@ -181,11 +182,11 @@ class WinningsDistributionTest extends BaseGameTestCase
     public function scenario_3()
     {
         $players = PlayerCollection::make([
-            Player::fromClient(Client::register('xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
-            Player::fromClient(Client::register('jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
-            Player::fromClient(Client::register('melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
-            Player::fromClient(Client::register('bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
-            Player::fromClient(Client::register('blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
         ]);
         $xLink = $players->get(0);
         $jesus = $players->get(1);
@@ -212,12 +213,12 @@ class WinningsDistributionTest extends BaseGameTestCase
         $deck = $this->buildSpecificDeck($board, $allHands);
 
         $dealer = Dealer::startWork($deck, new SevenCard());
-        $table = Table::setUp($dealer, $players);
+        $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
         $round->dealHands();
 
         $round->postSmallBlind($jesus); // 25
@@ -254,11 +255,11 @@ class WinningsDistributionTest extends BaseGameTestCase
     public function scenario_4()
     {
         $players = PlayerCollection::make([
-            Player::fromClient(Client::register('xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
-            Player::fromClient(Client::register('jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
-            Player::fromClient(Client::register('melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
-            Player::fromClient(Client::register('bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
-            Player::fromClient(Client::register('blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
         ]);
         $xLink = $players->get(0);
         $jesus = $players->get(1);
@@ -280,12 +281,12 @@ class WinningsDistributionTest extends BaseGameTestCase
         $deck = $this->buildSpecificDeck($board, $allHands);
 
         $dealer = Dealer::startWork($deck, new SevenCard());
-        $table = Table::setUp($dealer, $players);
+        $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
         $round->dealHands();
 
         $round->postSmallBlind($jesus); // 25
@@ -322,11 +323,11 @@ class WinningsDistributionTest extends BaseGameTestCase
     public function scenario_5()
     {
         $players = PlayerCollection::make([
-            Player::fromClient(Client::register('xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
-            Player::fromClient(Client::register('jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
-            Player::fromClient(Client::register('melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
-            Player::fromClient(Client::register('bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
-            Player::fromClient(Client::register('blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
         ]);
         $xLink = $players->get(0);
         $jesus = $players->get(1);
@@ -348,12 +349,12 @@ class WinningsDistributionTest extends BaseGameTestCase
         $deck = $this->buildSpecificDeck($board, $allHands);
 
         $dealer = Dealer::startWork($deck, new SevenCard());
-        $table = Table::setUp($dealer, $players);
+        $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
         $round->dealHands();
 
         $round->postSmallBlind($jesus); // 25
@@ -406,12 +407,12 @@ class WinningsDistributionTest extends BaseGameTestCase
 
         // Do game
         $dealer = Dealer::startWork(new Deck(), $evaluator);
-        $table = Table::setUp($dealer, $players);
+        $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $round->postSmallBlind($jesus); // 25
         $round->postBigBlind($melk); // 50

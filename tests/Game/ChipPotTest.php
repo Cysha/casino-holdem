@@ -7,6 +7,7 @@ use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Game\ChipPot;
 use Cysha\Casino\Holdem\Game\Player;
+use Ramsey\Uuid\Uuid;
 
 class ChipPotTest extends BaseGameTestCase
 {
@@ -27,7 +28,7 @@ class ChipPotTest extends BaseGameTestCase
     public function can_create_a_chipPot_with_chips_and_players()
     {
         // create a client & player
-        $client = Client::register('player1', Chips::fromAmount(5500));
+        $client = Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(5500));
         $player = Player::fromClient($client, Chips::fromAmount(1000));
 
         // create the pot

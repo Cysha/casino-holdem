@@ -9,6 +9,7 @@ use Cysha\Casino\Game\Client;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Cards\SevenCardResultCollection;
 use Cysha\Casino\Holdem\Game\Player;
+use Ramsey\Uuid\Uuid;
 
 class SevenCardResultCollectionTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,7 +20,7 @@ class SevenCardResultCollectionTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function can_create_collection_of_results()
     {
-        $client1 = Client::register('player1', Chips::fromAmount(5500));
+        $client1 = Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(5500));
         $player1 = Player::fromClient($client1, Chips::fromAmount(5500));
 
         $board = CardCollection::fromString('3s 3h 8h 2s 4c');

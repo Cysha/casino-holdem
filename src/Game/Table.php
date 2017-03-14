@@ -7,9 +7,15 @@ use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Game\Table as BaseTable;
 use Cysha\Casino\Holdem\Exceptions\TableException;
+use Ramsey\Uuid\Uuid;
 
 class Table extends BaseTable
 {
+    /**
+     * @var Uuid
+     */
+    private $id;
+
     /**
      * @var Dealer
      */
@@ -33,25 +39,36 @@ class Table extends BaseTable
     /**
      * Table constructor.
      *
-     * @param DealerContract   $dealer
+     * @param Uuid $id
+     * @param DealerContract $dealer
      * @param PlayerCollection $players
      */
-    private function __construct(DealerContract $dealer, PlayerCollection $players)
+    private function __construct(Uuid $id, DealerContract $dealer, PlayerCollection $players)
     {
+        $this->id = $id;
         $this->players = $players;
         $this->playersSatOut = PlayerCollection::make();
         $this->dealer = $dealer;
     }
 
     /**
-     * @param DealerContract   $dealer
+     * @param Uuid $id
+     * @param DealerContract $dealer
      * @param PlayerCollection $players
      *
      * @return Table
      */
-    public static function setUp(DealerContract $dealer, PlayerCollection $players)
+    public static function setUp(Uuid $id, DealerContract $dealer, PlayerCollection $players)
     {
-        return new self($dealer, $players);
+        return new self($id, $dealer, $players);
+    }
+
+    /**
+     * @return Uuid
+     */
+    public function id(): Uuid
+    {
+        return $this->id;
     }
 
     /**

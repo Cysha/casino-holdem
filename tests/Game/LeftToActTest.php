@@ -7,6 +7,7 @@ use Cysha\Casino\Holdem\Game\LeftToAct;
 use Cysha\Casino\Holdem\Game\Parameters\CashGameParameters;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Table;
+use Ramsey\Uuid\Uuid;
 
 class LeftToActTest extends BaseGameTestCase
 {
@@ -240,7 +241,7 @@ class LeftToActTest extends BaseGameTestCase
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $expected = LeftToAct::make([
             ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
@@ -338,7 +339,7 @@ class LeftToActTest extends BaseGameTestCase
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $seat1 = $table->playersSatDown()->get(0);
         $seat2 = $table->playersSatDown()->get(1);
@@ -364,7 +365,7 @@ class LeftToActTest extends BaseGameTestCase
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $expected = LeftToAct::make([
             ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
@@ -412,7 +413,7 @@ class LeftToActTest extends BaseGameTestCase
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $expected = LeftToAct::make([
             ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
@@ -461,7 +462,7 @@ class LeftToActTest extends BaseGameTestCase
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $expected = LeftToAct::make([
             ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
@@ -514,7 +515,7 @@ class LeftToActTest extends BaseGameTestCase
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $expected = LeftToAct::make([
             ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],
@@ -552,7 +553,7 @@ class LeftToActTest extends BaseGameTestCase
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $expected = LeftToAct::make([
             ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::STILL_TO_ACT],

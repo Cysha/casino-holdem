@@ -12,6 +12,7 @@ use Cysha\Casino\Holdem\Cards\Evaluators\SevenCard;
 use Cysha\Casino\Holdem\Cards\Results\SevenCardResult;
 use Cysha\Casino\Holdem\Game\Dealer;
 use Cysha\Casino\Holdem\Game\Player;
+use Ramsey\Uuid\Uuid;
 
 class DealerTest extends BaseGameTestCase
 {
@@ -32,8 +33,8 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function dealer_can_compare_2_hands_to_select_winnner()
     {
-        $client1 = Client::register('xLink', Chips::fromAmount(5000));
-        $client2 = Client::register('jesus', Chips::fromAmount(5000));
+        $client1 = Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(5000));
+        $client2 = Client::register(Uuid::uuid4(), 'jesus', Chips::fromAmount(5000));
 
         $player1 = Player::fromClient($client1);
         $player2 = Player::fromClient($client2);
@@ -58,10 +59,10 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function dealer_can_compare_4_hands_to_select_winnner()
     {
-        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
-        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
-        $player3 = Player::fromClient(Client::register('player3', Chips::fromAmount(500)));
-        $player4 = Player::fromClient(Client::register('player4', Chips::fromAmount(500)));
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
+        $player3 = Player::fromClient(Client::register(Uuid::uuid4(), 'player3', Chips::fromAmount(500)));
+        $player4 = Player::fromClient(Client::register(Uuid::uuid4(), 'player4', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('Ts 9h Qs Ks Js');
         $hand1 = Hand::fromString('As 3d', $player1);
@@ -85,15 +86,15 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function dealer_can_compare_10_hands_and_decide_its_a_split_pot()
     {
-        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
-        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
-        $player3 = Player::fromClient(Client::register('player3', Chips::fromAmount(500)));
-        $player4 = Player::fromClient(Client::register('player4', Chips::fromAmount(500)));
-        $player5 = Player::fromClient(Client::register('player5', Chips::fromAmount(500)));
-        $player6 = Player::fromClient(Client::register('player6', Chips::fromAmount(500)));
-        $player7 = Player::fromClient(Client::register('player7', Chips::fromAmount(500)));
-        $player8 = Player::fromClient(Client::register('player8', Chips::fromAmount(500)));
-        $player9 = Player::fromClient(Client::register('player9', Chips::fromAmount(500)));
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
+        $player3 = Player::fromClient(Client::register(Uuid::uuid4(), 'player3', Chips::fromAmount(500)));
+        $player4 = Player::fromClient(Client::register(Uuid::uuid4(), 'player4', Chips::fromAmount(500)));
+        $player5 = Player::fromClient(Client::register(Uuid::uuid4(), 'player5', Chips::fromAmount(500)));
+        $player6 = Player::fromClient(Client::register(Uuid::uuid4(), 'player6', Chips::fromAmount(500)));
+        $player7 = Player::fromClient(Client::register(Uuid::uuid4(), 'player7', Chips::fromAmount(500)));
+        $player8 = Player::fromClient(Client::register(Uuid::uuid4(), 'player8', Chips::fromAmount(500)));
+        $player9 = Player::fromClient(Client::register(Uuid::uuid4(), 'player9', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('As Ah Ac Ad Kd');
         $hand1 = Hand::fromString('2h 5s', $player1);
@@ -118,15 +119,15 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function dealer_can_compare_10_hands_with_odd_kickers_and_decide_its_a_split_pot()
     {
-        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
-        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
-        $player3 = Player::fromClient(Client::register('player3', Chips::fromAmount(500)));
-        $player4 = Player::fromClient(Client::register('player4', Chips::fromAmount(500)));
-        $player5 = Player::fromClient(Client::register('player5', Chips::fromAmount(500)));
-        $player6 = Player::fromClient(Client::register('player6', Chips::fromAmount(500)));
-        $player7 = Player::fromClient(Client::register('player7', Chips::fromAmount(500)));
-        $player8 = Player::fromClient(Client::register('player8', Chips::fromAmount(500)));
-        $player9 = Player::fromClient(Client::register('player9', Chips::fromAmount(500)));
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
+        $player3 = Player::fromClient(Client::register(Uuid::uuid4(), 'player3', Chips::fromAmount(500)));
+        $player4 = Player::fromClient(Client::register(Uuid::uuid4(), 'player4', Chips::fromAmount(500)));
+        $player5 = Player::fromClient(Client::register(Uuid::uuid4(), 'player5', Chips::fromAmount(500)));
+        $player6 = Player::fromClient(Client::register(Uuid::uuid4(), 'player6', Chips::fromAmount(500)));
+        $player7 = Player::fromClient(Client::register(Uuid::uuid4(), 'player7', Chips::fromAmount(500)));
+        $player8 = Player::fromClient(Client::register(Uuid::uuid4(), 'player8', Chips::fromAmount(500)));
+        $player9 = Player::fromClient(Client::register(Uuid::uuid4(), 'player9', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('As Ah Ac Ad 2d');
         $hand1 = Hand::fromString('2h Ks', $player1);
@@ -151,9 +152,9 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function dealer_can_compare_2_hands_as_pairs_and_decide_its_a_split_pot()
     {
-        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
-        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
-        $player3 = Player::fromClient(Client::register('player3', Chips::fromAmount(500)));
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
+        $player3 = Player::fromClient(Client::register(Uuid::uuid4(), 'player3', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('As 3d 9s 2c Th');
         $hand1 = Hand::fromString('Qh Qd', $player1);
@@ -181,8 +182,8 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function dealer_can_compare_2_high_card_hands_and_decide_its_a_split_pot()
     {
-        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
-        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('5h 3s 7s 4c 6h');
         $hand1 = Hand::fromString('Kh Ah', $player1);
@@ -209,8 +210,8 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function when_comparing_2_quads_highest_quad_wins()
     {
-        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
-        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('As Qd 2s 2c Qh');
         $hand1 = Hand::fromString('2h 2d', $player1);
@@ -232,8 +233,8 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function compare_2_full_houses_highest_wins()
     {
-        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
-        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('9s 2c Js Jh 2h');
         $hand1 = Hand::fromString('9c 9d', $player1);
@@ -255,8 +256,8 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function compare_2_flushes_highest_wins()
     {
-        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
-        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('5h 7h Jh 9h 5s');
         $hand1 = Hand::fromString('Kh Qs', $player1);
@@ -278,8 +279,8 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function compare_2_straights_highest_wins()
     {
-        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
-        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('2d 3h 4c 5s 6h');
         $hand1 = Hand::fromString('7h 9s', $player1);
@@ -301,8 +302,8 @@ class DealerTest extends BaseGameTestCase
     /** @test */
     public function compare_2_pair_as_counterfeit()
     {
-        $player1 = Player::fromClient(Client::register('player1', Chips::fromAmount(500)));
-        $player2 = Player::fromClient(Client::register('player2', Chips::fromAmount(500)));
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
 
         $board = CardCollection::fromString('4h 4s 9c 9s Tc');
         $hand1 = Hand::fromString('2h 2s', $player1);

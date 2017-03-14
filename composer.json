@@ -28,6 +28,9 @@
             "Cysha\\Casino\\Holdem\\Tests\\": "tests/"
         }
     },
+    "repositories": [
+        { "type": "path", "url": "../casino" }
+    ],
     "config": {
         "bin-dir": "bin"
     }

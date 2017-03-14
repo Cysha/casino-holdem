@@ -6,13 +6,14 @@ use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Client;
 use Cysha\Casino\Holdem\Game\Action;
 use Cysha\Casino\Holdem\Game\Player;
+use Ramsey\Uuid\Uuid;
 
 class ActionTest extends BaseGameTestCase
 {
     /** @test */
     public function can_get_player_from_action()
     {
-        $client = Client::register('xLink');
+        $client = Client::register(Uuid::uuid4(), 'xLink');
         $player = Player::fromClient($client);
 
         $action = new Action($player, Action::CALL, Chips::fromAmount(250));
@@ -24,7 +25,7 @@ class ActionTest extends BaseGameTestCase
     /** @test */
     public function can_get_chips_from_action()
     {
-        $client = Client::register('xLink');
+        $client = Client::register(Uuid::uuid4(), 'xLink');
         $player = Player::fromClient($client);
 
         $action = new Action($player, Action::CALL, Chips::fromAmount(250));
@@ -35,7 +36,7 @@ class ActionTest extends BaseGameTestCase
     /** @test */
     public function can_create_action_for_check()
     {
-        $client = Client::register('xLink');
+        $client = Client::register(Uuid::uuid4(), 'xLink');
         $player = Player::fromClient($client);
 
         $action = new Action($player, Action::CHECK);
@@ -47,7 +48,7 @@ class ActionTest extends BaseGameTestCase
     /** @test */
     public function can_create_action_for_call()
     {
-        $client = Client::register('xLink');
+        $client = Client::register(Uuid::uuid4(), 'xLink');
         $player = Player::fromClient($client);
 
         $action = new Action($player, Action::CALL, Chips::fromAmount(250));
@@ -59,7 +60,7 @@ class ActionTest extends BaseGameTestCase
     /** @test */
     public function can_create_action_for_raise()
     {
-        $client = Client::register('xLink');
+        $client = Client::register(Uuid::uuid4(), 'xLink');
         $player = Player::fromClient($client);
 
         $action = new Action($player, Action::RAISE, Chips::fromAmount(999));
@@ -71,7 +72,7 @@ class ActionTest extends BaseGameTestCase
     /** @test */
     public function can_create_action_for_fold()
     {
-        $client = Client::register('xLink');
+        $client = Client::register(Uuid::uuid4(), 'xLink');
         $player = Player::fromClient($client);
 
         $action = new Action($player, Action::FOLD);
@@ -83,7 +84,7 @@ class ActionTest extends BaseGameTestCase
     /** @test */
     public function can_create_action_for_allin()
     {
-        $client = Client::register('xLink');
+        $client = Client::register(Uuid::uuid4(), 'xLink');
         $player = Player::fromClient($client);
 
         $action = new Action($player, Action::ALLIN, Chips::fromAmount(2453));
@@ -95,7 +96,7 @@ class ActionTest extends BaseGameTestCase
     /** @test */
     public function can_create_action_for_sb()
     {
-        $client = Client::register('xLink');
+        $client = Client::register(Uuid::uuid4(), 'xLink');
         $player = Player::fromClient($client);
 
         $action = new Action($player, Action::SMALL_BLIND, Chips::fromAmount(25));
@@ -107,7 +108,7 @@ class ActionTest extends BaseGameTestCase
     /** @test */
     public function can_create_action_for_bb()
     {
-        $client = Client::register('xLink');
+        $client = Client::register(Uuid::uuid4(), 'xLink');
         $player = Player::fromClient($client);
 
         $action = new Action($player, Action::BIG_BLIND, Chips::fromAmount(50));

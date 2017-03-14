@@ -16,6 +16,7 @@ use Cysha\Casino\Holdem\Game\Parameters\CashGameParameters;
 use Cysha\Casino\Holdem\Game\Player;
 use Cysha\Casino\Holdem\Game\Round;
 use Cysha\Casino\Holdem\Game\Table;
+use Ramsey\Uuid\Uuid;
 
 class PotBuildingTest extends BaseGameTestCase
 {
@@ -27,9 +28,9 @@ class PotBuildingTest extends BaseGameTestCase
     public function split_pot_with_3_players()
     {
         $players = PlayerCollection::make([
-            Player::fromClient(Client::register('xLink', Chips::fromAmount(800)), Chips::fromAmount(800)),
-            Player::fromClient(Client::register('jesus', Chips::fromAmount(300)), Chips::fromAmount(300)),
-            Player::fromClient(Client::register('melk', Chips::fromAmount(150)), Chips::fromAmount(150)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(800)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'jesus', Chips::fromAmount(300)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'melk', Chips::fromAmount(150)), Chips::fromAmount(150)),
         ]);
         $xLink = $players->first();
         $jesus = $players->get(1);
@@ -49,11 +50,11 @@ class PotBuildingTest extends BaseGameTestCase
 
         // Do game
         $dealer = Dealer::startWork(new Deck(), $evaluator);
-        $table = Table::setUp($dealer, $players);
+        $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $round->postSmallBlind($jesus); // 25
         $round->postBigBlind($melk); // 50
@@ -89,11 +90,11 @@ class PotBuildingTest extends BaseGameTestCase
     public function split_pot_with_left_over_chips()
     {
         $players = PlayerCollection::make([
-            Player::fromClient(Client::register('xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
-            Player::fromClient(Client::register('jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
-            Player::fromClient(Client::register('melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
-            Player::fromClient(Client::register('bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
-            Player::fromClient(Client::register('blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(650)), Chips::fromAmount(2000)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'jesus', Chips::fromAmount(800)), Chips::fromAmount(300)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'melk', Chips::fromAmount(1200)), Chips::fromAmount(800)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'bob', Chips::fromAmount(1200)), Chips::fromAmount(150)),
+            Player::fromClient(Client::register(Uuid::uuid4(), 'blackburn', Chips::fromAmount(1200)), Chips::fromAmount(5000)),
         ]);
         $xLink = $players->get(0);
         $jesus = $players->get(1);
@@ -116,11 +117,11 @@ class PotBuildingTest extends BaseGameTestCase
 
         // Do game
         $dealer = Dealer::startWork(new Deck(), $evaluator);
-        $table = Table::setUp($dealer, $players);
+        $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
         $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
-        $round = Round::start($table, $gameRules);
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
         $round->postSmallBlind($jesus); // 25
         $round->postBigBlind($melk); // 50

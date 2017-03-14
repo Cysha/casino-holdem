@@ -6,6 +6,7 @@ use Assert\Assertion;
 use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;
+use Ramsey\Uuid\Uuid;
 
 class Player extends Client implements PlayerContract
 {
@@ -20,9 +21,9 @@ class Player extends Client implements PlayerContract
      * @param string $name
      * @param Chips  $chips
      */
-    public function __construct($name, Chips $wallet = null, Chips $chips = null)
+    public function __construct(Uuid $id, $name, Chips $wallet = null, Chips $chips = null)
     {
-        parent::__construct($name, $wallet);
+        parent::__construct($id, $name, $wallet);
 
         $this->chipStack = $chips ?? Chips::zero();
     }
@@ -35,7 +36,7 @@ class Player extends Client implements PlayerContract
      */
     public static function fromClient(Client $client, Chips $chipCount = null): PlayerContract
     {
-        return new self($client->name(), $client->wallet(), $chipCount);
+        return new self($client->id(), $client->name(), $client->wallet(), $chipCount);
     }
 
     /**
@@ -46,6 +47,7 @@ class Player extends Client implements PlayerContract
     public function equals(PlayerContract $object): bool
     {
         return static::class === get_class($object)
+        && $this->id() === $object->id()
         && $this->name() === $object->name()
         && $this->wallet() === $object->wallet()
         && $this->chipStack() === $object->chipStack();
