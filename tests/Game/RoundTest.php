@@ -1308,4 +1308,45 @@ class RoundTest extends BaseGameTestCase
 
         $this->assertFalse($round->whosTurnIsIt());
     }
+
+    /** @test */
+    public function can_call_all_in_with_less_chips()
+    {
+        $xLink = Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(5500));
+        $jesus = Client::register(Uuid::uuid4(), 'jesus', Chips::fromAmount(5500));
+
+        $gameRules = new CashGameParameters(Chips::fromAmount(2), null, 9, Chips::fromAmount(500));
+
+        // we got a game
+        $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', $gameRules);
+
+        // register clients to game
+        $game->registerPlayer($xLink, Chips::fromAmount(44)); // x
+        $game->registerPlayer($jesus, Chips::fromAmount(11)); //
+
+        $game->assignPlayersToTables(); // table has max of 9 or 5 players in holdem
+
+        $table = $game->tables()->first();
+
+        $player1 = $table->playersSatDown()->get(0);
+        $player2 = $table->playersSatDown()->get(1);
+
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
+
+        // deal some hands
+        $round->dealHands();
+
+        // make sure we start with no chips on the table
+        $this->assertEquals(0, $round->betStacksTotal());
+
+        $round->postSmallBlind($player1); // 1
+        $round->postBigBlind($player2); // 2
+
+        $round->playerPushesAllIn($player1); // SB + 43
+        $round->playerCalls($player2); // BB + 9
+
+        // collect the chips, burn a card, deal the flop
+        $round->end();
+        $this->assertEquals(55, $round->chipPots()->total()->amount());
+    }
 }

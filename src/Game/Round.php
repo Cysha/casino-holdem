@@ -582,6 +582,11 @@ class Round
 
         $chipStackLeft = Chips::fromAmount($player->chipStack()->amount() - $amountLeftToBet->amount());
 
+        if ($chipStackLeft->amount() <= 0) {
+            $amountLeftToBet = Chips::fromAmount($player->chipStack()->amount());
+            $chipStackLeft = Chips::zero();
+        }
+
         $action = $chipStackLeft->amount() === 0 ? Action::ALLIN : Action::CALL;
         $this->playerActions->push(new Action($player, $action, $amountLeftToBet));
 
