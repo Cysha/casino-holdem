@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "beberlei/assert",
-            "version": "v2.7.3",
+            "version": "v2.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/beberlei/assert.git",
-                "reference": "5972776d6a9eedfd3c55216341434e19cb50418f"
+                "reference": "3ee3bc468a3ce4bbfc3d74f53c6cdb5242d39d1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/beberlei/assert/zipball/5972776d6a9eedfd3c55216341434e19cb50418f",
-                "reference": "5972776d6a9eedfd3c55216341434e19cb50418f",
+                "url": "https://api.github.com/repos/beberlei/assert/zipball/3ee3bc468a3ce4bbfc3d74f53c6cdb5242d39d1a",
+                "reference": "3ee3bc468a3ce4bbfc3d74f53c6cdb5242d39d1a",
                 "shasum": ""
             },
             "require": {
@@ -25,8 +25,8 @@
                 "php": ">=5.3"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.0",
-                "phpunit/phpunit": "@stable"
+                "friendsofphp/php-cs-fixer": "^2.1.1",
+                "phpunit/phpunit": "^4|^5"
             },
             "type": "library",
             "autoload": {
@@ -59,7 +59,7 @@
                 "assertion",
                 "validation"
             ],
-            "time": "2017-01-24T15:14:39+00:00"
+            "time": "2017-03-14T18:06:52+00:00"
         },
         {
             "name": "cysha/casino",
@@ -67,12 +67,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Cysha/casino.git",
-                "reference": "f8253010563e0b723e21ac85c87d035dfaf661a9"
+                "reference": "b9ae38b5997440f7fab259acd8d41ee6661a8c6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Cysha/casino/zipball/f8253010563e0b723e21ac85c87d035dfaf661a9",
-                "reference": "f8253010563e0b723e21ac85c87d035dfaf661a9",
+                "url": "https://api.github.com/repos/Cysha/casino/zipball/b9ae38b5997440f7fab259acd8d41ee6661a8c6a",
+                "reference": "b9ae38b5997440f7fab259acd8d41ee6661a8c6a",
                 "shasum": ""
             },
             "require": {
@@ -107,7 +107,7 @@
                 }
             ],
             "description": "Casino Package for PHP",
-            "time": "2017-03-08 00:44:25"
+            "time": "2017-03-14 15:46:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -964,16 +964,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "5.7.15",
+            "version": "5.7.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "b99112aecc01f62acf3d81a3f59646700a1849e5"
+                "reference": "dafc78e2a7d12139b0e97078d1082326bd09363d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b99112aecc01f62acf3d81a3f59646700a1849e5",
-                "reference": "b99112aecc01f62acf3d81a3f59646700a1849e5",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/dafc78e2a7d12139b0e97078d1082326bd09363d",
+                "reference": "dafc78e2a7d12139b0e97078d1082326bd09363d",
                 "shasum": ""
             },
             "require": {
@@ -1042,7 +1042,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-03-02T15:22:43+00:00"
+            "time": "2017-03-15T13:02:34+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
