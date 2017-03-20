@@ -11,10 +11,11 @@ use Cysha\Casino\Cards\HandCollection;
 use Cysha\Casino\Cards\ResultCollection;
 use Cysha\Casino\Game\Contracts\Dealer as DealerContract;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;
+use Cysha\Casino\Game\Dealer as BaseDealer;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Holdem\Exceptions\RoundException;
 
-class Dealer implements DealerContract
+class Dealer extends BaseDealer implements DealerContract
 {
     /**
      * @var Deck

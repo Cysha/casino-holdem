@@ -1015,15 +1015,20 @@ class RoundTest extends BaseGameTestCase
         $round->playerCalls($player2); // SB + 25
         $round->playerChecks($player3); // BB
 
+        $round->dealFlop();
+
         $expected = ActionCollection::make([
-            new Action($player2, Action::SMALL_BLIND, Chips::fromAmount(25)),
-            new Action($player3, Action::BIG_BLIND, Chips::fromAmount(50)),
-            new Action($player4, Action::CALL, Chips::fromAmount(50)),
+            new Action($player2, Action::SMALL_BLIND, ['chips' => Chips::fromAmount(25)]),
+            new Action($player3, Action::BIG_BLIND, ['chips' => Chips::fromAmount(50)]),
+            new Action($player4, Action::CALL, ['chips' => Chips::fromAmount(50)]),
             new Action($player1, Action::FOLD),
-            new Action($player2, Action::CALL, Chips::fromAmount(25)),
+            new Action($player2, Action::CALL, ['chips' => Chips::fromAmount(25)]),
             new Action($player3, Action::CHECK),
+            new Action($round->dealer(), Action::DEALT_FLOP, [
+                'communityCards' => $round->dealer()->communityCards()->only(range(0, 3)),
+            ]),
         ]);
-        $this->assertEquals($expected, $round->playerActions());
+        $this->assertEquals($expected, $round->actions());
     }
 
     /** @test */

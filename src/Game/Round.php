@@ -48,7 +48,7 @@ class Round
     /**
      * @var ActionCollection
      */
-    private $playerActions;
+    private $actions;
 
     /**
      * @var PlayerCollection
@@ -75,7 +75,7 @@ class Round
         $this->currentPot = ChipPot::create();
         $this->betStacks = ChipStackCollection::make();
         $this->foldedPlayers = PlayerCollection::make();
-        $this->playerActions = ActionCollection::make();
+        $this->actions = ActionCollection::make();
         $this->leftToAct = LeftToAct::make();
         $this->gameRules = $gameRules;
 
@@ -161,9 +161,9 @@ class Round
     /**
      * @return ActionCollection
      */
-    public function playerActions(): ActionCollection
+    public function actions(): ActionCollection
     {
-        return $this->playerActions;
+        return $this->actions;
     }
 
     /**
@@ -318,7 +318,7 @@ class Round
 
         $this->postBlind($player, $chips);
 
-        $this->playerActions()->push(new Action($player, Action::SMALL_BLIND, $this->smallBlind()));
+        $this->actions()->push(new Action($player, Action::SMALL_BLIND, ['chips' => $this->smallBlind()]));
         $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::SMALL_BLIND);
     }
 
@@ -332,7 +332,7 @@ class Round
 
         $this->postBlind($player, $chips);
 
-        $this->playerActions()->push(new Action($player, Action::BIG_BLIND, $this->bigBlind()));
+        $this->actions()->push(new Action($player, Action::BIG_BLIND, ['chips' => $this->bigBlind()]));
         $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::BIG_BLIND);
     }
 
@@ -510,6 +510,9 @@ class Round
         $this->resetPlayerList($seat);
 
         $this->dealer()->dealCommunityCards(3);
+        $this->actions()->push(new Action($this->dealer(), Action::DEALT_FLOP, [
+            'communityCards' => $this->dealer()->communityCards()->only(range(0, 2)),
+        ]));
     }
 
     /**
@@ -530,6 +533,9 @@ class Round
         $this->resetPlayerList($seat);
 
         $this->dealer()->dealCommunityCards(1);
+        $this->actions()->push(new Action($this->dealer(), Action::DEALT_TURN, [
+            'communityCards' => $this->dealer()->communityCards()->only(3),
+        ]));
     }
 
     /**
@@ -550,6 +556,9 @@ class Round
         $this->resetPlayerList($seat);
 
         $this->dealer()->dealCommunityCards(1);
+        $this->actions()->push(new Action($this->dealer(), Action::DEALT_RIVER, [
+            'communityCards' => $this->dealer()->communityCards()->only(4),
+        ]));
     }
 
     /**
@@ -588,7 +597,7 @@ class Round
         }
 
         $action = $chipStackLeft->amount() === 0 ? Action::ALLIN : Action::CALL;
-        $this->playerActions->push(new Action($player, $action, $amountLeftToBet));
+        $this->actions->push(new Action($player, $action, ['chips' => $amountLeftToBet]));
 
         $this->placeChipBet($player, $amountLeftToBet);
 
@@ -614,7 +623,7 @@ class Round
         $chipStackLeft = Chips::fromAmount($player->chipStack()->amount() - $chips->amount());
 
         $action = $chipStackLeft->amount() === 0 ? Action::ALLIN : Action::RAISE;
-        $this->playerActions->push(new Action($player, $action, $chips));
+        $this->actions->push(new Action($player, $action, ['chips' => $chips]));
 
         $this->placeChipBet($player, $chips);
 
@@ -631,7 +640,7 @@ class Round
     {
         $this->checkPlayerTryingToAct($player);
 
-        $this->playerActions()->push(new Action($player, Action::FOLD));
+        $this->actions()->push(new Action($player, Action::FOLD));
 
         $this->foldedPlayers->push($player);
         $this->leftToAct = $this->leftToAct()->removePlayer($player);
@@ -650,7 +659,7 @@ class Round
         $chips = $player->chipStack();
 
         // gotta create a new chip obj here cause of PHPs /awesome/ objRef ability :D
-        $this->playerActions()->push(new Action($player, Action::ALLIN, Chips::fromAmount($chips->amount())));
+        $this->actions()->push(new Action($player, Action::ALLIN, ['chips' => Chips::fromAmount($chips->amount())]));
 
         $this->placeChipBet($player, $chips);
         $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::ALL_IN);
@@ -669,7 +678,7 @@ class Round
             throw RoundException::cantCheckWithBetActive();
         }
 
-        $this->playerActions()->push(new Action($player, Action::CHECK));
+        $this->actions()->push(new Action($player, Action::CHECK));
         $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::ACTIONED);
     }
 
