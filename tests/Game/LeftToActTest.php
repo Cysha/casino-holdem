@@ -239,7 +239,7 @@ class LeftToActTest extends BaseGameTestCase
         $player3 = $table->playersSatDown()->get(2);
         $player4 = $table->playersSatDown()->get(3);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
@@ -337,7 +337,7 @@ class LeftToActTest extends BaseGameTestCase
         /** @var Table $table */
         $table = $game->tables()->first();
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
@@ -363,7 +363,7 @@ class LeftToActTest extends BaseGameTestCase
 
         $seat2 = $table->playersSatDown()->get(1);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
@@ -411,7 +411,7 @@ class LeftToActTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
@@ -460,7 +460,7 @@ class LeftToActTest extends BaseGameTestCase
         $seat5 = $table->playersSatDown()->get(4);
         $seat6 = $table->playersSatDown()->get(5);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
@@ -513,7 +513,7 @@ class LeftToActTest extends BaseGameTestCase
         $seat1 = $table->playersSatDown()->get(0);
         $seat2 = $table->playersSatDown()->get(1);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
@@ -551,7 +551,7 @@ class LeftToActTest extends BaseGameTestCase
         $seat1 = $table->playersSatDown()->get(0);
         $seat2 = $table->playersSatDown()->get(1);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 

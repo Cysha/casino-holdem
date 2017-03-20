@@ -62,7 +62,7 @@ class WinningsDistributionTest extends BaseGameTestCase
         $seat2 = $table->playersSatDown()->get(1);
         $seat3 = $table->playersSatDown()->get(2);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
@@ -215,7 +215,7 @@ class WinningsDistributionTest extends BaseGameTestCase
         $dealer = Dealer::startWork($deck, new SevenCard());
         $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
@@ -283,7 +283,7 @@ class WinningsDistributionTest extends BaseGameTestCase
         $dealer = Dealer::startWork($deck, new SevenCard());
         $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
@@ -351,7 +351,7 @@ class WinningsDistributionTest extends BaseGameTestCase
         $dealer = Dealer::startWork($deck, new SevenCard());
         $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
@@ -409,7 +409,7 @@ class WinningsDistributionTest extends BaseGameTestCase
         $dealer = Dealer::startWork(new Deck(), $evaluator);
         $table = Table::setUp(Uuid::uuid4(), $dealer, $players);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // Round start
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);

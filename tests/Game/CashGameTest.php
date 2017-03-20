@@ -21,8 +21,9 @@ class CashGameTest extends BaseGameTestCase
     public function a_cash_game_can_be_setup()
     {
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $game = CashGame::setUp($id, $name, $gameRules);
         $this->assertInstanceOf(CashGame::class, $game);
@@ -35,8 +36,9 @@ class CashGameTest extends BaseGameTestCase
     public function an_exception_is_thrown_when_id_is_not_valid()
     {
         $id = 'abc';
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $game = CashGame::setUp($id, $name, $gameRules);
     }
@@ -45,8 +47,9 @@ class CashGameTest extends BaseGameTestCase
     public function i_can_see_the_id_of_the_game()
     {
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $game = CashGame::setUp($id, $name, $gameRules);
         $this->assertEquals($id, $game->id());
@@ -56,8 +59,9 @@ class CashGameTest extends BaseGameTestCase
     public function i_can_see_the_name_of_the_game()
     {
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $game = CashGame::setUp($id, $name, $gameRules);
         $this->assertEquals($name, $game->name());
@@ -67,8 +71,9 @@ class CashGameTest extends BaseGameTestCase
     public function the_game_should_be_setup_with_no_players_initialy()
     {
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $game = CashGame::setUp($id, $name, $gameRules);
         $this->assertEquals(PlayerCollection::make(), $game->players());
@@ -78,13 +83,14 @@ class CashGameTest extends BaseGameTestCase
     /** @test */
     public function a_client_can_register_to_a_game()
     {
+        $gameId = Uuid::uuid4();
         $id = Uuid::uuid4();
         $name = 'Demo Cash Game';
         $minimumBuyIn = Chips::fromAmount(500);
         $playerName = 'xLink';
         $xLink = Client::register(Uuid::uuid4(), $playerName, $minimumBuyIn);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, $minimumBuyIn);
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, $minimumBuyIn);
 
         $game = CashGame::setUp($id, $name, $gameRules);
         $game->registerPlayer($xLink);
@@ -100,9 +106,10 @@ class CashGameTest extends BaseGameTestCase
     public function multiple_clients_can_register_to_a_game()
     {
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
         $minimumBuyIn = Chips::fromAmount(500);
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, $minimumBuyIn);
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, $minimumBuyIn);
 
         $game = CashGame::setUp($id, $name, $gameRules);
 
@@ -124,8 +131,9 @@ class CashGameTest extends BaseGameTestCase
     public function client_cannot_register_to_same_game_twice()
     {
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $game = CashGame::setUp($id, $name, $gameRules);
 
@@ -142,9 +150,10 @@ class CashGameTest extends BaseGameTestCase
     {
         $client = Client::register(Uuid::uuid4(), 'Bob', Chips::fromAmount(1000));
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
         $minimumBuyIn = Chips::fromAmount(500);
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, $minimumBuyIn);
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, $minimumBuyIn);
 
         $game = CashGame::setUp($id, $name, $gameRules);
 
@@ -165,8 +174,9 @@ class CashGameTest extends BaseGameTestCase
     public function test_an_exception_is_thrown_if_a_player_has_insufficient_funds_to_buy_in()
     {
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $game = CashGame::setUp($id, $name, $gameRules);
         $player = Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(0));
@@ -178,8 +188,9 @@ class CashGameTest extends BaseGameTestCase
     public function can_create_game_with_a_table()
     {
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $game = CashGame::setUp($id, $name, $gameRules);
 
@@ -218,9 +229,10 @@ class CashGameTest extends BaseGameTestCase
     public function can_remove_player_from_game()
     {
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
         $minimumBuyIn = Chips::fromAmount(500);
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, $minimumBuyIn);
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, $minimumBuyIn);
 
         $game = CashGame::setUp($id, $name, $gameRules);
 
@@ -245,9 +257,10 @@ class CashGameTest extends BaseGameTestCase
     public function ensures_that_players_cant_be_removed_if_they_dont_exist_on_game()
     {
         $id = Uuid::uuid4();
+        $gameId = Uuid::uuid4();
         $name = 'Demo Cash Game';
         $minimumBuyIn = Chips::fromAmount(500);
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, $minimumBuyIn);
+        $gameRules = new CashGameParameters($gameId, Chips::fromAmount(50), null, 9, $minimumBuyIn);
 
         $game = CashGame::setUp($id, $name, $gameRules);
 

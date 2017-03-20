@@ -24,7 +24,7 @@ class BaseGameTestCase extends PHPUnit
             $players[] = Client::register(Uuid::uuid4(), 'player' . ($i + 1), Chips::fromAmount(5500));
         }
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         // we got a game
         $game = CashGame::setUp(Uuid::uuid4(), 'Demo Cash Game', $gameRules);

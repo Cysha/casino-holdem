@@ -117,7 +117,7 @@ class PlayerButtonTest extends BaseGameTestCase
 
         $table->giveButtonToPlayer($seat3);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
 
@@ -140,7 +140,7 @@ class PlayerButtonTest extends BaseGameTestCase
         $seat1 = $table->players()->get(0);
         $seat2 = $table->players()->get(1);
 
-        $gameRules = new CashGameParameters(Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
 
         $round = Round::start(Uuid::uuid4(), $table, $gameRules);
         $round->dealHands();

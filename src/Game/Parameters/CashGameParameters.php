@@ -4,6 +4,7 @@ namespace Cysha\Casino\Holdem\Game\Parameters;
 
 use Cysha\Casino\Game\Chips;
 use Cysha\Casino\Game\Contracts\GameParameters;
+use Ramsey\Uuid\Uuid;
 
 class CashGameParameters extends DefaultParameters implements GameParameters
 {
@@ -32,9 +33,9 @@ class CashGameParameters extends DefaultParameters implements GameParameters
      */
     private $maximumBuyIn;
 
-    public function __construct(Chips $bigBlind, Chips $smallBlind = null, int $tableSize = 9, Chips $minimumBuyIn, Chips $maximumBuyIn = null)
+    public function __construct(Uuid $gameId, Chips $bigBlind, Chips $smallBlind = null, int $tableSize = 9, Chips $minimumBuyIn, Chips $maximumBuyIn = null)
     {
-        parent::__construct($bigBlind, $smallBlind, $tableSize);
+        parent::__construct($gameId, $bigBlind, $smallBlind, $tableSize);
 
         $this->minimumBuyIn = $minimumBuyIn;
         $this->maximumBuyIn = $maximumBuyIn;
