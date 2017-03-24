@@ -2,7 +2,9 @@
 
 namespace Cysha\Casino\Holdem\Game;
 
+use Cysha\Casino\Game\Client;
 use Cysha\Casino\Game\Contracts\Dealer as DealerContract;
+use Cysha\Casino\Game\Contracts\Player;
 use Cysha\Casino\Game\Contracts\Player as PlayerContract;
 use Cysha\Casino\Game\PlayerCollection;
 use Cysha\Casino\Game\Table as BaseTable;
@@ -178,5 +180,25 @@ class Table extends BaseTable
                 return $player->name() === $playerName;
             })
             ->first();
+    }
+
+    public function removePlayer(Client $client)
+    {
+        $player = $this->players()
+            ->filter(function (Player $player) use ($client) {
+                return $player->name() === $client->name();
+            })
+            ->first()
+        ;
+
+        if ($player === null) {
+            throw TableException::notRegistered($client, $this);
+        }
+
+        $this->players = $this->players()
+            ->reject(function (Player $player) use ($client) {
+                return $player->name() === $client->name();
+            })
+            ->values();
     }
 }
