@@ -1354,4 +1354,21 @@ class RoundTest extends BaseGameTestCase
         $round->end();
         $this->assertEquals(55, $round->chipPots()->total()->amount());
     }
+
+    /** @test */
+    public function can_remove_a_player_from_table_and_game()
+    {
+        $game = $this->createGenericGame(4);
+
+        $game->assignPlayersToTables();
+
+        $table = $game->tables()->first();
+
+        $player1 = $table->playersSatDown()->get(0);
+
+        $game->removePlayer($player1);
+
+        $this->assertEquals(3, $table->players()->count());
+        $this->assertEquals(3, $game->players()->count());
+    }
 }

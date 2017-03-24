@@ -166,6 +166,15 @@ final class CashGame implements Game
                 return $player->name() === $client->name();
             })
             ->values();
+
+        $this->tables()
+            ->each(function (Table $table) use ($client) {
+                try {
+                    $table->removePlayer($client);
+                } catch (Cysha\Casino\Holdem\Exceptions\TableException $e) {
+
+                }
+            });
     }
 
     public function assignPlayersToTables()
