@@ -169,4 +169,38 @@ class PlayerButtonTest extends BaseGameTestCase
 
         $this->assertEquals($table->locatePlayerWithButton(), $seat2);
     }
+
+    /** @test */
+    public function ensure_when_button_moves_blinds_are_correct_with_two_players()
+    {
+        $game = $this->createGenericGame(2);
+
+        $dealer = Dealer::startWork(new Deck(), new SevenCard());
+
+        $table = Table::setUp(Uuid::uuid4(), $dealer, $game->players());
+        $seat1 = $table->players()->get(0);
+        $seat2 = $table->players()->get(1);
+
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(50), null, 9, Chips::fromAmount(500));
+
+        // run thru the first round
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
+        $this->assertEquals($table->locatePlayerWithButton()->name(), $seat1->name());
+        $this->assertEquals($round->playerWithSmallBlind()->name(), $seat1->name());
+        $this->assertEquals($round->playerWithBigBlind()->name(), $seat2->name());
+        $round->dealHands();
+
+        // setup a new table with current rules and players
+        $dealer = Dealer::startWork(new Deck(), new SevenCard());
+        $newTable = Table::setUp($table->id(), $dealer, $table->players());
+        $player = $table->locatePlayerWithButton();
+        $newTable->giveButtonToPlayer($player);
+        $newTable->moveButton();
+        $round2 = Round::start(Uuid::uuid4(), $newTable, $round->gameRules());
+
+        $this->assertEquals($newTable->locatePlayerWithButton()->name(), $seat2->name());
+        $this->assertEquals($round2->playerWithSmallBlind()->name(), $seat2->name());
+        $this->assertEquals($round2->playerWithBigBlind()->name(), $seat1->name());
+    }
+
 }

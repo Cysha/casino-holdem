@@ -102,7 +102,13 @@ class Table extends BaseTable
      */
     public function locatePlayerWithButton(): PlayerContract
     {
-        return $this->playersSatDown()->get($this->button);
+        $buttonLocation = $this->playersSatDown()->get($this->button);
+        if ($buttonLocation === null) {
+            $this->button = 0;
+            $buttonLocation = $this->playersSatDown()->first();
+        }
+
+        return $buttonLocation;
     }
 
     /**
@@ -146,7 +152,7 @@ class Table extends BaseTable
      */
     public function moveButton()
     {
-        ++$this->button;
+        $this->button = $this->button + 1;
 
         if ($this->button >= $this->playersSatDown()->count()) {
             $this->button = 0;

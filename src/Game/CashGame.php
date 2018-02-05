@@ -172,7 +172,6 @@ final class CashGame implements Game
                 try {
                     $table->removePlayer($client);
                 } catch (Cysha\Casino\Holdem\Exceptions\TableException $e) {
-
                 }
             });
     }

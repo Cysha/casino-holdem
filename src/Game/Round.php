@@ -290,7 +290,7 @@ class Round
     public function playerWithSmallBlind(): PlayerContract
     {
         if ($this->table()->playersSatDown()->count() === 2) {
-            return $this->table()->playersSatDown()->get(0);
+            return $this->table()->playersSatDown()->get($this->table()->button());
         }
 
         return $this->table()->playersSatDown()->get($this->table()->button() + 1);
@@ -302,7 +302,9 @@ class Round
     public function playerWithBigBlind(): PlayerContract
     {
         if ($this->table()->playersSatDown()->count() === 2) {
-            return $this->table()->playersSatDown()->get(1);
+            $idx = $this->table()->button();
+            $idx = ($idx === 1) ? $idx - 1 : $idx + 1;
+            return $this->table()->playersSatDown()->get($idx);
         }
 
         return $this->table()->playersSatDown()->get($this->table()->button() + 2);
