@@ -216,13 +216,13 @@ class LeftToActTest extends BaseGameTestCase
         ]);
         $this->assertEquals($expected, $leftToAct);
 
-        $leftToAct = $leftToAct->playerHasActioned($seat1, LeftToAct::ALL_IN);
+        $leftToAct = $leftToAct->playerHasActioned($seat1, LeftToAct::ALLIN);
 
         $expected = LeftToAct::make([
             ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::STILL_TO_ACT],
             ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
             ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
-            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALL_IN],
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALLIN],
         ]);
         $this->assertEquals($expected, $leftToAct);
     }
@@ -321,8 +321,8 @@ class LeftToActTest extends BaseGameTestCase
         $round->playerCalls($player4); // 250
 
         $expected = LeftToAct::make([
-            ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::ALL_IN],
-            ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::ALL_IN],
+            ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::ALLIN],
+            ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::ALLIN],
         ]);
         $this->assertEquals($expected, $round->leftToAct());
 
@@ -439,7 +439,7 @@ class LeftToActTest extends BaseGameTestCase
             ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
             ['seat' => 4, 'player' => 'player5', 'action' => LeftToAct::STILL_TO_ACT],
             ['seat' => 5, 'player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALL_IN],
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALLIN],
         ]);
 
         $this->assertEquals($expected, $round->leftToAct());
@@ -497,7 +497,7 @@ class LeftToActTest extends BaseGameTestCase
             ['seat' => 2, 'player' => 'player3', 'action' => LeftToAct::STILL_TO_ACT],
             ['seat' => 3, 'player' => 'player4', 'action' => LeftToAct::STILL_TO_ACT],
             ['seat' => 5, 'player' => 'player6', 'action' => LeftToAct::STILL_TO_ACT],
-            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALL_IN],
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALLIN],
         ]);
         $this->assertEquals($expected, $round->leftToAct());
     }
@@ -531,8 +531,8 @@ class LeftToActTest extends BaseGameTestCase
         $round->playerCalls($seat1); // 950
 
         $expected = LeftToAct::make([
-            ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::ALL_IN],
-            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALL_IN],
+            ['seat' => 1, 'player' => 'player2', 'action' => LeftToAct::ALLIN],
+            ['seat' => 0, 'player' => 'player1', 'action' => LeftToAct::ALLIN],
         ]);
         $this->assertEquals($expected, $round->leftToAct());
     }

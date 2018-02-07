@@ -1315,6 +1315,37 @@ class RoundTest extends BaseGameTestCase
     }
 
     /** @test */
+    public function player_raise_equals_current_bet_plus_raise()
+    {
+        $game = $this->createGenericGame(2);
+
+        $table = $game->tables()->first();
+
+        $player1 = $table->playersSatDown()->get(0);
+        $player2 = $table->playersSatDown()->get(1);
+
+        $gameRules = new CashGameParameters(Uuid::uuid4(), Chips::fromAmount(2), null, 9, Chips::fromAmount(500));
+
+        $round = Round::start(Uuid::uuid4(), $table, $gameRules);
+
+        // deal some hands
+        $round->dealHands();
+
+        // make sure we start with no chips on the table
+        $this->assertEquals(0, $round->betStacksTotal());
+
+        $round->postSmallBlind($player1); // 1
+        $round->postBigBlind($player2); // 2
+
+        $round->playerRaises($player1, Chips::fromAmount(10)); // BB + 10
+        $round->playerCalls($player2); // BB + 10
+
+        // collect the chips, burn a card, deal the flop
+        $round->end();
+        $this->assertEquals(26, $round->chipPots()->total()->amount());
+    }
+
+    /** @test */
     public function can_call_all_in_with_less_chips()
     {
         $xLink = Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(5500));

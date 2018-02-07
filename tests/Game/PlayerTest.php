@@ -46,4 +46,18 @@ class PlayerTest extends BaseGameTestCase
 
         $player->bet(Chips::fromAmount(-50));
     }
+
+    /**
+     * @expectedException Assert\InvalidArgumentException
+     * @test
+     */
+    public function player_cannot_bet_more_than_they_have()
+    {
+        $client = Client::register(Uuid::uuid4(), 'xLink');
+        $player = Player::fromClient($client, Chips::fromAmount(50));
+
+        $this->assertEquals(50, $player->chipStack()->amount());
+
+        $player->bet(Chips::fromAmount(51));
+    }
 }

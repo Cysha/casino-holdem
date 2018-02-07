@@ -416,7 +416,7 @@ class Round
     public function collectChipTotal(): ChipPotCollection
     {
         $allInActionsThisRound = $this->leftToAct()->filter(function (array $value) {
-            return $value['action'] === LeftToAct::ALL_IN;
+            return $value['action'] === LeftToAct::ALLIN;
         });
 
         $orderedBetStacks = $this->betStacks()
@@ -603,7 +603,7 @@ class Round
 
         $this->placeChipBet($player, $amountLeftToBet);
 
-        $action = $chipStackLeft->amount() === 0 ? LeftToAct::ALL_IN : LeftToAct::ACTIONED;
+        $action = $chipStackLeft->amount() === 0 ? LeftToAct::ALLIN : LeftToAct::ACTIONED;
         $this->leftToAct = $this->leftToAct()->playerHasActioned($player, $action);
     }
 
@@ -623,13 +623,16 @@ class Round
         }
 
         $chipStackLeft = Chips::fromAmount($player->chipStack()->amount() - $chips->amount());
+        if ($chipStackLeft->amount() === 0) {
+            return $this->playerPushesAllIn($player, $chips);
+        }
 
-        $action = $chipStackLeft->amount() === 0 ? Action::ALLIN : Action::RAISE;
-        $this->actions->push(new Action($player, $action, ['chips' => $chips]));
+        $betAmount = Chips::fromAmount($highestChipBet->amount() + $chips->amount());
 
-        $this->placeChipBet($player, $chips);
+        $this->actions->push(new Action($player, Action::RAISE, ['chips' => $betAmount]));
+        $this->placeChipBet($player, $betAmount);
 
-        $action = $chipStackLeft->amount() === 0 ? LeftToAct::ALL_IN : LeftToAct::AGGRESSIVELY_ACTIONED;
+        $action = $chipStackLeft->amount() === 0 ? LeftToAct::ALLIN : LeftToAct::AGGRESSIVELY_ACTIONED;
         $this->leftToAct = $this->leftToAct()->playerHasActioned($player, $action);
     }
 
@@ -664,7 +667,7 @@ class Round
         $this->actions()->push(new Action($player, Action::ALLIN, ['chips' => Chips::fromAmount($chips->amount())]));
 
         $this->placeChipBet($player, $chips);
-        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::ALL_IN);
+        $this->leftToAct = $this->leftToAct()->playerHasActioned($player, LeftToAct::ALLIN);
     }
 
     /**

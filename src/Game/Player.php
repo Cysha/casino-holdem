@@ -67,6 +67,7 @@ class Player extends Client implements PlayerContract
     public function bet(Chips $chips)
     {
         Assertion::greaterOrEqualThan($chips->amount(), 0);
+        Assertion::lessOrEqualThan($chips->amount(), $this->chipStack()->amount());
         $this->chipStack()->subtract($chips);
     }
 }
