@@ -221,7 +221,6 @@ class SevenCard implements CardEvaluator
     {
         // a straight has to have a 5 or 10 in
         if ($cardCollection->whereValue(5)->count() === 0 && $cardCollection->whereValue(10)->count() === 0) {
-            // var_dump('5 or 10');
             return false;
         }
 
@@ -231,18 +230,14 @@ class SevenCard implements CardEvaluator
         // check with ace == 1
         $check = static::checkForStraight($cardCollection->sortByValue()->unique());
         if ($check !== false) {
-            // var_dump('straight A low');
             return $check;
         }
 
         // check with ace == 14
         $check = static::checkForStraight($cardCollection->switchAceValue()->sortByValue()->unique());
-        // var_dump($cardCollection->switchAceValue()->sortByValue()->unique()->__toString());
         if ($check !== false) {
-            // var_dump('straight A high');
             return $check;
         }
-        // var_dump('nope');
 
         return false;
     }
@@ -382,10 +377,6 @@ class SevenCard implements CardEvaluator
         ))) {
             return $cards->sortByValue()->values();
         }
-        // var_dump([$cards->sumByValue(),array_sum(range(
-        //     $cards->sortByValue()->first()->value(),
-        //     $cards->sortByValue()->last()->value()
-        // )),$cards->__toString()]);
 
         return false;
     }
