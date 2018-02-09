@@ -118,6 +118,50 @@ class SevenCardTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
+    public function can_eval_hand_straight_wheel()
+    {
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
+        $board = CardCollection::fromString('9d Ac 2c 3h 8d');
+        $hand = Hand::fromString('5c 4d', $player);
+
+        $result = SevenCard::evaluate($board, $hand);
+
+        $expected = CardCollection::fromString('Ac 2c 3h 4d 5c');
+        $expectedResult = SevenCardResult::createStraight($expected, $hand);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_straight_broadway()
+    {
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
+        $board = CardCollection::fromString('As Tc Qd Jh 3c');
+        $hand = Hand::fromString('Kc Jc', $player);
+
+        $result = SevenCard::evaluate($board, $hand);
+
+        $expected = CardCollection::fromString('Tc Jh Qd Kc 14s');
+        $expectedResult = SevenCardResult::createStraight($expected, $hand);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /** @test **/
+    public function can_eval_hand_straight_dupe_numbers()
+    {
+        $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));
+        $board = CardCollection::fromString('8s 4c 6d 7h 3c');
+        $hand = Hand::fromString('5c 7c', $player);
+
+        $result = SevenCard::evaluate($board, $hand);
+
+        $expected = CardCollection::fromString('4c 5c 6d 7h 8s');
+        $expectedResult = SevenCardResult::createStraight($expected, $hand);
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /** @test **/
     public function can_eval_hand_straight_on_the_board()
     {
         $player = Player::fromClient(Client::register(Uuid::uuid4(), 'xLink', Chips::fromAmount(500)));

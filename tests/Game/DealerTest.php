@@ -321,4 +321,27 @@ class DealerTest extends BaseGameTestCase
         $expectedResult = SevenCardResult::createTwoPair($winningHand, $hand2);
         $this->assertEquals($expectedResult, $result->first());
     }
+
+    /** @test */
+    public function make_sure_can_identify_straight()
+    {
+        $player1 = Player::fromClient(Client::register(Uuid::uuid4(), 'player1', Chips::fromAmount(500)));
+        $player2 = Player::fromClient(Client::register(Uuid::uuid4(), 'player2', Chips::fromAmount(500)));
+
+        $board = CardCollection::fromString('As Tc Qd Jh 3c');
+        $hand1 = Hand::fromString('Kc Jc', $player1);
+        $hand2 = Hand::fromString('8h Ac', $player2);
+
+        $dealer = Dealer::startWork(new Deck(), new SevenCard());
+
+        $result = $dealer->evaluateHands($board, HandCollection::make([
+            $hand1, $hand2,
+        ]));
+
+        $this->assertCount(1, $result);
+
+        $winningHand = CardCollection::fromString('Tc Jh Qd Kc 14s');
+        $expectedResult = SevenCardResult::createStraight($winningHand, $hand1);
+        $this->assertEquals($expectedResult, $result->first());
+    }
 }
